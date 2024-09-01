@@ -37,7 +37,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="bg-black text-white flex flex-col">
+    <div className="bg-black text-gray-100 flex flex-col">
       <header className="w-full bg-black py-4 px-4 sm:px-8 lg:px-16">
         <div className="flex justify-center items-center mb-4">
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">

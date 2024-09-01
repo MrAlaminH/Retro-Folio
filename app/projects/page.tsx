@@ -22,7 +22,7 @@ const projectData = [
 
 const Projects = () => {
   return (
-    <section className="flex justify-center min-h-screen p-4 bg-black text-white text-sm">
+    <section className="flex justify-center min-h-screen p-4 bg-black text-green-500 text-sm">
       <div className="w-full max-w-3xl">
         <h2 className="mb-4 text-2xl font-bold">Recent Projects</h2>
         <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
@@ -36,7 +36,7 @@ const Projects = () => {
               <h3 className="mb-2 text-lg font-bold text-green-500">
                 {project.title}
               </h3>
-              <p className="text-sm">{project.description}</p>
+              <p className="text-sm text-gray-100">{project.description}</p>
             </div>
           ))}
         </div>

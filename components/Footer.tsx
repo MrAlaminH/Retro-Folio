@@ -3,11 +3,11 @@ import { Github, Twitter, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white p-4 flex justify-center sm:text-sm">
+    <footer className="bg-black text-gray-100 p-4 flex justify-center sm:text-sm">
       <div className="flex justify-between items-center w-full max-w-3xl">
         <div className="text-xs md:text-sm">
           © 2024
-          <span className="text-green-500"> MrAlaminH. </span>
+          <span className="text-green-500 "> MrAlaminH. </span>
           All rights reserved.
         </div>
         <div className="flex space-x-4">
