@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import MatrixCursor from "@/components/MatrixCursor/MatrixCursor";
 import { PHProvider } from "./providers";
 import dynamic from "next/dynamic";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const PostHogPageView = dynamic(() => import("./PostHogPageView"), {
   ssr: false,
@@ -36,15 +37,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <PHProvider>
-        <body className={`${ibmBios.className} bg-black`}>
-          <PostHogPageView />
-          <Navbar />
-          {children}
-          <MatrixCursor />
-          <Footer />
-        </body>
+        <ThemeProvider>
+          <body
+            className={`${ibmBios.className} bg-white dark:bg-black text-black dark:text-white transition-colors duration-300`}
+          >
+            <PostHogPageView />
+            <Navbar />
+            <main className="min-h-screen">{children}</main>
+            <MatrixCursor />
+            <Footer />
+          </body>
+        </ThemeProvider>
       </PHProvider>
     </html>
   );

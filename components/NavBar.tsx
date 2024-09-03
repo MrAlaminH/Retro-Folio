@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const navItems = [
   { name: "Home", path: "/" },
@@ -17,6 +18,7 @@ export default function Navbar() {
   const email = "itsalamin999@gmail.com";
   const [showCopyMessage, setShowCopyMessage] = useState(false);
   const pathname = usePathname();
+  const { theme, toggleTheme } = useTheme();
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -37,8 +39,8 @@ export default function Navbar() {
   };
 
   return (
-    <div className="bg-black text-gray-100 flex flex-col">
-      <header className="w-full bg-black py-4 px-4 sm:px-8 lg:px-16">
+    <div className="bg-white dark:bg-black text-black dark:text-gray-100 flex flex-col transition-colors duration-300">
+      <header className="w-full py-4 px-4 sm:px-8 lg:px-16">
         <div className="flex justify-center items-center mb-4">
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
             <div className="relative w-24 h-24 sm:w-32 sm:h-32">
@@ -76,26 +78,39 @@ export default function Navbar() {
                   </svg>
                   <p className="text-gray-400">{email}</p>
                 </div>
-                <button
-                  onClick={handleCopyEmail}
-                  className="bg-gray-700 hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-3 w-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleCopyEmail}
+                    className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center transition-colors duration-300"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 16h8M8 12h8m-8 4h8m2-10H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2z"
-                    />
-                  </svg>
-                  <span className="ml-1">Copy</span>
-                </button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-3 w-3"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 16h8M8 12h8m-8 4h8m2-10H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2z"
+                      />
+                    </svg>
+                    <span className="ml-1">Copy</span>
+                  </button>
+                  <button
+                    onClick={toggleTheme}
+                    className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center transition-colors duration-300"
+                    aria-label={
+                      theme === "dark"
+                        ? "Switch to light mode"
+                        : "Switch to dark mode"
+                    }
+                  >
+                    {theme === "dark" ? "☀️" : "🌙"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -107,7 +122,7 @@ export default function Navbar() {
                 <Link
                   href={item.path}
                   className={`hover:underline ${
-                    pathname === item.path ? "text-white" : ""
+                    pathname === item.path ? "text-black dark:text-white" : ""
                   }`}
                 >
                   {item.name}
@@ -123,7 +138,10 @@ export default function Navbar() {
 
       {showCopyMessage && (
         <div className="fixed top-4 right-4">
-          <Alert variant="default" className="text-green-500">
+          <Alert
+            variant="default"
+            className="text-green-700 dark:text-green-500"
+          >
             Email copied to clipboard!
           </Alert>
         </div>

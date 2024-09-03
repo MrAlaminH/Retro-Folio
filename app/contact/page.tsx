@@ -70,30 +70,34 @@ export default function Contact() {
   };
 
   return (
-    <section className="bg-black text-gray-100 min-h-screen p-4 flex justify-center text-sm">
+    <section className="bg-white dark:bg-black text-black dark:text-gray-100 min-h-screen p-4 flex justify-center text-sm transition-colors duration-300">
       <div className="w-full max-w-3xl">
-        <h2 className="text-lg md:text-xl mb-4 text-green-500">
+        <h2 className="text-lg md:text-xl mb-4 text-green-600 dark:text-green-500">
           Contact / Socials
         </h2>
         <ul className="list-none text-xs md:text-sm space-y-2">
           {contacts.map((contact, index) => (
             <li key={index} className="flex items-center">
-              <span className="mr-2 text-green-500">{">"}</span>
+              <span className="mr-2 text-green-600 dark:text-green-500">
+                {">"}
+              </span>
               <a
                 href={contact.link}
-                className="hover:underline hover:text-white transition-colors duration-300"
+                className="hover:underline hover:text-black dark:hover:text-white "
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <span>{contact.name}:</span>
-                <span className="ml-2 text-green-500">{contact.value}</span>
+                <span className="ml-2 text-green-600 dark:text-green-500">
+                  {contact.value}
+                </span>
               </a>
             </li>
           ))}
         </ul>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <h2 className="text-green-500 text-center py-12 underline underline-offset-4">
+          <h2 className="text-green-600 dark:text-green-500 text-center py-12 underline underline-offset-4">
             Send me a direct message
           </h2>
           {alertMessage && (
@@ -110,7 +114,7 @@ export default function Contact() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 bg-black text-white border border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full p-2 bg-transparent text-black dark:text-white border border-green-600 dark:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-600 dark:focus:ring-green-500"
               required
             />
           </div>
@@ -123,7 +127,7 @@ export default function Contact() {
               id="subject"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="w-full p-2 bg-black text-white border border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full p-2 bg-transparent text-white border border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
           </div>
@@ -135,13 +139,13 @@ export default function Contact() {
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="w-full p-2 bg-black text-white border border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 h-32"
+              className="w-full p-2 bg-transparent text-white border border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 h-32"
               required
             ></textarea>
           </div>
           <button
             type="submit"
-            className={`bg-green-500 text-black px-4 py-2 rounded hover:bg-green-600 transition-colors ${
+            className={`bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600 transition-colors ${
               isSubmitting ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={isSubmitting}
