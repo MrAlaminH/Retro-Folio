@@ -63,10 +63,17 @@ export default function AIWebsite() {
             </h2>
             <ul className="list-none text-xs md:text-sm space-y-2">
               <li>👨🏽‍💻 Learning AI/ML Development (prv: WebDev)</li>
-              <li>🌱 Growing every day</li>
-              <li>☕ Fun fact: I fuel myself with a LOT of coffee</li>
-              <li>🧑 Pronouns: He/Him</li>
-              <li>🗿 Personality Type:INTP-A</li>
+              <li>
+                ☕ Fun fact: I fuel myself with a LOT of{" "}
+                <span className="text-green-500">caffeine</span>{" "}
+              </li>
+              <li>
+                🧑 Pronouns: <span className="text-green-500">He/Him</span>{" "}
+              </li>
+              <li>
+                🗿 Personality Type:{" "}
+                <span className="text-green-500">INTP-A</span>
+              </li>
             </ul>
             <p className="mt-4 whitespace-pre-wrap text-gray-700 dark:text-gray-300">
               <span className="mr-2 text-green-700 dark:text-green-500">
@@ -80,7 +87,7 @@ export default function AIWebsite() {
               onClick={handleToggle}
               className="text-green-700 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline transition-colors duration-300"
             >
-              {isExpanded ? "Learn less" : "Learn more"}
+              {isExpanded ? "Learn less>" : "Learn more>"}
             </button>
           </section>
 

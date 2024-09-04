@@ -11,7 +11,7 @@ const Footer = () => {
             {" "}
             MrAlaminH.{" "}
           </span>
-          All rights reserved.
+          All rights reserved.🚀
         </div>
         <div className="flex space-x-4">
           <a

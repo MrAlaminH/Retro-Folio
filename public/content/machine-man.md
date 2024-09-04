@@ -14,8 +14,6 @@ The primary goal of _Machine Man_ is to empower Telegram users with the ability 
 
 - **Multi-Model Support**: Offers flexibility by allowing users to select from a variety of AI models, ensuring diverse outputs that cater to different needs and preferences.
 
-## Technical Details
-
 ### Technologies Used
 
 - **Python**: Serves as the core programming language for developing the bot, providing robustness and ease of integration with various APIs.
@@ -25,6 +23,8 @@ The primary goal of _Machine Man_ is to empower Telegram users with the ability 
 - **llama 3/OpenAI GPT-4o-mini**: Powers the text generation feature, utilizing its advanced natural language processing capabilities.
 
 - **playground 2.5/kandinsky 3**: Enables image generation by transforming textual descriptions into unique visual content.
+
+![Demo image](https://blue-official-newt-770.mypinata.cloud/ipfs/Qmb3FpRXujhUN3gvXWwBtKJ8G9GjvxGURGfSkd3bCh3Pxr)
 
 ## Architecture
 
@@ -37,6 +37,8 @@ The architecture of _Machine Man_ follows a modular approach to ensure scalabili
 3. **Generation Engine**: Acts as the core component interfacing with AI models, responsible for generating both text and image content.
 
 4. **Response Formatter**: Prepares and formats the generated content for display within the Telegram chat interface, ensuring a user-friendly presentation.
+
+![Demo image](https://blue-official-newt-770.mypinata.cloud/ipfs/QmfCqoK3TKnpDHZiVB5TkJDb7STFRj9q6W6scc55YTSuCp)
 
 ## Key Learnings from This Build
 

@@ -12,6 +12,8 @@ SolidArt is a cutting-edge platform that enables users to generate beautiful dig
 - **User-Friendly Interface**: Offers an intuitive and easy-to-navigate interface, making it accessible for users of all experience levels.
 - **Gallery of Generated Artworks**: Features a gallery showcasing the best-generated artworks, allowing users to view and get inspired by the creativity of others.
 
+![Demo image](https://blue-official-newt-770.mypinata.cloud/ipfs/QmZA2VHp1Zyc11NMn4Ww3RDMaAaESvYrhYQv3rnrmvXaiX)
+
 ## Tech Stack
 
 - **Next.js**: Chosen for its fast performance, SEO-friendly capabilities, and scalability. It provides both server-side rendering and static site generation, enhancing the app's speed and efficiency.
@@ -25,6 +27,8 @@ SolidArt is a cutting-edge platform that enables users to generate beautiful dig
 - **Scalable Architecture**: Implemented a scalable code structure using TypeScript, which improved the project's maintainability and facilitated seamless collaboration among team members.
 - **Responsive Design**: Enhanced skills in creating fluid and responsive UI components using TailwindCSS, ensuring the app delivers a consistent experience across various devices and screen sizes.
 - **Integrating AI Models**: Developed expertise in integrating and fine-tuning open-source AI models to generate diverse and high-quality outputs, further pushing the boundaries of what AI-generated art can achieve.
+
+![Demo image](https://blue-official-newt-770.mypinata.cloud/ipfs/QmToaxPh1tw2uPMj3uxiYwS3uVnkcpusLNHbPZd1s39CDC)
 
 ## Conclusion
 
