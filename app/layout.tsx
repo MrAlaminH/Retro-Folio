@@ -46,7 +46,7 @@ export default function RootLayout({
           >
             <PostHogPageView />
             <Navbar />
-            <main className="min-h-screen">{children}</main>
+            {children}
             <Analytics />
             <MatrixCursor />
             <Footer />
