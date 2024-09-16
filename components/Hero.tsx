@@ -43,7 +43,7 @@ export default function Protfolio() {
     setIsExpanded(!isExpanded);
   };
 
-  const paragraphText = `<span class="text-green-700 dark:text-green-500">Hey there!</span> I'm Alamin Hossain, which in Arabic means "the trusted one"—and I've been on quite a journey! I first got into crypto back in 2017, which led me to work as a community manager for Web3 projects. It was an amazing experience—getting to know the ins and outs of blockchain technology while connecting with people from all over the world.
+  const paragraphText = `<span class="text-green-500 dark:text-green-500">Hey there!</span> I'm Alamin Hossain, which in Arabic means "the trusted one"—and I've been on quite a journey! I first got into crypto back in 2017, which led me to work as a community manager for Web3 projects. It was an amazing experience—getting to know the ins and outs of blockchain technology while connecting with people from all over the world.
 
     While doing that, I was also neck-deep in my computer science studies. As much as I enjoyed community management, my heart was set on becoming a developer. After gaining some great experience, I decided to transition into web development, where I'm now focused on creating innovative, user-friendly web experiences and bringing exciting ideas to life through code.
 
@@ -57,7 +57,7 @@ export default function Protfolio() {
 
         <main>
           <section className="mb-8">
-            <h2 className="text-lg md:text-xl mb-4 text-green-700 dark:text-green-500">
+            <h2 className="text-lg md:text-xl mb-4 text-green-500 dark:text-green-500">
               <DecodeText text="About Me" />
             </h2>
             <ul className="list-none text-xs md:text-sm space-y-2">
@@ -75,7 +75,7 @@ export default function Protfolio() {
               </li>
             </ul>
             <p className="mt-4 whitespace-pre-wrap text-gray-700 dark:text-gray-300">
-              <span className="mr-2 text-green-700 dark:text-green-500">
+              <span className="mr-2 text-green-500 dark:text-green-500">
                 {">"}
               </span>
               <span
@@ -88,7 +88,7 @@ export default function Protfolio() {
             </p>
             <button
               onClick={handleToggle}
-              className="text-green-700 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline transition-colors duration-300"
+              className="text-green-500 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline transition-colors duration-300"
             >
               {isExpanded ? "Learn less>" : "Learn more>"}
             </button>
@@ -97,14 +97,14 @@ export default function Protfolio() {
           <hr className="border-green-700 dark:border-green-500 my-8" />
 
           <section className="mb-8">
-            <h2 className="text-lg md:text-xl mb-4 text-green-700 dark:text-green-500">
+            <h2 className="text-lg md:text-xl mb-4 text-green-500 dark:text-green-500">
               <DecodeText text="Projects" />
             </h2>
             <p className="mb-2">A random selection of stuff I made:</p>
             <ul className="list-none text-xs md:text-sm space-y-2">
               {projects.map((project, index) => (
                 <li key={index} className="flex items-start">
-                  <span className="mr-2 text-green-700 dark:text-green-500">
+                  <span className="mr-2 text-green-500 dark:text-green-500">
                     {">"}
                   </span>
                   <span>
@@ -119,23 +119,23 @@ export default function Protfolio() {
           <hr className="border-green-700 dark:border-green-500 my-8" />
 
           <section>
-            <h2 className="text-lg md:text-xl mb-4 text-green-700 dark:text-green-500">
+            <h2 className="text-lg md:text-xl mb-4 text-green-500 dark:text-green-500">
               <DecodeText text="Contact / Socials" />
             </h2>
             <ul className="list-none text-xs md:text-sm space-y-2">
               {contacts.map((contact, index) => (
                 <li key={index} className="flex items-center">
-                  <span className="mr-2 text-green-700 dark:text-green-500">
+                  <span className="mr-2 text-green-500 dark:text-green-500">
                     {">"}
                   </span>
                   <a
                     href={contact.link}
-                    className="hover:underline hover:text-green-700 dark:hover:text-green-500 "
+                    className="hover:underline hover:text-green-500 dark:hover:text-green-500 "
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <span>{contact.name}:</span>
-                    <span className="ml-2 text-green-700 dark:text-green-500">
+                    <span className="ml-2 text-green-500 dark:text-green-500">
                       {contact.value}
                     </span>
                   </a>
