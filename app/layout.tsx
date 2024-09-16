@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
-import { Analytics } from "@vercel/analytics/react";
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import MatrixCursor from "@/components/MatrixCursor/MatrixCursor";
 import { PHProvider } from "./providers";
 import dynamic from "next/dynamic";
+import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const PostHogPageView = dynamic(() => import("./PostHogPageView"), {
