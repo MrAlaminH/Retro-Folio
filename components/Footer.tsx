@@ -31,7 +31,7 @@ const Footer = () => {
             <Twitter size={20} />
           </a>
           <a
-            href="https://linkedin.com/in/MrAlaminH"
+            href="https://www.linkedin.com/in/itsalamin"
             target="_blank"
             rel="noopener noreferrer"
             className="text-black dark:text-white hover:text-green-700 dark:hover:text-green-500 transition-colors duration-300"

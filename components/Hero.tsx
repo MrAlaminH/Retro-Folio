@@ -36,15 +36,14 @@ const contacts = [
   },
 ];
 
-export default function AIWebsite() {
-  const pathname = usePathname();
+export default function Protfolio() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const paragraphText = `Hey there! I'm Alamin Hossain, which in Arabic means "the trusted one"—and I've been on quite a journey! I first got into crypto back in 2017, which led me to work as a community manager for Web3 projects. It was an amazing experience—getting to know the ins and outs of blockchain technology while connecting with people from all over the world.
+  const paragraphText = `<span class="text-green-700 dark:text-green-500">Hey there!</span> I'm Alamin Hossain, which in Arabic means "the trusted one"—and I've been on quite a journey! I first got into crypto back in 2017, which led me to work as a community manager for Web3 projects. It was an amazing experience—getting to know the ins and outs of blockchain technology while connecting with people from all over the world.
 
     While doing that, I was also neck-deep in my computer science studies. As much as I enjoyed community management, my heart was set on becoming a developer. After gaining some great experience, I decided to transition into web development, where I'm now focused on creating innovative, user-friendly web experiences and bringing exciting ideas to life through code.
 
@@ -79,9 +78,13 @@ export default function AIWebsite() {
               <span className="mr-2 text-green-700 dark:text-green-500">
                 {">"}
               </span>
-              {isExpanded
-                ? paragraphText
-                : `${paragraphText.substring(0, 240)}...`}
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: isExpanded
+                    ? paragraphText
+                    : `${paragraphText.substring(0, 240)}...`,
+                }}
+              />
             </p>
             <button
               onClick={handleToggle}

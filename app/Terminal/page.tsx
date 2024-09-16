@@ -97,9 +97,9 @@ const Component: React.FC = () => {
 
   const bootSequence = () => {
     const bootMessages = [
-      "Initializing HackerOS v3.1337...",
+      "Initializing HedaOS v3.1337...",
       "Establishing secure connection...",
-      "HackerOS v3.1337 ready. Welcome, Agent.",
+      "HedaOS v3.1337 ready. Welcome, Agent.",
     ];
 
     let delay = 0;
@@ -266,7 +266,7 @@ const Component: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen p-4  text-black dark:text-gray-100 bg-white dark:bg-black transition-colors duration-300">
-      <h2 className="text-center text-green-500 text-2xl ">Hedaminal</h2>
+      <h2 className="text-center text-green-500 text-2xl ">The Terminal</h2>
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-4xl bg-gray-900 rounded-lg shadow-2xl flex flex-col overflow-hidden">
           {/* PC Case Top */}
@@ -311,7 +311,7 @@ const Component: React.FC = () => {
                     <div className="text-center">
                       <Terminal className="w-16 h-16 mb-4 mx-auto animate-pulse text-green-500" />
                       <h1 className="text-2xl mb-4 text-green-500">
-                        HackerOS v3.1337
+                        HedaOS v3.1337
                       </h1>
                       <div className="w-64 h-2 bg-green-900 rounded-full">
                         <div className="w-0 h-full bg-green-500 rounded-full animate-load"></div>
