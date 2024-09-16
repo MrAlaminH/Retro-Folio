@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/react";
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import MatrixCursor from "@/components/MatrixCursor/MatrixCursor";
@@ -46,6 +47,7 @@ export default function RootLayout({
             <PostHogPageView />
             <Navbar />
             <main className="min-h-screen">{children}</main>
+            <Analytics />
             <MatrixCursor />
             <Footer />
           </body>
