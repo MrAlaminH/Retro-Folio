@@ -265,8 +265,8 @@ const Component: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-4  text-black dark:text-gray-100 bg-white dark:bg-black transition-colors duration-300">
-      <h2 className="text-center text-green-500 text-2xl ">The Terminal</h2>
+    <div className="flex flex-col p-4  text-black dark:text-gray-100 bg-white dark:bg-black transition-colors duration-300">
+      <h2 className="text-center text-green-500 text-2xl mb-8">The Terminal</h2>
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-4xl bg-gray-900 rounded-lg shadow-2xl flex flex-col overflow-hidden">
           {/* PC Case Top */}

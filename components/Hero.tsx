@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { usePathname } from "next/navigation";
+import DecodeText from "./MatrixCursor/DecodeText";
 
 const projects = [
   {
@@ -58,7 +58,7 @@ export default function Protfolio() {
         <main>
           <section className="mb-8">
             <h2 className="text-lg md:text-xl mb-4 text-green-700 dark:text-green-500">
-              About Me
+              <DecodeText text="About Me" />
             </h2>
             <ul className="list-none text-xs md:text-sm space-y-2">
               <li>👨🏽‍💻 Learning AI/ML Development (prv: WebDev)</li>
@@ -98,7 +98,7 @@ export default function Protfolio() {
 
           <section className="mb-8">
             <h2 className="text-lg md:text-xl mb-4 text-green-700 dark:text-green-500">
-              Projects
+              <DecodeText text="Projects" />
             </h2>
             <p className="mb-2">A random selection of stuff I made:</p>
             <ul className="list-none text-xs md:text-sm space-y-2">
@@ -120,7 +120,7 @@ export default function Protfolio() {
 
           <section>
             <h2 className="text-lg md:text-xl mb-4 text-green-700 dark:text-green-500">
-              Contact / Socials
+              <DecodeText text="Contact / Socials" />
             </h2>
             <ul className="list-none text-xs md:text-sm space-y-2">
               {contacts.map((contact, index) => (

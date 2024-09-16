@@ -2,13 +2,14 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { projectData } from "@/data/projectData";
+import DecodeText from "../../components/MatrixCursor/DecodeText";
 
 const Projects = () => {
   return (
     <section className="flex justify-center min-h-screen p-4 bg-white dark:bg-black text-black dark:text-gray-100 text-sm transition-colors duration-300">
       <div className="w-full max-w-3xl">
-        <h2 className="mb-4 text-2xl font-bold text-green-600 dark:text-green-500">
-          Recent Projects
+        <h2 className="mb-8 text-lg md:text-xl font-bold text-green-600 dark:text-green-500">
+          <DecodeText text="Recent Projects" />
         </h2>
         <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
           {projectData.map((project) => (

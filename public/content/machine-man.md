@@ -14,7 +14,7 @@ The primary goal of _Machine Man_ is to empower Telegram users with the ability 
 
 - **Multi-Model Support**: Offers flexibility by allowing users to select from a variety of AI models, ensuring diverse outputs that cater to different needs and preferences.
 
-### Technologies Used
+## Technologies Used
 
 - **Python**: Serves as the core programming language for developing the bot, providing robustness and ease of integration with various APIs.
 
