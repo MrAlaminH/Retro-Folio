@@ -53,7 +53,7 @@ export default function Protfolio() {
   return (
     <div className="bg-white dark:bg-black text-black dark:text-gray-100 min-h-screen p-4 flex justify-center text-sm transition-colors duration-300">
       <div className="w-full max-w-3xl">
-        <hr className="border-green-700 dark:border-green-500 my-8" />
+        <hr className="border-green-700 dark:border-green-500 my-4" />
 
         <main>
           <section className="mb-8">

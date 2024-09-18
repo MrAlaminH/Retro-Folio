@@ -8,6 +8,7 @@ import { PHProvider } from "./providers";
 import dynamic from "next/dynamic";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { FontProvider } from "@/contexts/FontContext";
 
 const PostHogPageView = dynamic(() => import("./PostHogPageView"), {
   ssr: false,
@@ -41,16 +42,17 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <PHProvider>
         <ThemeProvider>
-          <body
-            className={`${ibmBios.className} bg-white dark:bg-black text-black dark:text-white transition-colors duration-300`}
-          >
-            <PostHogPageView />
-            <Navbar />
-            {children}
-            <Analytics />
-            <MatrixCursor />
-            <Footer />
-          </body>
+          <FontProvider>
+            <body className="bg-white dark:bg-black text-black dark:text-white">
+              <PostHogPageView />
+              <Navbar />
+              <div className="transition-colors duration-300"></div>
+              {children}
+              <Analytics />
+              <MatrixCursor />
+              <Footer />
+            </body>
+          </FontProvider>
         </ThemeProvider>
       </PHProvider>
     </html>

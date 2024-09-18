@@ -5,6 +5,15 @@ import { usePathname } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useFont } from "@/contexts/FontContext";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
+import Image from "next/image";
 
 const navItems = [
   { name: "Home", path: "/" },
@@ -19,6 +28,7 @@ export default function Navbar() {
   const [showCopyMessage, setShowCopyMessage] = useState(false);
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const { font, setFont } = useFont();
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -44,10 +54,11 @@ export default function Navbar() {
         <div className="flex justify-center items-center mb-4">
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
             <div className="relative w-24 h-24 sm:w-32 sm:h-32">
-              <img
+              <Image
                 src={image}
                 alt="Profile"
-                className="w-full h-full rounded-full object-cover"
+                fill
+                className="rounded-full object-cover"
               />
               <Input
                 type="file"
@@ -108,15 +119,89 @@ export default function Navbar() {
                         : "Switch to dark mode"
                     }
                   >
-                    {theme === "dark" ? "☀️" : "🌙"}
+                    {theme === "dark" ? "☀️" : "🌗"}
                   </button>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        // variant="outline"
+                        size="sm"
+                        className="h-8 border-dashed bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center transition-colors duration-300"
+                      >
+                        <span className="mr-1">Aa</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-3 w-3"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-56 bg-gray-300 dark:bg-gray-700">
+                      <div className="grid gap-4 ">
+                        <div className="space-y-2">
+                          <p className="text-xs text-muted-foreground">
+                            Select a font for the website.
+                          </p>
+                        </div>
+                        <div className="grid gap-2">
+                          <Button
+                            variant="ghost"
+                            className="justify-start"
+                            onClick={() => setFont("ibmBios")}
+                          >
+                            <Check
+                              className={`mr-2 h-4 w-4 ${
+                                font === "ibmBios" ? "opacity-100" : "opacity-0"
+                              }`}
+                            />
+                            IBM BIOS
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="justify-start"
+                            onClick={() => setFont("departureMono")}
+                          >
+                            <Check
+                              className={`mr-2 h-4 w-4 ${
+                                font === "departureMono"
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              }`}
+                            />
+                            Departure
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="justify-start"
+                            onClick={() => setFont("inter")}
+                          >
+                            <Check
+                              className={`mr-2 h-4 w-4 ${
+                                font === "inter" ? "opacity-100" : "opacity-0"
+                              }`}
+                            />
+                            Inter
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <nav>
-          <ul className="flex flex-wrap justify-center gap-2 text-green-500 text-xs md:text-sm">
+          <ul className="flex flex-wrap justify-center gap-2 text-green-500 text-xs md:text-sm py-4">
             {navItems.map((item, index) => (
               <li key={index}>
                 <Link
@@ -134,7 +219,7 @@ export default function Navbar() {
         </nav>
       </header>
 
-      <main className="flex-grow p-4">{/* Your main content goes here */}</main>
+      <main className="flex-grow p-4"> </main>
 
       {showCopyMessage && (
         <div className="fixed top-4 right-4">
