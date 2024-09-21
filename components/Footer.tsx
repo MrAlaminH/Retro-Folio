@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="bg-white dark:bg-black text-black dark:text-gray-100 p-4 flex justify-center sm:text-sm transition-colors duration-300">
       <div className="flex justify-between items-center w-full max-w-3xl">
-        <div className="text-xs md:text-sm">
+        <div className="text-xs md:text-sm mb-4">
           © 2024
           <span className="text-green-700 dark:text-green-500">
             {" "}

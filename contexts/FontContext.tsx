@@ -13,7 +13,7 @@ const FontContext = createContext<FontContextType | undefined>(undefined);
 export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [font, setFont] = useState<Font>("ibmBios");
+  const [font, setFont] = useState<Font>("departureMono");
 
   useEffect(() => {
     const savedFont = localStorage.getItem("font") as Font | null;

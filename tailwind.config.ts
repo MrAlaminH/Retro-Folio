@@ -75,6 +75,7 @@ const config = {
       fontFamily: {
         'ibm-bios': ['IBM BIOS', 'monospace'],
         'inter': ['Inter', 'sans-serif'],
+        'departureMono': ['Departure Mono', 'monospace']
       },
     },
   },

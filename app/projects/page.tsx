@@ -30,7 +30,7 @@ const Projects = () => {
                 <h3 className="mb-2 text-lg font-bold text-green-600 dark:text-green-500 group-hover:underline">
                   {project.title}
                 </h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300 flex-grow">
+                <p className="text-sm text-gray-700 dark:text-gray-300 flex-grow transition-colors duration-300">
                   {project.shortDescription}
                 </p>
                 <div className="mt-4 flex items-center text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300">

@@ -201,7 +201,7 @@ export default function Navbar() {
           </div>
         </div>
         <nav>
-          <ul className="flex flex-wrap justify-center gap-2 text-green-500 text-xs md:text-sm py-4">
+          <ul className="flex flex-wrap justify-center gap-2 text-green-500 text-sm md:text-base py-4">
             {navItems.map((item, index) => (
               <li key={index}>
                 <Link
@@ -218,9 +218,6 @@ export default function Navbar() {
           </ul>
         </nav>
       </header>
-
-      <main className="flex-grow p-4"> </main>
-
       {showCopyMessage && (
         <div className="fixed top-4 right-4">
           <Alert

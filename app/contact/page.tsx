@@ -73,7 +73,7 @@ export default function Contact() {
   return (
     <section className="bg-white dark:bg-black text-black dark:text-gray-100 min-h-screen p-4 flex justify-center text-sm transition-colors duration-300">
       <div className="w-full max-w-3xl">
-        <h2 className="text-lg md:text-xl mb-4 text-green-600 dark:text-green-500">
+        <h2 className="text-lg md:text-xl font-extrabold	 mb-4 text-green-600 dark:text-green-500">
           <DecodeText text="Contact / Socials" />
         </h2>
         <ul className="list-none text-xs md:text-sm space-y-2">
