@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import DecodeText from "./MatrixCursor/DecodeText";
+import { ChevronRight, ExternalLink } from "lucide-react";
 
 const projects = [
   {
@@ -39,8 +40,11 @@ const contacts = [
   },
 ];
 
-export default function Protfolio() {
+export default function Portfolio() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [hoveredProjectIndex, setHoveredProjectIndex] = useState<number | null>(
+    null
+  );
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
@@ -93,7 +97,7 @@ export default function Protfolio() {
               onClick={handleToggle}
               className="text-green-500 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline transition-colors duration-300"
             >
-              {isExpanded ? "Learn less>" : "Learn more>"}
+              {isExpanded ? "Learn less >" : "Learn more>"}
             </button>
           </section>
 
@@ -106,13 +110,22 @@ export default function Protfolio() {
             <p className="mb-2">A selection of stuff I made:</p>
             <ul className="list-none text-xs md:text-sm space-y-2">
               {projects.map((project, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="mr-2 text-green-500 dark:text-green-500">
+                <li
+                  key={index}
+                  className="group flex items-start p-2 rounded-md transition-all duration-300 ease-in-out cursor-pointer"
+                  onMouseEnter={() => setHoveredProjectIndex(index)}
+                  onMouseLeave={() => setHoveredProjectIndex(null)}
+                >
+                  <span
+                    className={`mr-2 text-green-500 dark:text-green-500 transition-transform duration-300 ${
+                      hoveredProjectIndex === index ? "transform rotate-90" : ""
+                    }`}
+                  >
                     {">"}
                   </span>
                   <a
                     href={project.url}
-                    className="hover:underline text-green-500 dark:text-green-400 transition-all duration-300 ease-in-out"
+                    className="flex-grow hover:underline text-green-500 dark:text-green-400 transition-all duration-300 ease-in-out"
                   >
                     <span className="font-semibold text-green-500 dark:text-green-500">
                       {project.name}
@@ -122,6 +135,14 @@ export default function Protfolio() {
                       {project.description}
                     </span>
                   </a>
+                  <ExternalLink
+                    className={`ml-2 text-gray-400 transition-opacity duration-300 ${
+                      hoveredProjectIndex === index
+                        ? "opacity-100"
+                        : "opacity-0"
+                    }`}
+                    size={16}
+                  />
                 </li>
               ))}
             </ul>
@@ -141,7 +162,7 @@ export default function Protfolio() {
                   </span>
                   <a
                     href={contact.link}
-                    className="hover:underline hover:text-green-500 dark:hover:text-green-500 "
+                    className="hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

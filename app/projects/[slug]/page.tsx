@@ -27,19 +27,25 @@ const ProjectPage = async ({ params }: { params: { slug: string } }) => {
   const content = await getProjectContent(project.contentPath);
 
   return (
-    <div className="max-w-3xl mx-auto p-4 bg-white dark:bg-black text-gray-100 font-mono">
+    <div className="max-w-3xl mx-auto p-4 bg-white dark:bg-black text-gray-100 font-mono text-sm">
+      <h2 className="text-2xl font-bold mb-2 text-green-500">
+        {project.title}
+      </h2>
+      <p className="text-gray-500 mb-4">
+        {project.publicationDate} • Read time: {project.readTime}
+      </p>
       <div className="prose prose-invert prose-gray max-w-none text-black dark:text-gray-100">
         <ReactMarkdown
           components={{
             h1: ({ node, ...props }) => (
               <h1
-                className="text-3xl font-bold mb-4 text-green-500"
+                className="text-2xl font-bold mb-4 text-green-500"
                 {...props}
               />
             ),
             h2: ({ node, ...props }) => (
               <h2
-                className="text-2xl font-bold mb-3 text-green-400"
+                className="text-lg font-bold mb-3 text-green-400"
                 {...props}
               />
             ),
