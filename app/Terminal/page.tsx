@@ -265,133 +265,140 @@ const Component: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col p-4  text-black dark:text-gray-100 bg-transparent ">
-      <h2 className="text-center text-green-500 text-2xl mb-8">The Terminal</h2>
-      <div className="flex-grow flex items-center justify-center">
-        <div className="w-full max-w-4xl bg-gray-900 rounded-lg shadow-2xl flex flex-col overflow-hidden">
-          {/* PC Case Top */}
-          <div className="bg-gray-800 p-2 flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+    <section className="flex p-4  text-black dark:text-gray-100 bg-transparent min-h-screen justify-center">
+      <div className="w-full max-w-3xl ">
+        <h2 className="text-center text-green-500 text-2xl mb-8">
+          The Terminal
+        </h2>
+        <div className="flex-grow flex items-center justify-center">
+          <div className="w-full max-w-4xl bg-gray-900 rounded-lg shadow-2xl flex flex-col overflow-hidden">
+            {/* PC Case Top */}
+            <div className="bg-gray-800 p-2 flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              </div>
+              <div className="text-green-400 text-sm ">HedaOS v3.1337</div>
+              <button
+                onClick={togglePower}
+                className="text-gray-300 hover:text-white "
+              >
+                <Power className="w-5 h-5" />
+              </button>
             </div>
-            <div className="text-green-400 text-sm ">HedaOS v3.1337</div>
-            <button
-              onClick={togglePower}
-              className="text-gray-300 hover:text-white "
+
+            {/* Monitor Screen */}
+            <div
+              className="flex-grow bg-black p-4 relative overflow-hidden"
+              style={{ minHeight: "60vh" }}
             >
-              <Power className="w-5 h-5" />
-            </button>
-          </div>
+              {isPoweredOn ? (
+                <>
+                  <div className="absolute inset-0 bg-green-500 opacity-5 pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-green-900 opacity-5 pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-scan-lines pointer-events-none"></div>
+                  <div className="glitch-effect"></div>
 
-          {/* Monitor Screen */}
-          <div
-            className="flex-grow bg-black p-4 relative overflow-hidden"
-            style={{ minHeight: "60vh" }}
-          >
-            {isPoweredOn ? (
-              <>
-                <div className="absolute inset-0 bg-green-500 opacity-5 pointer-events-none"></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-green-900 opacity-5 pointer-events-none"></div>
-                <div className="absolute inset-0 bg-scan-lines pointer-events-none"></div>
-                <div className="glitch-effect"></div>
+                  {accessGranted && (
+                    <div className="absolute top-4 right-4 flex items-center bg-green-900 px-3 py-1 rounded animate-pulse">
+                      <Shield className="w-4 h-4 mr-2 text-yellow-400" />
+                      <span className="text-sm text-yellow-400">
+                        Access Granted
+                      </span>
+                    </div>
+                  )}
 
-                {accessGranted && (
-                  <div className="absolute top-4 right-4 flex items-center bg-green-900 px-3 py-1 rounded animate-pulse">
-                    <Shield className="w-4 h-4 mr-2 text-yellow-400" />
-                    <span className="text-sm text-yellow-400">
-                      Access Granted
-                    </span>
-                  </div>
-                )}
-
-                {isBooting ? (
-                  <div className="h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <Terminal className="w-16 h-16 mb-4 mx-auto animate-pulse text-green-500" />
-                      <h1 className="text-2xl mb-4 text-green-500">
-                        HedaOS v3.1337
-                      </h1>
-                      <div className="w-64 h-2 bg-green-900 rounded-full">
-                        <div className="w-0 h-full bg-green-500 rounded-full animate-load"></div>
+                  {isBooting ? (
+                    <div className="h-full flex items-center justify-center">
+                      <div className="text-center">
+                        <Terminal className="w-16 h-16 mb-4 mx-auto animate-pulse text-green-500" />
+                        <h1 className="text-2xl mb-4 text-green-500">
+                          HedaOS v3.1337
+                        </h1>
+                        <div className="w-64 h-2 bg-green-900 rounded-full">
+                          <div className="w-0 h-full bg-green-500 rounded-full animate-load"></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <div
-                    ref={outputRef}
-                    className="h-full overflow-auto pb-8 terminal-output text-green-500 font-mono relative"
-                  >
-                    {matrixMode && (
-                      <canvas
-                        ref={canvasRef}
-                        className="absolute inset-0 w-full h-full"
-                        width={800}
-                        height={600}
-                      />
-                    )}
-                    {history.map((item, index) => (
-                      <div key={index} className="mb-1 typewriter">
-                        {typeof item === "string" ? item : item.text}
-                      </div>
-                    ))}
-                    <form onSubmit={handleSubmit} className="flex items-center">
-                      {isAIThinking ? (
-                        <Bot className="w-4 h-4 mr-2 text-yellow-500 animate-pulse" />
-                      ) : (
-                        <AlertCircle className="w-4 h-4 mr-2 text-yellow-500" />
+                  ) : (
+                    <div
+                      ref={outputRef}
+                      className="h-full overflow-auto pb-8 terminal-output text-green-500 font-mono relative"
+                    >
+                      {matrixMode && (
+                        <canvas
+                          ref={canvasRef}
+                          className="absolute inset-0 w-full h-full"
+                          width={800}
+                          height={600}
+                        />
                       )}
-                      <span className="mr-2 text-green-500">{">"}</span>
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        className="flex-1 bg-transparent focus:outline-none caret-green-500 text-green-500"
-                        autoFocus
-                        disabled={isAIThinking}
-                      />
-                    </form>
-                  </div>
-                )}
+                      {history.map((item, index) => (
+                        <div key={index} className="mb-1 typewriter">
+                          {typeof item === "string" ? item : item.text}
+                        </div>
+                      ))}
+                      <form
+                        onSubmit={handleSubmit}
+                        className="flex items-center"
+                      >
+                        {isAIThinking ? (
+                          <Bot className="w-4 h-4 mr-2 text-yellow-500 animate-pulse" />
+                        ) : (
+                          <AlertCircle className="w-4 h-4 mr-2 text-yellow-500" />
+                        )}
+                        <span className="mr-2 text-green-500">{">"}</span>
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={input}
+                          onChange={(e) => setInput(e.target.value)}
+                          className="flex-1 bg-transparent focus:outline-none caret-green-500 text-green-500"
+                          autoFocus
+                          disabled={isAIThinking}
+                        />
+                      </form>
+                    </div>
+                  )}
 
-                {/* Blinking cursor */}
-                <div className="absolute bottom-6 left-[3.5ch] w-2 h-4 bg-green-500 animate-blink"></div>
-              </>
-            ) : (
-              <div className="h-full flex items-center justify-center">
-                <span className="text-gray-600 text-2xl font-mono">
-                  System Offline
+                  {/* Blinking cursor */}
+                  <div className="absolute bottom-6 left-[3.5ch] w-2 h-4 bg-green-500 animate-blink"></div>
+                </>
+              ) : (
+                <div className="h-full flex items-center justify-center">
+                  <span className="text-gray-600 text-2xl font-mono">
+                    System Offline
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* PC Case Bottom */}
+            <div className="bg-gray-800 p-2 flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <Zap className="w-5 h-5 text-yellow-400 hidden md:inline" />
+                <span className="text-yellow-400 text-sm hidden md:inline">
+                  Power
                 </span>
               </div>
-            )}
-          </div>
-
-          {/* PC Case Bottom */}
-          <div className="bg-gray-800 p-2 flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <Zap className="w-5 h-5 text-yellow-400 hidden md:inline" />
-              <span className="text-yellow-400 text-sm hidden md:inline">
-                Power
-              </span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Wifi className="w-5 h-5 text-green-400" />
-              <span className="text-green-400 text-sm">Network</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Server className="w-5 h-5 text-blue-400" />
-              <span className="text-blue-400 text-sm">Server</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Bot className="w-5 h-5 text-purple-400" />
-              <span className="text-purple-400 text-sm">AI</span>
+              <div className="flex items-center space-x-2">
+                <Wifi className="w-5 h-5 text-green-400" />
+                <span className="text-green-400 text-sm">Network</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Server className="w-5 h-5 text-blue-400" />
+                <span className="text-blue-400 text-sm">Server</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Bot className="w-5 h-5 text-purple-400" />
+                <span className="text-purple-400 text-sm">AI</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
