@@ -27,7 +27,7 @@ const ProjectPage = async ({ params }: { params: { slug: string } }) => {
   const content = await getProjectContent(project.contentPath);
 
   return (
-    <div className="max-w-3xl mx-auto p-4 bg-white dark:bg-black text-gray-100 font-mono text-sm">
+    <div className="max-w-3xl mx-auto p-4 bg-transparent text-gray-100 font-mono md:text-sm text-xs">
       <h2 className="text-2xl font-bold mb-2 text-green-500">
         {project.title}
       </h2>

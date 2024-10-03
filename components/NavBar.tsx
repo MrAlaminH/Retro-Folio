@@ -49,7 +49,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="bg-white dark:bg-black text-black dark:text-gray-100 flex flex-col transition-colors duration-300">
+    <div className="bg-transparent text-black dark:text-gray-100 flex flex-col">
       <header className="w-full py-4 px-4 sm:px-8 lg:px-16">
         <div className="flex justify-center items-center mb-4">
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
@@ -92,7 +92,7 @@ export default function Navbar() {
                 <div className="flex space-x-2">
                   <button
                     onClick={handleCopyEmail}
-                    className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center transition-colors duration-300"
+                    className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +112,7 @@ export default function Navbar() {
                   </button>
                   <button
                     onClick={toggleTheme}
-                    className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center transition-colors duration-300"
+                    className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center"
                     aria-label={
                       theme === "dark"
                         ? "Switch to light mode"
@@ -126,7 +126,7 @@ export default function Navbar() {
                       <Button
                         // variant="outline"
                         size="sm"
-                        className="h-8 border-dashed bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center transition-colors duration-300"
+                        className="h-8 border-dashed bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center"
                       >
                         <span className="mr-1">Aa</span>
                         <svg

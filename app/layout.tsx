@@ -46,7 +46,7 @@ export default function RootLayout({
             <body className="bg-white dark:bg-black text-black dark:text-white">
               <PostHogPageView />
               <Navbar />
-              <div className="transition-colors duration-300"></div>
+              <div className=""></div>
               {children}
               <Analytics />
               <MatrixCursor />

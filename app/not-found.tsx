@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Custom404() {
   return (
-    <div className=" dark:text-gray-100 bg-white dark:bg-black transition-colors duration-300 text-green-400 min-h-screen font-mono p-8 flex flex-col items-center justify-center overflow-hidden">
+    <div className=" dark:text-gray-100 bg-transparent text-green-400 min-h-screen p-8 flex flex-col items-center justify-center overflow-hidden">
       <svg
         className="w-full max-w-2xl mb-8"
         viewBox="0 0 300 150"

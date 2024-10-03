@@ -265,7 +265,7 @@ const Component: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col p-4  text-black dark:text-gray-100 bg-white dark:bg-black transition-colors duration-300">
+    <div className="flex flex-col p-4  text-black dark:text-gray-100 bg-transparent ">
       <h2 className="text-center text-green-500 text-2xl mb-8">The Terminal</h2>
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-4xl bg-gray-900 rounded-lg shadow-2xl flex flex-col overflow-hidden">
@@ -279,7 +279,7 @@ const Component: React.FC = () => {
             <div className="text-green-400 text-sm ">HedaOS v3.1337</div>
             <button
               onClick={togglePower}
-              className="text-gray-300 hover:text-white transition-colors duration-300"
+              className="text-gray-300 hover:text-white "
             >
               <Power className="w-5 h-5" />
             </button>

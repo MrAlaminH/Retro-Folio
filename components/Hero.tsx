@@ -58,7 +58,7 @@ export default function Portfolio() {
   `;
 
   return (
-    <div className="bg-white dark:bg-black text-black dark:text-gray-100 min-h-screen p-4 flex justify-center text-sm transition-colors duration-300">
+    <div className="bg-transparent text-black dark:text-gray-100 min-h-screen p-4 flex justify-center text-sm ">
       <div className="w-full max-w-3xl">
         <hr className="border-green-700 dark:border-green-500 my-4" />
 
@@ -68,7 +68,11 @@ export default function Portfolio() {
               <DecodeText text="About Me" />
             </h2>
             <ul className="list-none text-xs md:text-sm space-y-2">
-              <li>👨🏽‍💻 Learning AI/ML Development (prv: WebDev)</li>
+              <li>
+                👨🏽‍💻 Learning AI/ML Development{" "}
+                <span className="text-green-500">(prv: WebDev)</span>{" "}
+              </li>
+
               <li>
                 ☕ Fun fact: I fuel myself with a LOT of{" "}
                 <span className="text-green-500">caffeine</span>{" "}
@@ -81,7 +85,7 @@ export default function Portfolio() {
                 <span className="text-green-500">INTP-A</span>
               </li>
             </ul>
-            <p className="mt-4 whitespace-pre-wrap text-black dark:text-gray-100 transition-colors duration-300">
+            <p className="mt-4 whitespace-pre-wrap text-black dark:text-gray-100 ">
               <span className="mr-2 text-green-500 dark:text-green-500">
                 {">"}
               </span>
@@ -95,7 +99,7 @@ export default function Portfolio() {
             </p>
             <button
               onClick={handleToggle}
-              className="text-green-500 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline transition-colors duration-300"
+              className="text-green-500 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline "
             >
               {isExpanded ? "Learn less >" : "Learn more>"}
             </button>
@@ -112,7 +116,7 @@ export default function Portfolio() {
               {projects.map((project, index) => (
                 <li
                   key={index}
-                  className="group flex items-start p-2 rounded-md transition-all duration-300 ease-in-out cursor-pointer"
+                  className="group flex items-start p-2 rounded-md ease-in-out cursor-pointer"
                   onMouseEnter={() => setHoveredProjectIndex(index)}
                   onMouseLeave={() => setHoveredProjectIndex(null)}
                 >
@@ -125,13 +129,13 @@ export default function Portfolio() {
                   </span>
                   <a
                     href={project.url}
-                    className="flex-grow hover:underline text-green-500 dark:text-green-400 transition-all duration-300 ease-in-out"
+                    className="flex-grow hover:underline text-green-500 dark:text-green-400  ease-in-out"
                   >
                     <span className="font-semibold text-green-500 dark:text-green-500">
                       {project.name}
                     </span>
                     :{" "}
-                    <span className="text-black dark:text-white transition-colors duration-300">
+                    <span className="text-black dark:text-white ">
                       {project.description}
                     </span>
                   </a>
