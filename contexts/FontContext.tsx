@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useState, useContext, useEffect } from "react";
 
-type Font = "ibmBios" | "inter" | "departureMono";
+type Font = "Kalam" | "inter" | "departureMono";
 
 interface FontContextType {
   font: Font;
@@ -26,8 +26,8 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("font", font);
     document.documentElement.style.setProperty(
       "font-family",
-      font === "ibmBios"
-        ? "'IBM BIOS', monospace"
+      font === "Kalam"
+        ? "'Kalam', cursive"
         : font === "inter"
         ? "'Inter', sans-serif"
         : "'Departure Mono', monospace"

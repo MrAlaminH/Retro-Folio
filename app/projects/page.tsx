@@ -6,7 +6,7 @@ import DecodeText from "../../components/MatrixCursor/DecodeText";
 
 const Projects = () => {
   return (
-    <section className="flex justify-center min-h-screen p-4 bg-transparent text-black dark:text-gray-100 text-sm ">
+    <section className="flex justify-center min-h-screen p-4 bg-transparent text-black dark:text-gray-100 text-sm mb-16">
       <div className="w-full max-w-3xl">
         <h2 className="mb-8 text-lg md:text-xl font-bold text-green-500 dark:text-green-500">
           <DecodeText text="Recent Projects" />

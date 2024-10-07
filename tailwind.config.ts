@@ -73,7 +73,7 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       fontFamily: {
-        'ibm-bios': ['IBM BIOS', 'monospace'],
+        'Kalam': ['Kalam', 'cursive'],
         'inter': ['Inter', 'sans-serif'],
         'departureMono': ['Departure Mono', 'monospace']
       },

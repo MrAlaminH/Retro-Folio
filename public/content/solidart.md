@@ -1,5 +1,3 @@
-_SolidArt_ is the next-generation AI image generation platform, designed to create stunning artwork using the power of artificial intelligence. Built with modern web technologies like TailwindCSS, Next.js, and open-source image generation models, SolidArt offers a seamless experience for users to create unique digital art.
-
 ## Overview
 
 SolidArt is a cutting-edge platform that enables users to generate beautiful digital art with just a few words. Whether you're envisioning a serene landscape or a unique portrait, SolidArt can bring your ideas to life using advanced AI models. This web app empowers artists and non-artists alike to explore their creativity through AI-generated art.

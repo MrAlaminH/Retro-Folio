@@ -1,5 +1,3 @@
-_Machine Man_ is an AI-powered Telegram bot designed to bring the capabilities of cutting-edge artificial intelligence models for text and image generation directly to Telegram users. This project enhances user experience by integrating advanced AI technologies into a widely-used messaging platform.
-
 ## Project Overview
 
 The primary goal of _Machine Man_ is to empower Telegram users with the ability to generate text and images seamlessly within their chat interface. This tool opens up new possibilities for creative communication and content generation by leveraging state-of-the-art AI models.

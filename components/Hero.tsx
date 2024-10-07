@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import DecodeText from "./MatrixCursor/DecodeText";
-import { ChevronRight, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const projects = [
   {
@@ -13,6 +14,12 @@ const projects = [
     name: "SolidArt",
     description: "The Next Gen AI Image Generation Platform ",
     url: "/projects/solidart",
+  },
+  {
+    name: "TweetScraper",
+    description:
+      "TweetScraper empowers users to gather tweet data related to specific hashtags. ",
+    url: "/projects/TweetScraper",
   },
   // Add more projects as needed
 ];
@@ -45,6 +52,11 @@ export default function Portfolio() {
   const [hoveredProjectIndex, setHoveredProjectIndex] = useState<number | null>(
     null
   );
+
+  const router = useRouter();
+  const handleMoreProjects = () => {
+    router.push("/projects");
+  };
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
@@ -129,13 +141,13 @@ export default function Portfolio() {
                   </span>
                   <a
                     href={project.url}
-                    className="flex-grow hover:underline text-green-500 dark:text-green-400  ease-in-out"
+                    className="flex-grow hover:underline text-green-500 dark:text-green-400 ease-in-out"
                   >
                     <span className="font-semibold text-green-500 dark:text-green-500">
                       {project.name}
                     </span>
                     :{" "}
-                    <span className="text-black dark:text-white ">
+                    <span className="text-black dark:text-white">
                       {project.description}
                     </span>
                   </a>
@@ -150,6 +162,16 @@ export default function Portfolio() {
                 </li>
               ))}
             </ul>
+
+            {/* Check More Projects Button */}
+            <div className="mt-4">
+              <button
+                className="text-green-500 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline"
+                onClick={handleMoreProjects}
+              >
+                Check More Projects &gt;
+              </button>
+            </div>
           </section>
 
           <hr className="border-green-700 dark:border-green-500 my-8" />

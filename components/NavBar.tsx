@@ -156,14 +156,14 @@ export default function Navbar() {
                           <Button
                             variant="ghost"
                             className="justify-start"
-                            onClick={() => setFont("ibmBios")}
+                            onClick={() => setFont("Kalam")}
                           >
                             <Check
                               className={`mr-2 h-4 w-4 ${
-                                font === "ibmBios" ? "opacity-100" : "opacity-0"
+                                font === "Kalam" ? "opacity-100" : "opacity-0"
                               }`}
                             />
-                            IBM BIOS
+                            Kalam
                           </Button>
                           <Button
                             variant="ghost"
