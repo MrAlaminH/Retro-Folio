@@ -16,6 +16,12 @@ const projects = [
     url: "/projects/solidart",
   },
   {
+    name: "Fusion Calling App",
+    description:
+      "AI Call Agent Platform that helps businesses automate outbound calls.",
+    url: "/projects/AI-Phone-Call-Agent",
+  },
+  {
     name: "TweetScraper",
     description:
       "TweetScraper empowers users to gather tweet data related to specific hashtags. ",

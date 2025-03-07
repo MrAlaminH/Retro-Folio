@@ -27,6 +27,19 @@ export const projectData = [
   },
   {
     id: 3,
+    slug: "AI-Phone-Call-Agent",
+    title: "AI Phone Call Agent",
+    imageSrc: "https://blue-official-newt-770.mypinata.cloud/ipfs/bafybeiezx6nsnmm4eannerhii5hz6zzz6bfikhhx6br6l745jbnsbwpvcq",
+    altText: "AI Phone Call Agent Platform that helps businesses automate outbound calls",
+    contentPath: "/content/AI-Phone-Call-Agent.md",
+    shortDescription: "AI Call Agent Platform that helps businesses automate outbound calls, track real-time progress, and analyze call performance—all in one place.",
+    publicationDate: "Feb 1, 2025", 
+    readTime: "3 min", 
+    githubLink: "https://fusion-calling-app.vercel.app", 
+    webPreviewLink: "https://fusion-calling-app.vercel.app"
+  },
+  {
+    id: 4,
     slug: "TweetScraper",
     title: "TweetScraper",
     imageSrc: "https://blue-official-newt-770.mypinata.cloud/ipfs/QmaxdkwMf6d9xUxkdBUQnsrEEDUxzGykgjrxJEoWBkDDGV",
@@ -39,7 +52,7 @@ export const projectData = [
     webPreviewLink: ""
   },
   {
-    id: 4,
+    id: 5,
     slug: "Gradio-Telegram-Bot",
     title: "Gradio Telegram Bot",
     imageSrc: "https://blue-official-newt-770.mypinata.cloud/ipfs/QmR13EqqTv1bAP9rsaKe5dsm5SiTyLkWHdYDcwrFTMipba",
