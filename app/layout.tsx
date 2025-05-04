@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { FontProvider } from "@/contexts/FontContext";
+import ChatWidget from "@/components/ChatWidget";
 
 const PostHogPageView = dynamic(() => import("./PostHogPageView"), {
   ssr: false,
@@ -48,6 +49,7 @@ export default function RootLayout({
               <Analytics />
               <MatrixCursor />
               <Footer />
+              <ChatWidget />
             </body>
           </FontProvider>
         </ThemeProvider>
