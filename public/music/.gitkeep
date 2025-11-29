@@ -1,0 +1,4 @@
+# Add your MP3 music files here
+# Example: song1.mp3, song2.mp3
+# Then update config/music-config.ts with the file paths
+

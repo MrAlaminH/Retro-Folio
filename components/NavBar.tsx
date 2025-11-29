@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import Image from "next/image";
+import MusicPlayer from "@/components/music-player";
 
 const navItems = [
   { name: "Home", path: "/" },
@@ -72,24 +73,8 @@ export default function Navbar() {
                 Yoo, It&apos;s Alamin Here
               </h1>
               <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 mt-2">
-                <div className="flex items-center space-x-2 text-xs sm:text-sm">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-3 w-3 sm:h-4 sm:w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <p className="text-gray-400">{email}</p>
-                </div>
                 <div className="flex space-x-2">
+                  <MusicPlayer />
                   <button
                     onClick={handleCopyEmail}
                     className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center"
@@ -105,10 +90,10 @@ export default function Navbar() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M8 16h8M8 12h8m-8 4h8m2-10H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2z"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                       />
                     </svg>
-                    <span className="ml-1">Copy</span>
+                    <span className="ml-1">Copy Email</span>
                   </button>
                   <button
                     onClick={toggleTheme}
