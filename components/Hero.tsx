@@ -56,6 +56,23 @@ function formatDateShort(publicationDate: string): string {
   return publicationDate; // Return original if parsing fails
 }
 
+// Utility function to get raw publicationDate for sorting
+function getProjectRawDate(url: string): Date | null {
+  // Extract slug from URL (e.g., "/projects/machine-man" -> "machine-man")
+  const slugMatch = url.match(/\/projects\/(.+)/);
+  if (!slugMatch) return null;
+
+  const slug = slugMatch[1];
+  const project = projectData.find((p) => p.slug === slug);
+
+  if (project && project.publicationDate) {
+    const date = new Date(project.publicationDate);
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  return null;
+}
+
 // Utility function to match a project URL with projectData entry and get the date
 function getProjectDate(url: string): string | null {
   // Extract slug from URL (e.g., "/projects/machine-man" -> "machine-man")
@@ -98,11 +115,21 @@ const projectsBase = [
   // Add more projects as needed
 ];
 
-// Add dates to projects by matching with projectData
-const projects = projectsBase.map((project) => ({
-  ...project,
-  date: getProjectDate(project.url) || "",
-}));
+// Add dates to projects by matching with projectData and sort by date (most recent first)
+const projects = projectsBase
+  .map((project) => ({
+    ...project,
+    date: getProjectDate(project.url) || "",
+    rawDate: getProjectRawDate(project.url),
+  }))
+  .sort((a, b) => {
+    // Projects without dates go to the bottom
+    if (!a.rawDate && !b.rawDate) return 0;
+    if (!a.rawDate) return 1;
+    if (!b.rawDate) return -1;
+    // Sort by date descending (most recent first)
+    return b.rawDate.getTime() - a.rawDate.getTime();
+  });
 
 const contacts = [
   {

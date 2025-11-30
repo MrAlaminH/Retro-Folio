@@ -41,7 +41,7 @@ export default function RootLayout({
       <PHProvider>
         <ThemeProvider>
           <FontProvider>
-            <body className="bg-white dark:bg-black text-black dark:text-white">
+            <body className="bg-white dark:bg-stone-900 text-black dark:text-white">
               <PostHogPageView />
               <Navbar />
               <div className=""></div>
