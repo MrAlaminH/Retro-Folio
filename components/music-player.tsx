@@ -8,6 +8,7 @@ export default function MusicPlayer() {
   const autoplayAttemptedRef = useRef(false);
   const userHasInteractedRef = useRef(false); // Track if user has manually paused
   const [isPlaying, setIsPlaying] = useState(false);
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false); // Track if autoplay was blocked by browser
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [hasError, setHasError] = useState(false);
 
@@ -89,6 +90,7 @@ export default function MusicPlayer() {
           console.log("Autoplay successful");
           setIsPlaying(true);
           setHasError(false);
+          setAutoplayBlocked(false);
         })
         .catch((error) => {
           // Autoplay blocked by browser - this is expected in many browsers
@@ -96,6 +98,7 @@ export default function MusicPlayer() {
             "Autoplay blocked by browser policy. User can click to play."
           );
           setIsPlaying(false);
+          setAutoplayBlocked(true);
           // Don't reset autoplayAttemptedRef - we tried once, that's enough
         });
     }
@@ -132,10 +135,12 @@ export default function MusicPlayer() {
               console.log("Autoplay successful (fallback)");
               setIsPlaying(true);
               setHasError(false);
+              setAutoplayBlocked(false);
             })
             .catch((error) => {
               console.log("Autoplay blocked by browser policy (fallback).");
               setIsPlaying(false);
+              setAutoplayBlocked(true);
             });
         }
       }, 100);
@@ -160,6 +165,78 @@ export default function MusicPlayer() {
       }
     }
   }, [currentTrackIndex, currentTrack, isPlaying]);
+
+  // Global interaction listener - retry autoplay after first user interaction
+  useEffect(() => {
+    // Check if we should set up listeners
+    // Only set up if autoplay was blocked and user hasn't manually interacted
+    if (!autoplayBlocked || userHasInteractedRef.current || isPlaying) {
+      return;
+    }
+
+    let listenersActive = true;
+
+    const handleUserInteraction = () => {
+      if (!listenersActive) return;
+
+      const audio = audioRef.current;
+
+      // Only attempt to play if:
+      // 1. Audio exists
+      // 2. Autoplay was blocked
+      // 3. User hasn't manually paused
+      // 4. Audio is not currently playing
+      if (
+        audio &&
+        autoplayBlocked &&
+        !userHasInteractedRef.current &&
+        !isPlaying
+      ) {
+        audio
+          .play()
+          .then(() => {
+            console.log("Autoplay successful after user interaction");
+            setIsPlaying(true);
+            setHasError(false);
+            setAutoplayBlocked(false);
+            listenersActive = false;
+            // Remove listeners after successful playback
+            removeListeners();
+          })
+          .catch((error) => {
+            console.log("Failed to play after user interaction:", error);
+            // Keep listeners in case user interacts again
+          });
+      } else {
+        // Remove listeners if conditions aren't met
+        listenersActive = false;
+        removeListeners();
+      }
+    };
+
+    const removeListeners = () => {
+      document.removeEventListener("click", handleUserInteraction);
+      document.removeEventListener("keydown", handleUserInteraction);
+      document.removeEventListener("touchstart", handleUserInteraction);
+      document.removeEventListener("mousedown", handleUserInteraction);
+    };
+
+    // Add event listeners for various user interactions
+    document.addEventListener("click", handleUserInteraction, { once: true });
+    document.addEventListener("keydown", handleUserInteraction, { once: true });
+    document.addEventListener("touchstart", handleUserInteraction, {
+      once: true,
+    });
+    document.addEventListener("mousedown", handleUserInteraction, {
+      once: true,
+    });
+
+    // Cleanup: remove listeners on unmount or when dependencies change
+    return () => {
+      listenersActive = false;
+      removeListeners();
+    };
+  }, [autoplayBlocked, isPlaying]);
 
   // Cleanup on unmount
   useEffect(() => {

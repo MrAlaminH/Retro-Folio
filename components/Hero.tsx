@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import DecodeText from "./MatrixCursor/DecodeText";
 import { ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { projectData } from "@/data/projectData";
 
 // Utility function to convert publicationDate to short format (e.g., "July 03, 2024" -> "Jul 2024")
@@ -236,7 +237,7 @@ export default function Portfolio() {
                     className="text-green-500 dark:text-green-500 underline group relative inline"
                   >
                     nature
-                    <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity absolute -right-3.5 top-0.5" />
+                    <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity absolute -right-3 top-0.5" />
                   </a>
                   <span
                     dangerouslySetInnerHTML={{
@@ -292,14 +293,14 @@ export default function Portfolio() {
                       >
                         {">"}
                       </span>
-                      <a
+                      <Link
                         href={project.url}
                         className="text-green-500 dark:text-green-400 ease-in-out"
                       >
                         <span className="font-semibold text-green-500 dark:text-green-500 underline">
                           {project.name}
                         </span>
-                      </a>
+                      </Link>
                       <ExternalLink className="ml-2 text-gray-400" size={16} />
                     </div>
                     <div className="flex items-start mt-0.5">
@@ -328,14 +329,14 @@ export default function Portfolio() {
                       >
                         {">"}
                       </span>
-                      <a
+                      <Link
                         href={project.url}
                         className="text-green-500 dark:text-green-400 ease-in-out"
                       >
                         <span className="font-semibold text-green-500 dark:text-green-500 underline">
                           {project.name}
                         </span>
-                      </a>
+                      </Link>
                       <ExternalLink
                         className={`ml-2 text-gray-400 transition-opacity duration-300 ${
                           hoveredProjectIndex === index
