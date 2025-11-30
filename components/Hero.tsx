@@ -3,8 +3,76 @@ import React, { useState } from "react";
 import DecodeText from "./MatrixCursor/DecodeText";
 import { ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { projectData } from "@/data/projectData";
 
-const projects = [
+// Utility function to convert publicationDate to short format (e.g., "July 03, 2024" -> "Jul 2024")
+function formatDateShort(publicationDate: string): string {
+  const monthMap: { [key: string]: string } = {
+    January: "Jan",
+    February: "Feb",
+    March: "Mar",
+    April: "Apr",
+    May: "May",
+    June: "Jun",
+    July: "Jul",
+    August: "Aug",
+    September: "Sep",
+    October: "Oct",
+    November: "Nov",
+    December: "Dec",
+  };
+
+  // Try to parse using Date constructor first
+  const date = new Date(publicationDate);
+  if (!isNaN(date.getTime())) {
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+    return `${month} ${year}`;
+  }
+
+  // Fallback: try to parse common formats manually (e.g., "July 03, 2024" or "Feb 1, 2025")
+  const match = publicationDate.match(/(\w+)\s+\d+,\s+(\d{4})/);
+  if (match) {
+    const fullMonth = match[1];
+    const year = match[2];
+    const shortMonth = monthMap[fullMonth] || fullMonth.substring(0, 3);
+    return `${shortMonth} ${year}`;
+  }
+
+  return publicationDate; // Return original if parsing fails
+}
+
+// Utility function to match a project URL with projectData entry and get the date
+function getProjectDate(url: string): string | null {
+  // Extract slug from URL (e.g., "/projects/machine-man" -> "machine-man")
+  const slugMatch = url.match(/\/projects\/(.+)/);
+  if (!slugMatch) return null;
+
+  const slug = slugMatch[1];
+  const project = projectData.find((p) => p.slug === slug);
+
+  if (project && project.publicationDate) {
+    return formatDateShort(project.publicationDate);
+  }
+
+  return null;
+}
+
+const projectsBase = [
   {
     name: "Machine Man",
     description: "AI-powered Telegram Bot for text and image generation.",
@@ -29,6 +97,12 @@ const projects = [
   },
   // Add more projects as needed
 ];
+
+// Add dates to projects by matching with projectData
+const projects = projectsBase.map((project) => ({
+  ...project,
+  date: getProjectDate(project.url) || "",
+}));
 
 const contacts = [
   {
@@ -134,37 +208,94 @@ export default function Portfolio() {
               {projects.map((project, index) => (
                 <li
                   key={index}
-                  className="group flex items-start p-2 rounded-md ease-in-out cursor-pointer"
+                  className="group p-2 rounded-md ease-in-out cursor-pointer"
                   onMouseEnter={() => setHoveredProjectIndex(index)}
                   onMouseLeave={() => setHoveredProjectIndex(null)}
                 >
-                  <span
-                    className={`mr-2 text-green-500 dark:text-green-500 transition-transform duration-300 ${
-                      hoveredProjectIndex === index ? "transform rotate-90" : ""
-                    }`}
-                  >
-                    {">"}
-                  </span>
-                  <a
-                    href={project.url}
-                    className="flex-grow hover:underline text-green-500 dark:text-green-400 ease-in-out"
-                  >
-                    <span className="font-semibold text-green-500 dark:text-green-500">
-                      {project.name}
-                    </span>
-                    :{" "}
-                    <span className="text-black dark:text-white">
-                      {project.description}
-                    </span>
-                  </a>
-                  <ExternalLink
-                    className={`ml-2 text-gray-400 transition-opacity duration-300 ${
-                      hoveredProjectIndex === index
-                        ? "opacity-100"
-                        : "opacity-0"
-                    }`}
-                    size={16}
-                  />
+                  {/* Mobile: Stacked Layout */}
+                  <div className="flex flex-col md:hidden">
+                    {project.date && (
+                      <span className="text-black dark:text-gray-300 opacity-50 dark:opacity-40 text-xs mb-0.5">
+                        {project.date}
+                      </span>
+                    )}
+                    <div className="flex items-center">
+                      <span
+                        className={`mr-2 text-green-500 dark:text-green-500 transition-transform duration-300 ${
+                          hoveredProjectIndex === index
+                            ? "transform rotate-90"
+                            : ""
+                        }`}
+                      >
+                        {">"}
+                      </span>
+                      <a
+                        href={project.url}
+                        className="text-green-500 dark:text-green-400 ease-in-out"
+                      >
+                        <span className="font-semibold text-green-500 dark:text-green-500 underline">
+                          {project.name}
+                        </span>
+                      </a>
+                      <ExternalLink className="ml-2 text-gray-400" size={16} />
+                    </div>
+                    <div className="flex items-start mt-0.5">
+                      <span className="mr-2 opacity-0 pointer-events-none">
+                        {">"}
+                      </span>
+                      <span className="text-black dark:text-white">
+                        {project.description}
+                      </span>
+                    </div>
+                  </div>
+                  {/* Desktop: Horizontal Layout */}
+                  <div className="hidden md:block">
+                    <div className="flex items-start">
+                      {project.date && (
+                        <span className="mr-3 text-black dark:text-gray-300 whitespace-nowrap opacity-50 dark:opacity-40">
+                          {project.date}
+                        </span>
+                      )}
+                      <span
+                        className={`mr-2 text-green-500 dark:text-green-500 transition-transform duration-300 ${
+                          hoveredProjectIndex === index
+                            ? "transform rotate-90"
+                            : ""
+                        }`}
+                      >
+                        {">"}
+                      </span>
+                      <a
+                        href={project.url}
+                        className="text-green-500 dark:text-green-400 ease-in-out"
+                      >
+                        <span className="font-semibold text-green-500 dark:text-green-500 underline">
+                          {project.name}
+                        </span>
+                      </a>
+                      <ExternalLink
+                        className={`ml-2 text-gray-400 transition-opacity duration-300 ${
+                          hoveredProjectIndex === index
+                            ? "opacity-100"
+                            : "opacity-0"
+                        }`}
+                        size={16}
+                      />
+                    </div>
+                    <div className="flex items-start mt-1">
+                      {project.date && (
+                        <span className="mr-3 opacity-0 pointer-events-none whitespace-nowrap">
+                          {project.date}
+                        </span>
+                      )}
+                      <span className="mr-2 opacity-0 pointer-events-none">
+                        {">"}
+                      </span>
+                      <span className="text-black dark:text-white">
+                        {project.description}
+                      </span>
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
