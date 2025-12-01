@@ -4,6 +4,7 @@ import DecodeText from "./MatrixCursor/DecodeText";
 import { ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { projectData } from "@/data/projectData";
 
 // Utility function to convert publicationDate to short format (e.g., "July 03, 2024" -> "Jul 2024")
@@ -401,6 +402,19 @@ export default function Portfolio() {
                 </li>
               ))}
             </ul>
+            <div className="mt-8 flex justify-center">
+              <div className="relative w-full max-w-2xl">
+                <Image
+                  src="/footer.png"
+                  alt="Human evolution pixel art"
+                  width={800}
+                  height={200}
+                  className="w-full h-auto object-contain opacity-90 dark:opacity-80 hover:opacity-100 dark:hover:opacity-90 transition-opacity duration-300"
+                  priority={false}
+                  unoptimized
+                />
+              </div>
+            </div>
           </section>
         </main>
       </div>
