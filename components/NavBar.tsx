@@ -1,8 +1,7 @@
 "use client";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useFont } from "@/contexts/FontContext";
@@ -24,23 +23,11 @@ const navItems = [
 ];
 
 export default function Navbar() {
-  const [image, setImage] = useState("/my-image.jpg?height=48&width=48");
   const email = "itsalamin999@gmail.com";
   const [showCopyMessage, setShowCopyMessage] = useState(false);
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { font, setFont } = useFont();
-
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(email).then(() => {
@@ -56,21 +43,13 @@ export default function Navbar() {
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
             <div className="relative w-24 h-24 sm:w-32 sm:h-32">
               <Image
-                src={image}
+                src="/my-image.jpg"
                 alt="Profile"
                 fill
                 className="rounded-full object-cover"
                 sizes="(max-width: 640px) 96px, 128px"
                 priority
                 quality={85}
-              />
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                aria-label="Upload profile picture"
-                id="profile-image-upload"
               />
             </div>
             <div className="text-center sm:text-left">
