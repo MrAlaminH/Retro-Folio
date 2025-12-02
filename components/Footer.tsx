@@ -22,6 +22,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-black dark:text-white hover:text-green-700 dark:hover:text-green-500"
+                aria-label="Visit GitHub profile"
               >
                 <Github size={20} />
               </a>
@@ -30,6 +31,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-black dark:text-white hover:text-green-700 dark:hover:text-green-500"
+                aria-label="Visit Twitter profile"
               >
                 <Twitter size={20} />
               </a>
@@ -38,6 +40,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-black dark:text-white hover:text-green-700 dark:hover:text-green-500"
+                aria-label="Visit LinkedIn profile"
               >
                 <Linkedin size={20} />
               </a>

@@ -60,12 +60,17 @@ export default function Navbar() {
                 alt="Profile"
                 fill
                 className="rounded-full object-cover"
+                sizes="(max-width: 640px) 96px, 128px"
+                priority
+                quality={85}
               />
               <Input
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                aria-label="Upload profile picture"
+                id="profile-image-upload"
               />
             </div>
             <div className="text-center sm:text-left">

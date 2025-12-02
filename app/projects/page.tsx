@@ -24,7 +24,10 @@ const Projects = () => {
                     className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-105"
                     src={project.imageSrc}
                     alt={project.altText}
-                    layout="fill"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    loading="lazy"
+                    quality={85}
                   />
                 </div>
                 <h3 className="mb-2 text-lg font-bold text-green-600 dark:text-green-500 group-hover:underline">

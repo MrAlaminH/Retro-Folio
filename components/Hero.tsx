@@ -135,11 +135,6 @@ const projects = projectsBase
 
 const contacts = [
   {
-    name: "Email",
-    value: "itsalamin999@gmail.com",
-    link: "mailto:itsalamin999@gmail.com",
-  },
-  {
     name: "LinkedIn",
     value: "itsalamin",
     link: "https://www.linkedin.com/in/itsalamin",
@@ -410,8 +405,8 @@ export default function Portfolio() {
                   width={800}
                   height={200}
                   className="w-full h-auto object-contain opacity-90 dark:opacity-80 hover:opacity-100 dark:hover:opacity-90 transition-opacity duration-300"
-                  priority={false}
-                  unoptimized
+                  loading="lazy"
+                  quality={85}
                 />
               </div>
             </div>

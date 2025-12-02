@@ -4,11 +4,6 @@ import DecodeText from "../../components/MatrixCursor/DecodeText";
 
 const contacts = [
   {
-    name: "Email",
-    value: "itsalamin999@gmail.com",
-    link: "mailto:itsalamin999@gmail.com",
-  },
-  {
     name: "LinkedIn",
     value: "itsalamin",
     link: "https://www.linkedin.com/in/itsalamin",

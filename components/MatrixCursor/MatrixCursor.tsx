@@ -11,15 +11,16 @@ interface Point {
   initialOpacity: number;
 }
 
-const TRAIL_LENGTH = 50; // Increased for longer trail
-const FADE_INTERVAL = 16; // Faster updates for smoother animation
+const TRAIL_LENGTH = 30; // Reduced for better performance
+const FADE_INTERVAL = 20; // Optimized interval for performance
 const MIN_FONT_SIZE = 8;
-const MAX_FONT_SIZE = 20; // Slightly larger max font size
-const THROTTLE_MS = 8; // Reduced for more responsive cursor tracking
-const TRAIL_OPACITY_STEP = 0.02; // Smaller steps for smoother fade
+const MAX_FONT_SIZE = 20;
+const THROTTLE_MS = 16; // Optimized throttle for better performance
+const TRAIL_OPACITY_STEP = 0.03; // Optimized for performance
 
 export default function MatrixCursor() {
   const [trail, setTrail] = useState<Point[]>([]);
+  const [isEnabled, setIsEnabled] = useState(false);
 
   const matrixChars = useMemo(
     () =>
@@ -34,7 +35,21 @@ export default function MatrixCursor() {
     [matrixChars]
   );
 
+  // Detect mobile/touch devices and disable on mobile
+  useEffect(() => {
+    const isTouchDevice =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    // Only enable on desktop non-touch devices
+    if (!isTouchDevice && !isMobile) {
+      setIsEnabled(true);
+    }
+  }, []);
+
   const updatePosition = useThrottledCallback((e: MouseEvent) => {
+    if (!isEnabled) return;
+
     const newPoint = {
       x: e.clientX,
       y: e.clientY,
@@ -49,11 +64,15 @@ export default function MatrixCursor() {
   }, THROTTLE_MS);
 
   useEffect(() => {
+    if (!isEnabled) return;
+
     window.addEventListener("mousemove", updatePosition);
     return () => window.removeEventListener("mousemove", updatePosition);
-  }, [updatePosition]);
+  }, [updatePosition, isEnabled]);
 
   useEffect(() => {
+    if (!isEnabled) return;
+
     const timer = setInterval(() => {
       setTrail((prevTrail) =>
         prevTrail
@@ -68,7 +87,10 @@ export default function MatrixCursor() {
       );
     }, FADE_INTERVAL);
     return () => clearInterval(timer);
-  }, []);
+  }, [isEnabled]);
+
+  // Don't render on mobile/touch devices
+  if (!isEnabled) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-50">
