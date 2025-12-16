@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { projectData } from "@/data/projectData";
+import { GitHubContributions } from "./github-contributions";
 
 // Utility function to convert publicationDate to short format (e.g., "July 03, 2024" -> "Jul 2024")
 function formatDateShort(publicationDate: string): string {
@@ -369,6 +370,12 @@ export default function Portfolio() {
                 Check More Projects &gt;
               </button>
             </div>
+
+            <GitHubContributions
+              username="MrAlaminH"
+              compact
+              className="mt-6"
+            />
           </section>
 
           <hr className="border-green-700 dark:border-green-500 my-8" />
