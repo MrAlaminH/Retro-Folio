@@ -22,6 +22,9 @@ export default function MusicPlayer() {
     // Mark that user has interacted
     userHasInteractedRef.current = true;
 
+    // Set volume to 30% (70% reduction from original)
+    audioRef.current.volume = 0.3;
+
     try {
       if (isPlaying) {
         audioRef.current.pause();
@@ -55,6 +58,7 @@ export default function MusicPlayer() {
     } else {
       // Single song: restart (loop) only if it was playing
       if (audioRef.current && isPlaying) {
+        audioRef.current.volume = 0.3;
         audioRef.current.currentTime = 0;
         audioRef.current.play().catch((error) => {
           console.warn("Failed to replay audio:", error);
@@ -73,6 +77,11 @@ export default function MusicPlayer() {
     // Primary autoplay mechanism - fires when audio data is loaded
     const audio = audioRef.current;
 
+    // Set volume to 30% (70% reduction from original)
+    if (audio) {
+      audio.volume = 0.3;
+    }
+
     // Only attempt autoplay if:
     // 1. Audio element exists
     // 2. User hasn't manually interacted yet
@@ -84,6 +93,8 @@ export default function MusicPlayer() {
     ) {
       autoplayAttemptedRef.current = true;
 
+      // Ensure volume is set before playing
+      audio.volume = 0.3;
       audio
         .play()
         .then(() => {
@@ -129,6 +140,7 @@ export default function MusicPlayer() {
           audioRef.current
         ) {
           autoplayAttemptedRef.current = true;
+          audioRef.current.volume = 0.3;
           audioRef.current
             .play()
             .then(() => {
@@ -155,9 +167,13 @@ export default function MusicPlayer() {
   useEffect(() => {
     if (audioRef.current && currentTrack) {
       audioRef.current.load();
+      // Set volume to 30% (70% reduction from original) - after load()
+      audioRef.current.volume = 0.3;
       // Only auto-play next track if the previous track was playing
       // This handles playlist progression when a track ends naturally
       if (isPlaying) {
+        // Ensure volume is set before playing
+        audioRef.current.volume = 0.3;
         audioRef.current.play().catch((error) => {
           console.warn("Failed to play next track:", error);
           setIsPlaying(false);
@@ -192,6 +208,7 @@ export default function MusicPlayer() {
         !userHasInteractedRef.current &&
         !isPlaying
       ) {
+        audio.volume = 0.3;
         audio
           .play()
           .then(() => {
@@ -237,6 +254,14 @@ export default function MusicPlayer() {
       removeListeners();
     };
   }, [autoplayBlocked, isPlaying]);
+
+  // Set initial volume when component mounts
+  useEffect(() => {
+    if (audioRef.current) {
+      // Set volume to 30% (70% reduction from original)
+      audioRef.current.volume = 0.3;
+    }
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -285,6 +310,12 @@ export default function MusicPlayer() {
         onEnded={handleTrackEnd}
         onError={handleError}
         onLoadedData={handleLoadedData}
+        onCanPlay={() => {
+          // Set volume whenever audio can play
+          if (audioRef.current) {
+            audioRef.current.volume = 0.3;
+          }
+        }}
         loop={musicTracks.length === 1}
       />
       <button

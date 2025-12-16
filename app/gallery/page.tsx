@@ -18,20 +18,17 @@ export default async function GalleryPage() {
   const categories = getAllCategories(allImages);
 
   // Group images by category
-  const imagesByCategory = categories.reduce(
-    (acc, category) => {
-      acc[category] = allImages.filter((img) => img.category === category);
-      return acc;
-    },
-    {} as Record<string, GalleryImage[]>
-  );
+  const imagesByCategory = categories.reduce((acc, category) => {
+    acc[category] = allImages.filter((img) => img.category === category);
+    return acc;
+  }, {} as Record<string, GalleryImage[]>);
 
   return (
     <main className="bg-transparent text-black dark:text-gray-100 min-h-screen p-4 flex justify-center text-sm">
       <div className="w-full max-w-3xl">
-        <h1 className="text-2xl md:text-3xl font-extrabold mb-8 text-green-600 dark:text-green-500">
+        {/* <h1 className="text-2xl md:text-3xl font-extrabold mb-8 text-green-600 dark:text-green-500">
           <DecodeText text="My Feed 👀" />
-        </h1>
+        </h1> */}
 
         {categories.length === 0 ? (
           <div className="text-center py-12">
@@ -63,4 +60,3 @@ export default async function GalleryPage() {
     </main>
   );
 }
-
