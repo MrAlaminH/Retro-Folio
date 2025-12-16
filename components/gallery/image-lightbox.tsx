@@ -1,5 +1,14 @@
 "use client";
 
+/**
+ * ImageLightbox Component
+ *
+ * Note: We use native <img> tags instead of Next.js <Image> component here
+ * for optimal lightbox performance. Images are already optimized by Next.js
+ * Image component in the grid view, and native img tags provide instant
+ * navigation in the lightbox since images are preloaded and cached.
+ */
+
 import { useEffect, useState, useCallback } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { GalleryImage } from "@/data/gallery-data";
@@ -135,6 +144,7 @@ export default function ImageLightbox({
           )}
 
           {/* Current image - using native img for faster loading */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             key={activeIndex}
             src={currentImage.src}
@@ -149,8 +159,11 @@ export default function ImageLightbox({
           />
 
           {/* Hidden preload images for instant navigation */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <div className="hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={images[prevIndex].src} alt="" loading="eager" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={images[nextIndex].src} alt="" loading="eager" />
           </div>
         </div>
@@ -165,4 +178,3 @@ export default function ImageLightbox({
     </div>
   );
 }
-
