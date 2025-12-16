@@ -206,7 +206,7 @@ export function GitHubContributions({
             <GitHubCalendar
               username={username}
               colorScheme={colorScheme}
-              fontSize={compact ? 14 : 12}
+              fontSize={compact ? 11 : 12}
               blockSize={compact ? 12 : 12}
               blockMargin={compact ? 2 : 3}
               showWeekdayLabels={!compact}
