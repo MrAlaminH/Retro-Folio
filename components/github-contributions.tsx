@@ -5,6 +5,7 @@ import GitHubCalendar from "react-github-calendar";
 import type { ThemeInput } from "react-activity-calendar";
 import { motion } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
+import DecodeText from "./MatrixCursor/DecodeText";
 
 interface GitHubContributionsProps {
   username: string;
@@ -55,7 +56,7 @@ export function GitHubContributions({
         id="github-contributions-heading"
         className="text-lg md:text-xl font-bold mb-3 text-green-500 dark:text-green-500"
       >
-        GitHub Contributions
+        <DecodeText text="GitHub Contributions @ MrAlaminH" />
       </h2>
 
       <motion.div

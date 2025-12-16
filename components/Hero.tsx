@@ -370,7 +370,7 @@ export default function Portfolio() {
                 Check More Projects &gt;
               </button>
             </div>
-
+            <hr className="border-green-700 dark:border-green-500 my-8" />
             <GitHubContributions
               username="MrAlaminH"
               compact

@@ -54,9 +54,12 @@ export default function Navbar() {
             </div>
             <div className="text-center sm:text-left">
               <h1 className="text-2xl sm:text-3xl font-bold text-green-500">
-                Yoo, It&apos;s Alamin Here
+                It&apos;s Alamin Here
               </h1>
-              <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 mt-2">
+              <p className="mt-1 text-xs sm:text-sm text-gray-700 dark:text-gray-300 sm:pl-1">
+                24 | Engineer | Builder
+              </p>
+              <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 mt-3">
                 <div className="flex space-x-2">
                   <MusicPlayer />
                   <button
