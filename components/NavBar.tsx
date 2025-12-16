@@ -18,7 +18,7 @@ import MusicPlayer from "@/components/music-player";
 const navItems = [
   { name: "Home", path: "/" },
   { name: "Projects", path: "/projects" },
-  { name: "Contact", path: "/contact" },
+  { name: "Gallery", path: "/gallery" },
   { name: "Terminal", path: "/Terminal" },
 ];
 
