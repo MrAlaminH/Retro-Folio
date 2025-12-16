@@ -6,6 +6,12 @@ export interface GitHubPullRequest {
   createdAt: string;
 }
 
+export interface GitHubContribution {
+  date: string;
+  count: number;
+  level: number;
+}
+
 interface GitHubSearchIssueItem {
   id: number;
   title: string;
@@ -96,5 +102,118 @@ export async function fetchUserPullRequests(
     throw error instanceof Error
       ? error
       : new Error("Unknown error while fetching GitHub pull requests");
+  }
+}
+
+export async function fetchGitHubContributions(
+  username: string
+): Promise<GitHubContribution[]> {
+  // GitHub doesn't have an official JSON API for contribution data
+  // We fetch from the same endpoint that react-github-calendar uses
+  // This endpoint returns HTML with SVG that contains the contribution data
+  const url = `https://github.com/users/${username}/contributions`;
+
+  const headers: HeadersInit = {
+    Accept: "text/html",
+    "User-Agent": "Mozilla/5.0",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+      // Use revalidate for caching at fetch level
+      next: { revalidate: 3600 },
+    });
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => "<no-body>");
+      console.error("GitHub contributions page response not ok", {
+        status: response.status,
+        statusText: response.statusText,
+        body: text.substring(0, 200),
+      });
+      throw new Error(
+        `GitHub contributions request failed with status ${response.status}: ${response.statusText}`
+      );
+    }
+
+    const html = await response.text();
+
+    // Parse the HTML to extract contribution data
+    // The contribution data is in SVG rect elements with data-date, data-level, and title attributes
+    // The title attribute contains the count: "X contributions on Y date"
+    const contributionData: GitHubContribution[] = [];
+    
+    // More flexible regex to match rect elements with attributes in any order
+    // Pattern: <rect ... data-date="YYYY-MM-DD" ... data-level="0-4" ... title="...">
+    const rectRegex = /<rect[^>]*>/g;
+    let match;
+
+    while ((match = rectRegex.exec(html)) !== null) {
+      const rectTag = match[0];
+      
+      // Extract data-date
+      const dateMatch = rectTag.match(/data-date="([^"]+)"/);
+      if (!dateMatch) continue;
+      const date = dateMatch[1];
+      
+      // Validate date format (YYYY-MM-DD)
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+      
+      // Extract data-level
+      const levelMatch = rectTag.match(/data-level="(\d+)"/);
+      if (!levelMatch) continue;
+      const level = Number.parseInt(levelMatch[1], 10);
+      if (isNaN(level) || level < 0 || level > 4) continue;
+      
+      // Extract title for count
+      const titleMatch = rectTag.match(/title="([^"]+)"/);
+      let count = 0;
+      
+      if (titleMatch) {
+        const title = titleMatch[1];
+        // Extract count from title: "X contributions on Y date" or "No contributions on Y date"
+        const countMatch = title.match(/(\d+)\s+contributions?/i);
+        if (countMatch) {
+          count = Number.parseInt(countMatch[1], 10);
+        } else if (title.toLowerCase().includes("no contributions")) {
+          count = 0;
+        }
+      }
+      
+      // Fallback to level-based estimate if count not found in title
+      if (count === 0 && level > 0) {
+        const countMap: Record<number, number> = {
+          1: 5,
+          2: 15,
+          3: 25,
+          4: 35,
+        };
+        count = countMap[level] ?? 0;
+      }
+      
+      contributionData.push({
+        date,
+        count,
+        level,
+      });
+    }
+
+    if (contributionData.length === 0) {
+      console.warn("No contribution data found in GitHub response");
+      // Return empty array instead of throwing to allow graceful degradation
+      return [];
+    }
+
+    return contributionData;
+  } catch (error) {
+    console.error("Error fetching GitHub contributions", {
+      username,
+      error,
+    });
+    throw error instanceof Error
+      ? error
+      : new Error("Unknown error while fetching GitHub contributions");
   }
 }
