@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { projectData } from "@/data/projectData";
 import { GitHubContributions } from "./github-contributions";
+import RetroButton from "./retro-button";
 
 // Utility function to convert publicationDate to short format (e.g., "July 03, 2024" -> "Jul 2024")
 function formatDateShort(publicationDate: string): string {
@@ -228,7 +229,7 @@ export default function Portfolio() {
                     }}
                   />
                   <a
-                    href="https://example.com/nature"
+                    href="https://uralamin.is-a.dev/gallery"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-green-500 dark:text-green-500 underline group relative inline"
@@ -404,6 +405,21 @@ export default function Portfolio() {
                 </li>
               ))}
             </ul>
+
+            {/* Book a Free Call Section */}
+            <div className="mt-6 mb-6">
+              <p className="text-sm italic mb-3 text-center text-green-500 dark:text-green-500">
+                Let&apos;s figure out if we&apos;re a good match.
+              </p>
+              <div className="flex justify-center">
+                <RetroButton
+                  href="https://cal.com/mralamin/discovery-call"
+                  text="Book a Free Call"
+                  external
+                />
+              </div>
+            </div>
+
             <div className="mt-8 flex justify-center">
               <div className="relative w-full max-w-2xl">
                 <Image
