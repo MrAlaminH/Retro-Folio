@@ -10,7 +10,8 @@ export const projectData = [
     publicationDate: "July 03, 2024", 
     readTime: "5 min", 
     githubLink: "https://github.com/MrAlaminH/Machine-Man-Bot",
-    webPreviewLink: "https://t.me/Machine_ManBot"
+    webPreviewLink: "https://t.me/Machine_ManBot",
+    technologies: ["Python", "Telegram", "OpenAI"]
   },
   {
     id: 2,
@@ -23,7 +24,8 @@ export const projectData = [
     publicationDate: "July 26, 2024", 
     readTime: "3 min", 
     githubLink: "https://github.com/MrAlaminH/SolidART", 
-    webPreviewLink: "https://solid-art.vercel.app/"
+    webPreviewLink: "https://solid-art.vercel.app/",
+    technologies: ["Next.js", "Tailwind", "TypeScript", "Vercel"]
   },
   {
     id: 3,
@@ -36,7 +38,8 @@ export const projectData = [
     publicationDate: "Feb 1, 2025", 
     readTime: "3 min", 
     githubLink: "https://fusion-calling-app.vercel.app", 
-    webPreviewLink: "https://fusion-calling-app.vercel.app"
+    webPreviewLink: "https://fusion-calling-app.vercel.app",
+    technologies: ["Next.js", "TypeScript", "React", "Vercel"]
   },
   {
     id: 4,
@@ -49,7 +52,8 @@ export const projectData = [
     publicationDate: "Oct 1, 2024", 
     readTime: "3 min", 
     githubLink: "https://github.com/MrAlaminH/TweetScraper", 
-    webPreviewLink: ""
+    webPreviewLink: "",
+    technologies: ["Python"]
   },
   {
     id: 5,
@@ -62,6 +66,7 @@ export const projectData = [
     publicationDate: "Oct 1, 2024", 
     readTime: "3 min", 
     githubLink: "https://github.com/MrAlaminH/multimodel_telegram_bot", 
-    webPreviewLink: "https://t.me/intelligent_Heda_bot"
+    webPreviewLink: "https://t.me/intelligent_Heda_bot",
+    technologies: ["Python", "Telegram"]
   },
 ];
