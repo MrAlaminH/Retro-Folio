@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import DecodeText from "./MatrixCursor/DecodeText";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Linkedin, Github, Twitter } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -142,16 +142,19 @@ const contacts = [
     name: "LinkedIn",
     value: "itsalamin",
     link: "https://www.linkedin.com/in/itsalamin",
+    icon: Linkedin,
   },
   {
     name: "Github",
     value: "MrAlaminH",
     link: "https://www.github.com/MrAlaminH",
+    icon: Github,
   },
   {
     name: "X/Twitter",
     value: "MrAlaminH",
     link: "https://www.twitter.com/MrAlaminH",
+    icon: Twitter,
   },
 ];
 
@@ -392,24 +395,31 @@ export default function Portfolio() {
               <DecodeText text="Contact / Socials" />
             </h2>
             <ul className="list-none text-xs md:text-sm space-y-2">
-              {contacts.map((contact, index) => (
-                <li key={index} className="flex items-center">
-                  <span className="mr-2 text-green-500 dark:text-green-500">
-                    {">"}
-                  </span>
-                  <a
-                    href={contact.link}
-                    className="hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span>{contact.name}:</span>
-                    <span className="ml-2 text-green-500 dark:text-green-500">
-                      {contact.value}
+              {contacts.map((contact, index) => {
+                const IconComponent = contact.icon;
+                return (
+                  <li key={index} className="flex items-center">
+                    <span className="mr-2 text-green-500 dark:text-green-500">
+                      {">"}
                     </span>
-                  </a>
-                </li>
-              ))}
+                    <a
+                      href={contact.link}
+                      className="flex items-center gap-2 hover:underline group/link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {IconComponent && (
+                        <IconComponent className="w-4 h-4 text-green-500 dark:text-green-500 flex-shrink-0" />
+                      )}
+                      <span>{contact.name}:</span>
+                      <span className="text-green-500 dark:text-green-500">
+                        {contact.value}
+                      </span>
+                      <ExternalLink className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400 flex-shrink-0 opacity-60 group-hover/link:opacity-100 transition-opacity duration-200" />
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
 
             {/* Book a Free Call Section */}
