@@ -5,7 +5,7 @@ import { FooterVisitorCounter } from "./footer-visitor-counter";
 
 const Footer = () => {
   return (
-    <footer className="bg-transparent text-black dark:text-gray-100 p-4">
+    <footer className="bg-transparent text-black dark:text-gray-100 p-4 pb-16 sm:pb-4">
       <div className="flex justify-center">
         <div className="w-full max-w-3xl">
           <hr className="border-green-700 dark:border-green-500 my-8" />

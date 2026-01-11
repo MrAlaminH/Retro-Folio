@@ -268,7 +268,7 @@ export default function Portfolio() {
 
           <section className="mb-8">
             <h2 className="text-lg md:text-xl font-bold mb-4 text-green-500 dark:text-green-500">
-              <DecodeText text="Projects" />
+              <DecodeText text="My Projects" />
             </h2>
             <p className="mb-2">A selection of stuff I made:</p>
             <ul className="list-none text-xs md:text-sm space-y-2">
