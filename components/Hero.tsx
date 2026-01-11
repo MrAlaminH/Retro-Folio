@@ -8,6 +8,7 @@ import Image from "next/image";
 import { projectData } from "@/data/projectData";
 import { GitHubContributions } from "./github-contributions";
 import { SkillsSection } from "./skills-section";
+import { WorkExperienceSection } from "./work-experience-section";
 import RetroButton from "./retro-button";
 
 // Utility function to convert publicationDate to short format (e.g., "July 03, 2024" -> "Jul 2024")
@@ -372,6 +373,8 @@ export default function Portfolio() {
                 Check More Projects &gt;
               </button>
             </div>
+            <hr className="border-green-700 dark:border-green-500 my-8" />
+            <WorkExperienceSection />
             <hr className="border-green-700 dark:border-green-500 my-8" />
             <SkillsSection />
             <hr className="border-green-700 dark:border-green-500 my-8" />

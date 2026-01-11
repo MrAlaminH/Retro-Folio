@@ -53,7 +53,7 @@ export const projectData = [
     readTime: "3 min", 
     githubLink: "https://github.com/MrAlaminH/TweetScraper", 
     webPreviewLink: "",
-    technologies: ["Python"]
+    technologies: ["Next.js", "Puppeteer"]
   },
   {
     id: 5,

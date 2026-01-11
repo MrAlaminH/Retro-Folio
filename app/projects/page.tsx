@@ -18,6 +18,7 @@ import {
   SiSupabase,
   SiPostgresql,
   SiOpenai,
+  SiPuppeteer,
 } from "react-icons/si";
 
 const Projects = () => {
@@ -104,6 +105,7 @@ const Projects = () => {
                         Supabase: SiSupabase,
                         PostgreSQL: SiPostgresql,
                         OpenAI: SiOpenai,
+                        Puppeteer: SiPuppeteer,
                       };
                       const IconComponent = techIcons[tech];
                       if (!IconComponent) return null;
