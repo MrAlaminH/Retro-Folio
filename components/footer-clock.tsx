@@ -13,6 +13,7 @@ export function FooterClock() {
         timeZone: "Asia/Dhaka",
         hour: "numeric",
         minute: "2-digit",
+        second: "2-digit",
         hour12: true,
       };
 
@@ -31,9 +32,14 @@ export function FooterClock() {
 
   return (
     <span className="flex items-center gap-1.5">
-      <span className="text-black dark:text-white">Local Time:</span>
-      <span className="text-green-700 dark:text-green-500 font-mono font-medium">
+      <span className="text-black dark:text-white text-xs sm:text-sm">
+        Local Time:
+      </span>
+      <span className="text-green-700 dark:text-green-500 font-mono font-medium text-xs sm:text-sm">
         {time}
+      </span>
+      <span className="text-neutral-500 dark:text-neutral-400 font-mono text-[10px] sm:text-xs">
+        (UTC+6)
       </span>
     </span>
   );
