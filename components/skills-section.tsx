@@ -18,10 +18,10 @@ export function SkillsSection({ className }: SkillsSectionProps) {
       >
         <DecodeText text="Technologies & Tools" />
       </h2>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-2 sm:gap-3">
+      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-5 gap-1.5 sm:gap-2">
         {skillsData.map((skill) => {
           const IconComponent = skill.icon;
-          const isLinux = skill.name === "Linux";
+          const isMobileOnly = skill.name === "shadcn/ui";
           return (
             <a
               key={skill.name}
@@ -29,7 +29,7 @@ export function SkillsSection({ className }: SkillsSectionProps) {
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                "group flex items-center gap-1.5 sm:gap-2 px-2 py-2 sm:px-3 sm:py-2.5 rounded-md",
+                "group flex items-center gap-1 sm:gap-1.5 px-1.5 py-2 sm:px-2 sm:py-2.5 rounded-md min-h-[36px] sm:min-h-[40px]",
                 "bg-neutral-700 dark:bg-neutral-800",
                 "border border-dotted border-neutral-500 dark:border-neutral-600",
                 "text-white dark:text-gray-100",
@@ -37,19 +37,19 @@ export function SkillsSection({ className }: SkillsSectionProps) {
                 "hover:bg-neutral-600 dark:hover:bg-neutral-700",
                 "hover:border-green-500/60 dark:hover:border-green-500/60",
                 "focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900",
-                isLinux && "hidden sm:flex"
+                isMobileOnly && "sm:hidden"
               )}
               aria-label={`${skill.name} - Opens in new tab`}
             >
               <IconComponent
                 className={cn(
-                  "w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-white dark:text-gray-100",
+                  "w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 text-white dark:text-gray-100",
                   "transition-transform duration-200",
                   "group-hover:scale-110"
                 )}
                 aria-hidden="true"
               />
-              <span className="text-[10px] sm:text-xs md:text-sm font-medium truncate">
+              <span className="text-[8px] sm:text-[9px] md:text-[10px] font-medium whitespace-normal leading-tight">
                 {skill.name}
               </span>
             </a>
