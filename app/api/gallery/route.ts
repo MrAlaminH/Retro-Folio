@@ -40,10 +40,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Return all categories if no specific category requested
+    // Return all images if no specific category requested
     const categories = getAllCategories(allImages);
     return NextResponse.json(
       {
+        images: allImages,
         categories,
         totalImages: allImages.length,
       },

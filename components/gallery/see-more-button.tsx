@@ -9,6 +9,7 @@ interface SeeMoreButtonProps {
   initialImages: GalleryImage[];
   allImages: GalleryImage[];
   imagesPerLoad?: number;
+  hideSeeMoreButton?: boolean;
 }
 
 export default function SeeMoreButton({
@@ -16,6 +17,7 @@ export default function SeeMoreButton({
   initialImages,
   allImages,
   imagesPerLoad = 6,
+  hideSeeMoreButton = false,
 }: SeeMoreButtonProps) {
   const [visibleCount, setVisibleCount] = useState(initialImages.length);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,12 +25,12 @@ export default function SeeMoreButton({
   // Use allImages prop directly (no API call needed)
   const hasMore = useMemo(
     () => visibleCount < allImages.length,
-    [visibleCount, allImages.length]
+    [visibleCount, allImages.length],
   );
 
   const visibleImages = useMemo(
     () => allImages.slice(0, visibleCount),
-    [allImages, visibleCount]
+    [allImages, visibleCount],
   );
 
   const handleLoadMore = useCallback(() => {
@@ -36,7 +38,7 @@ export default function SeeMoreButton({
     // Use requestAnimationFrame for smoother UX
     requestAnimationFrame(() => {
       setVisibleCount((prev) =>
-        Math.min(prev + imagesPerLoad, allImages.length)
+        Math.min(prev + imagesPerLoad, allImages.length),
       );
       setIsLoading(false);
     });
@@ -49,7 +51,7 @@ export default function SeeMoreButton({
   return (
     <>
       <ImageGrid images={visibleImages} />
-      {hasMore && (
+      {hasMore && !hideSeeMoreButton && (
         <div className="flex justify-center mt-6">
           <button
             onClick={handleLoadMore}

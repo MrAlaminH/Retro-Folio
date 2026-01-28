@@ -6,12 +6,16 @@ interface GalleryCategoryProps {
   category: string;
   initialImages: GalleryImage[];
   allImages: GalleryImage[];
+  showPagination?: boolean;
+  imagesPerLoad?: number;
 }
 
 export default function GalleryCategory({
   category,
   initialImages,
   allImages,
+  showPagination = false,
+  imagesPerLoad = 6,
 }: GalleryCategoryProps) {
   const displayName = getCategoryDisplayName(category);
 
@@ -20,13 +24,22 @@ export default function GalleryCategory({
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-green-600 dark:text-green-500">
         <DecodeText text={displayName} />
       </h2>
-      <SeeMoreButton
-        category={category}
-        initialImages={initialImages}
-        allImages={allImages}
-        imagesPerLoad={6}
-      />
+      {showPagination ? (
+        <SeeMoreButton
+          category={category}
+          initialImages={initialImages}
+          allImages={allImages}
+          imagesPerLoad={imagesPerLoad}
+        />
+      ) : (
+        <SeeMoreButton
+          category={category}
+          initialImages={initialImages}
+          allImages={allImages}
+          imagesPerLoad={imagesPerLoad}
+          hideSeeMoreButton
+        />
+      )}
     </section>
   );
 }
-
