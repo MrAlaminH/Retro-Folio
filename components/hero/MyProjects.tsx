@@ -17,24 +17,26 @@ interface Project {
 const projectsBase = [
   {
     name: "Machine Man",
-    description: "AI-powered Telegram Bot for text and image generation.",
+    description:
+      "AI-powered Telegram Bot that generates creative text and stunning images. Built with advanced AI models to handle diverse user requests seamlessly.",
     url: "/projects/machine-man",
   },
   {
     name: "SolidArt",
-    description: "The Next Gen AI Image Generation Platform ",
+    description:
+      "Next Generation AI Image Generation Platform with cutting-edge algorithms. Create, explore, and share AI-generated artwork with powerful customization options.",
     url: "/projects/solidart",
   },
   {
     name: "Fusion Calling App",
     description:
-      "AI Call Agent Platform that helps businesses automate outbound calls.",
+      "AI Call Agent Platform that automates outbound calls for businesses. Intelligent conversation system that engages customers and drives conversions automatically.",
     url: "/projects/AI-Phone-Call-Agent",
   },
   {
     name: "TweetScraper",
     description:
-      "TweetScraper empowers users to gather tweet data related to specific hashtags. ",
+      "Powerful tool to gather and analyze tweet data from specific hashtags. Extract valuable insights and trends from social media conversations with ease.",
     url: "/projects/TweetScraper",
   },
 ];
@@ -75,7 +77,7 @@ export default function MyProjects() {
         {projects.map((project, index) => (
           <li
             key={index}
-            className="group p-2 rounded-md ease-in-out cursor-pointer"
+            className="group p-2 rounded-md ease-in-out cursor-pointer pb-2 border-b border-neutral-200 dark:border-neutral-800 last:border-b-0"
             onMouseEnter={() => setHoveredProjectIndex(index)}
             onMouseLeave={() => setHoveredProjectIndex(null)}
           >
@@ -136,12 +138,7 @@ export default function MyProjects() {
                     {project.name}
                   </span>
                 </Link>
-                <ExternalLink
-                  className={`ml-2 text-gray-400 transition-opacity duration-300 ${
-                    hoveredProjectIndex === index ? "opacity-100" : "opacity-0"
-                  }`}
-                  size={16}
-                />
+                <ExternalLink className="ml-2 text-gray-400" size={16} />
               </div>
               <div className="flex items-start mt-1">
                 {project.date && (

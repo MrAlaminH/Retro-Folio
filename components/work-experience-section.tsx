@@ -63,7 +63,7 @@ export function WorkExperienceSection({
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4">
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm sm:text-base font-bold text-black dark:text-white mb-0.5 sm:mb-1 break-words">
+                      <h3 className="text-sm sm:text-base font-bold text-green-500 dark:text-green-500 mb-0.5 sm:mb-1 break-words">
                         {experience.company}
                       </h3>
                       <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 break-words">
@@ -77,7 +77,7 @@ export function WorkExperienceSection({
                       <ChevronDown
                         className={cn(
                           "w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500 dark:text-green-500 transition-transform duration-200 flex-shrink-0",
-                          isExpanded && "transform rotate-180"
+                          isExpanded && "transform rotate-180",
                         )}
                       />
                     </div>

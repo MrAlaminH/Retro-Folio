@@ -7,7 +7,7 @@ export const projectData = [
     altText: "Machine Man AI Bot Image",
     contentPath: "/content/machine-man.md",
     shortDescription: "AI-powered Telegram Bot for text and image generation.",
-    publicationDate: "July 03, 2024", 
+    publicationDate: "June 03, 2024", 
     readTime: "5 min", 
     githubLink: "https://github.com/MrAlaminH/Machine-Man-Bot",
     webPreviewLink: "https://t.me/Machine_ManBot",
