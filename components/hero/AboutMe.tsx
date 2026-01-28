@@ -70,6 +70,7 @@ export default function AboutMe({}: AboutMeProps) {
               className="text-green-500 dark:text-green-500 underline group relative inline hover:text-green-600 dark:hover:text-green-400 transition-colors"
             >
               nature
+              <FaExternalLinkAlt className="w-3 h-3 ml-1 inline" />
             </Link>
             <span
               dangerouslySetInnerHTML={{

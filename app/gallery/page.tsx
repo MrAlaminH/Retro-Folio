@@ -1,4 +1,5 @@
 import GalleryCategory from "@/components/gallery/gallery-category";
+import GalleryNav from "@/components/gallery/gallery-nav";
 import DecodeText from "@/components/MatrixCursor/DecodeText";
 import GalleryScrollHandler from "@/components/gallery/gallery-scroll-handler";
 import { GalleryImage } from "@/data/gallery-data";
@@ -33,6 +34,9 @@ export default async function GalleryPage({}: GalleryPageProps) {
       </Suspense>
       <main className="bg-transparent text-black dark:text-gray-100 min-h-screen p-4 flex justify-center text-sm">
         <div className="w-full max-w-3xl">
+          <Suspense fallback={null}>
+            <GalleryNav categories={categories} />
+          </Suspense>
           {categories.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600 dark:text-gray-400">
