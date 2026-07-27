@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { GitHubContributions } from "./github-contributions";
 import { SkillsSection } from "./skills-section";

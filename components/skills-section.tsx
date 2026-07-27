@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { skillsData } from "@/data/skills-data";
 import { cn } from "@/lib/utils";
