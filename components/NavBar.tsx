@@ -36,7 +36,7 @@ export default function Navbar() {
   // for the other read-only consumers. To change the effect, swap the type:
   // CIRCLE | BLUR_CIRCLE | QR_SCAN | POLYGON | POLYGON_GRADIENT | GIF.
   const { ref, toggleSwitchTheme, isDarkMode } = useModeAnimation({
-    animationType: ThemeAnimationType.POLYGON_GRADIENT,
+    animationType: ThemeAnimationType.POLYGON,
     globalClassName: "dark",
   });
 
