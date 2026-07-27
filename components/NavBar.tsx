@@ -3,8 +3,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useFont } from "@/contexts/FontContext";
+import {
+  ThemeAnimationType,
+  useModeAnimation,
+} from "react-theme-switch-animation";
 import {
   Popover,
   PopoverContent,
@@ -26,8 +29,16 @@ export default function Navbar() {
   const email = "itsalamin999@gmail.com";
   const [showCopyMessage, setShowCopyMessage] = useState(false);
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
   const { font, setFont } = useFont();
+
+  // Theme switch animation. Runs uncontrolled so the hook owns persistence
+  // (localStorage.theme) and the `.dark` class toggle; ThemeContext mirrors it
+  // for the other read-only consumers. To change the effect, swap the type:
+  // CIRCLE | BLUR_CIRCLE | QR_SCAN | POLYGON | POLYGON_GRADIENT | GIF.
+  const { ref, toggleSwitchTheme, isDarkMode } = useModeAnimation({
+    animationType: ThemeAnimationType.POLYGON_GRADIENT,
+    globalClassName: "dark",
+  });
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(email).then(() => {
@@ -83,15 +94,14 @@ export default function Navbar() {
                     <span className="ml-1">Copy Email</span>
                   </button>
                   <button
-                    onClick={toggleTheme}
+                    ref={ref}
+                    onClick={toggleSwitchTheme}
                     className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center"
                     aria-label={
-                      theme === "dark"
-                        ? "Switch to light mode"
-                        : "Switch to dark mode"
+                      isDarkMode ? "Switch to light mode" : "Switch to dark mode"
                     }
                   >
-                    {theme === "dark" ? "☀️" : "🌗"}
+                    {isDarkMode ? "☀️" : "🌗"}
                   </button>
                   <Popover>
                     <PopoverTrigger asChild>

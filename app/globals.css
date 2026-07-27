@@ -19,7 +19,14 @@
 }
 
 /* ═══════════════════════════════════════════
-   THEME TRANSITIONS — GPU Diagonal Wipe + CSS Fallback
+   THEME TRANSITIONS
+   The animated theme switch (circle / polygon /
+   blur / qr-scan / gif reveal) is provided by the
+   `react-theme-switch-animation` hook, which injects
+   its own ::view-transition-* rules + keyframes at
+   runtime. Only the FOUC guard and a CSS-property
+   fallback for browsers without the View Transition
+   API live here.
    ═══════════════════════════════════════════ */
 
 /* Disable transitions during page load (toggled by inline script) */
@@ -28,32 +35,6 @@ html.disable-transitions *,
 html.disable-transitions *::before,
 html.disable-transitions *::after {
   transition: none !important;
-}
-
-/* ─── Primary: View Transition API (GPU-composited) ─── */
-/* Diagonal gradient wipe with a soft feathered edge */
-
-/* Keep the old (pre-toggle) snapshot fully visible underneath */
-::view-transition-old(root) {
-  animation: none;
-  z-index: 1;
-}
-
-/* Reveal the new (post-toggle) snapshot with a diagonal gradient mask */
-::view-transition-new(root) {
-  z-index: 2;
-  animation: 500ms cubic-bezier(0.22, 1, 0.36, 1) both diagonal-wipe;
-}
-
-@keyframes diagonal-wipe {
-  from {
-    /* Start: a thin diagonal band at the bottom-right corner */
-    clip-path: polygon(100% 100%, 100% 100%, 100% 100%, 100% 100%);
-  }
-  to {
-    /* End: entire viewport visible */
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  }
 }
 
 /* ─── Fallback: CSS property transitions (non-VT browsers) ─── */
@@ -75,11 +56,6 @@ select {
 
 /* ─── Respect reduced motion preferences ─── */
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-  }
-
   html,
   body,
   a,
