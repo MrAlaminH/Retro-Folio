@@ -16,7 +16,7 @@ export const workExperienceData: WorkExperience[] = [
     role: "Founder and Marketer",
     startDate: "Jan 2025",
     endDate: "Present",
-    logo: "/fusion-calling-lab.png",
+    logo: "/fusion-calling-lab.webp",
     description:
       "We help businesses automate their phone calls with AI voice assistants. Scale support, sales, and follow-ups without hiring more people.",
     achievements: [
@@ -33,7 +33,7 @@ export const workExperienceData: WorkExperience[] = [
     role: "Web & Automation Engineer",
     startDate: "Jan 2024",
     endDate: "Present",
-    logo: "/fiverr.png",
+    logo: "/fiverr.webp",
     description:
       "As a freelance AI automation & SaaS developer, I partner with founders, startups, and businesses to design and build modern web applications, automation systems, and custom AI solutions. My work focuses on delivering clean, scalable, and production-ready products — fast. From concept to deployment, I handle the full stack and integrate AI wherever it adds real value.",
     achievements: [
@@ -50,7 +50,7 @@ export const workExperienceData: WorkExperience[] = [
     role: "Software Engineering Intern",
     startDate: "Aug 2023",
     endDate: "Oct 2023",
-    logo: "/jan-ai.png",
+    logo: "/jan-ai.webp",
     description:
       "Worked as a software engineering intern, contributing to web platform development, analytics integration, and community management initiatives.",
     achievements: [

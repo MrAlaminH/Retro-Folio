@@ -43,7 +43,7 @@ export default function Navbar() {
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
             <div className="relative w-24 h-24 sm:w-32 sm:h-32">
               <Image
-                src="/my-image.jpg"
+                src="/my-image.webp"
                 alt="Profile"
                 fill
                 className="rounded-full object-cover"

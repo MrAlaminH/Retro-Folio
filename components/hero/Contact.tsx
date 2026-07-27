@@ -88,7 +88,7 @@ export default function Contact() {
       <div className="mt-8 flex justify-center">
         <div className="relative w-full max-w-2xl">
           <Image
-            src="/footer.png"
+            src="/footer.webp"
             alt="Human evolution pixel art"
             width={800}
             height={200}
