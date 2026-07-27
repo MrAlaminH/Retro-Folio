@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
-import { PHProvider } from "./providers";
+
 import dynamic from "next/dynamic";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -20,6 +20,10 @@ const MatrixCursor = dynamic(
 );
 
 const ChatWidget = dynamic(() => import("@/components/ChatWidget"), {
+  ssr: false,
+});
+
+const PHProvider = dynamic(() => import("./providers").then((mod) => mod.PHProvider), {
   ssr: false,
 });
 
@@ -46,13 +50,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem("theme");
+                  if (theme === "light") {
+                    document.documentElement.classList.remove("dark");
+                  } else {
+                    document.documentElement.classList.add("dark");
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
         />
       </head>
       <PHProvider>
