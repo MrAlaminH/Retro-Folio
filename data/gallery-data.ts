@@ -3,6 +3,9 @@ export interface GalleryImage {
   src: string;
   alt: string;
   category: string;
+  width: number;
+  height: number;
+  blurDataURL?: string;
 }
 
 /**

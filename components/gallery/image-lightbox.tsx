@@ -3,10 +3,16 @@
 /**
  * ImageLightbox Component
  *
- * Note: We use native <img> tags instead of Next.js <Image> component here
- * for optimal lightbox performance. Images are already optimized by Next.js
- * Image component in the grid view, and native img tags provide instant
- * navigation in the lightbox since images are preloaded and cached.
+ * Uses native <img> tags (not Next.js <Image>) for lightbox display since
+ * images are already optimized by the grid view and cached by the browser.
+ * Native <img> provides instant navigation without re-optimization overhead.
+ *
+ * Preloading strategy:
+ *   - Only the current image loads immediately (loading="eager")
+ *   - Adjacent images (prev/next) are preloaded via hidden <img> elements
+ *   - On navigation, updates the hidden preload targets to stay one ahead
+ *   - No bulk preloading of the entire category — avoids burst network traffic
+ *     for large categories (e.g. 12 nature images up to 5.7MB each)
  */
 
 import { useEffect, useState, useCallback } from "react";
@@ -34,17 +40,7 @@ export default function ImageLightbox({
     setImageLoaded(false);
   }, [currentIndex]);
 
-  // Preload all images in category when lightbox opens for instant navigation
-  useEffect(() => {
-    if (!isOpen) return;
-
-    // Preload all images in the category for instant navigation
-    images.forEach((image) => {
-      const img = new window.Image();
-      img.src = image.src;
-    });
-  }, [isOpen, images]);
-
+  // Keyboard and body scroll lock
   useEffect(() => {
     if (!isOpen) return;
 
@@ -84,6 +80,10 @@ export default function ImageLightbox({
   const currentImage = images[activeIndex];
   const prevIndex = activeIndex > 0 ? activeIndex - 1 : images.length - 1;
   const nextIndex = activeIndex < images.length - 1 ? activeIndex + 1 : 0;
+
+  // Target the image two steps ahead for preloading (covers rapid clicking)
+  const nextNextIndex =
+    nextIndex < images.length - 1 ? nextIndex + 1 : 0;
 
   return (
     <div
@@ -156,15 +156,20 @@ export default function ImageLightbox({
             onError={() => setImageLoaded(true)}
             loading="eager"
             decoding="async"
+            fetchPriority="high"
           />
 
-          {/* Hidden preload images for instant navigation */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <div className="hidden">
+          {/* Hidden preload: adjacent images for instant navigation */}
+          <div className="hidden" aria-hidden="true">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={images[prevIndex].src} alt="" loading="eager" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={images[nextIndex].src} alt="" loading="eager" />
+            {/* Preload one more ahead for rapid clicking */}
+            {nextNextIndex !== nextIndex && (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={images[nextNextIndex].src} alt="" loading="lazy" />
+            )}
           </div>
         </div>
       </div>

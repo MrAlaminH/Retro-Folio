@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Image from "next/image";
 import { GalleryImage } from "@/data/gallery-data";
 import ImageLightbox from "./image-lightbox";
@@ -17,10 +17,10 @@ export default function ImageGrid({
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  const handleImageClick = (index: number) => {
+  const handleImageClick = useCallback((index: number) => {
     setLightboxIndex(index);
     setLightboxOpen(true);
-  };
+  }, []);
 
   return (
     <>
@@ -42,29 +42,18 @@ export default function ImageGrid({
               }}
               aria-label={`View ${image.alt} in full size`}
             >
-              {/* Blurred background image - optimized with will-change */}
-              <div
-                className="absolute inset-0 -z-10 will-change-transform"
-                style={{
-                  backgroundImage: `url(${image.src})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  filter: "blur(20px)",
-                  transform: "scale(1.1)",
-                }}
-                aria-hidden="true"
-              />
-              {/* Main image */}
               <Image
                 src={image.src}
                 alt={image.alt}
-                width={1200}
-                height={1200}
-                sizes="(max-width: 640px) 100vw, 50vw"
+                width={image.width}
+                height={image.height}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="relative w-full h-auto max-h-[400px] max-w-full object-contain transition-transform duration-300 ease-in-out group-hover:scale-105"
                 priority={isPriority}
                 quality={85}
-                {...(isPriority ? {} : { loading: "lazy" })}
+                placeholder={image.blurDataURL ? "blur" : "empty"}
+                blurDataURL={image.blurDataURL}
+                loading={isPriority ? "eager" : "lazy"}
               />
             </div>
           );

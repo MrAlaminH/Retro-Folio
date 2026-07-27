@@ -1,0 +1,164 @@
+{
+  "images": [
+    {
+      "id": "my-setup-setup-1",
+      "src": "/gallery/my-setup/setup-1.webp",
+      "alt": "my-setup image 1",
+      "category": "my-setup",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAQCBv/EACEQAAIBAgYDAAAAAAAAAAAAAAABAhESAwQTISJRUpHh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAWEQEBAQAAAAAAAAAAAAAAAAABABH/2gAMAwEAAhEDEQA/AOdewK9dRy9jWHGvUayJ+HhL38LSNLDFz7YAEN//2Q==",
+      "sizeBytes": 1374412
+    },
+    {
+      "id": "nature-nature-1",
+      "src": "/gallery/nature/nature-1.webp",
+      "alt": "nature image 1",
+      "category": "nature",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAQBAgb/xAAgEAABAwQCAwAAAAAAAAAAAAABAAIDEhQhUhGRU3HS/8QAFQEBAQAAAAAAAAAAAAAAAAAAAgP/xAAVEQEBAAAAAAAAAAAAAAAAAAAAIf/aAAwDAQACEQMRAD8Afa9tHElJOwblRUzzSdD5Wdu5SMyOPsqtxJue04jS4QhCBv/Z",
+      "sizeBytes": 896940
+    },
+    {
+      "id": "my-setup-setup-2",
+      "src": "/gallery/my-setup/setup-2.webp",
+      "alt": "my-setup image 2",
+      "category": "my-setup",
+      "width": 9248,
+      "height": 6936,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAQF/8QAHxAAAQQABwAAAAAAAAAAAAAAAAECAxEEEhMiMlLR/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAL/xAAXEQEAAwAAAAAAAAAAAAAAAAAAAREx/9oADAMBAAIRAxEAPwDFdJhtDI2FivrnuvwltOqAFTlj/9k=",
+      "sizeBytes": 1392744
+    },
+    {
+      "id": "nature-nature-2",
+      "src": "/gallery/nature/nature-2.webp",
+      "alt": "nature image 2",
+      "category": "nature",
+      "width": 6000,
+      "height": 3376,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAGAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAT/xAAfEAABBAAHAAAAAAAAAAAAAAABAAIDBAUVISJCU5H/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAv/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJIcYmiqOiYNx5u1IUeZXO4+BERL/9k=",
+      "sizeBytes": 1032642
+    },
+    {
+      "id": "my-setup-setup-3",
+      "src": "/gallery/my-setup/setup-3.webp",
+      "alt": "my-setup image 3",
+      "category": "my-setup",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAMFAQL/xAAgEAEAAgICAQUAAAAAAAAAAAABAAIRMQMEBRITFJGS/8QAFgEBAQEAAAAAAAAAAAAAAAAAAwAC/8QAGBEBAAMBAAAAAAAAAAAAAAAAAAESIWH/2gAMAwEAAhEDEQA/AJ/b7VeTyFDjMcTgxgd7j/b6rutvsk/kL/IrYV0rOksq5P1EjrV91mX07ilc7hCQpf/Z",
+      "sizeBytes": 1690326
+    },
+    {
+      "id": "nature-nature-3",
+      "src": "/gallery/nature/nature-3.webp",
+      "alt": "nature image 3",
+      "category": "nature",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAMCBAX/xAAgEAABBAICAwEAAAAAAAAAAAABAAIDBBESBTEiMkGh/8QAFgEBAQEAAAAAAAAAAAAAAAAAAQAC/8QAFxEBAQEBAAAAAAAAAAAAAAAAAAEREv/aAAwDAQACEQMRAD8AbHXhsBwgcH6jOR0Uk0Tk+H4qFXknVmlsZ127CmeYmz7o6rORkj4jKEKL/9k=",
+      "sizeBytes": 1388322
+    },
+    {
+      "id": "my-setup-setup-4",
+      "src": "/gallery/my-setup/setup-4.webp",
+      "alt": "my-setup image 4",
+      "category": "my-setup",
+      "width": 2305,
+      "height": 4096,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAMEAQL/xAAcEAACAwEAAwAAAAAAAAAAAAABAgADESEFEzH/xAAUAQEAAAAAAAAAAAAAAAAAAAAC/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQACIf/aAAwDAQACEQMRAD8AgbxJGg2YQSDzkhekq5XQcObGe9XJa0u7E795ODZXpxY1ykA0PWVMhCCd/9k=",
+      "sizeBytes": 215592
+    },
+    {
+      "id": "nature-nature-4",
+      "src": "/gallery/nature/nature-4.webp",
+      "alt": "nature image 4",
+      "category": "nature",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAQFAgP/xAAjEAACAgAFBAMAAAAAAAAAAAABAgADERIhMVEEBRMiQXGS/8QAFwEAAwEAAAAAAAAAAAAAAAAAAAECA//EABgRAQADAQAAAAAAAAAAAAAAAAABERJB/9oADAMBAAIRAxEAPwCZf0VtduSwEtuQNZwyDlf1Ki9wa0CxlDEb/GP3FHat3ZstfsSdFmexReknwNrMYnmEJPZN/9k=",
+      "sizeBytes": 3466294
+    },
+    {
+      "id": "nature-nature-5",
+      "src": "/gallery/nature/nature-5.webp",
+      "alt": "nature image 5",
+      "category": "nature",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAAAAIBAwUG/8QAIRAAAQMDBAMAAAAAAAAAAAAAAQACAwQFMRESE5EjQVH/xAAVAQEBAAAAAAAAAAAAAAAAAAACA//EABkRAAIDAQAAAAAAAAAAAAAAAAABAhExUf/aAAwDAQACEQMRAD8Am1W2ogIdLsAOR7C1+Bv0LkxWzYdK7tIamTU+d/aTlWE0uorKVCFMZ//Z",
+      "sizeBytes": 1714298
+    },
+    {
+      "id": "nature-nature-6",
+      "src": "/gallery/nature/nature-6.webp",
+      "alt": "nature image 6",
+      "category": "nature",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAMBBf/EAB8QAAEEAQUBAAAAAAAAAAAAAAABAgMRIQQFEhNBUf/EABUBAQEAAAAAAAAAAAAAAAAAAAIB/8QAFxEBAAMAAAAAAAAAAAAAAAAAAAERIf/aAAwDAQACEQMRAD8AtG/TRx8nLdeImVILuDLxGyvLU4Pe92HKZ2O+huTxMAFF/9k=",
+      "sizeBytes": 1256652
+    },
+    {
+      "id": "nature-nature-7",
+      "src": "/gallery/nature/nature-7.webp",
+      "alt": "nature image 7",
+      "category": "nature",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAQCBv/EAB8QAAIBAgcAAAAAAAAAAAAAAAABAgMRBBMxMlKBkf/EABUBAQEAAAAAAAAAAAAAAAAAAAMC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAQAD/9oADAMBAAIRAxEAPwCahCg5JSqLotUcFbc/DnIzad7jMfIt0WMzCw9QAHJf/9k=",
+      "sizeBytes": 1077280
+    },
+    {
+      "id": "nature-nature-8",
+      "src": "/gallery/nature/nature-8.webp",
+      "alt": "nature image 8",
+      "category": "nature",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAQBAwb/xAAfEAACAgEEAwAAAAAAAAAAAAAAAQIDBQQREhQiM7H/xAAVAQEBAAAAAAAAAAAAAAAAAAADAv/EABcRAQEBAQAAAAAAAAAAAAAAAAACERL/2gAMAwEAAhEDEQA/AHaKoWS4pNP6XdUzMcldBeNjIeT1e/vkHlK6kiAAIN//2Q==",
+      "sizeBytes": 993210
+    },
+    {
+      "id": "nature-nature-9",
+      "src": "/gallery/nature/nature-9.webp",
+      "alt": "nature image 9",
+      "category": "nature",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwQA/8QAHxAAAQMEAwEAAAAAAAAAAAAAAQACAxESITEEMnFR/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAID/8QAFREBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhEDEQA/AIONK0Rx7qHVKkko6Rx+klO1jLwBcQcZKQgNNLNY2jMMXceqx3Y+rLIqP//Z",
+      "sizeBytes": 3424002
+    },
+    {
+      "id": "nature-nature-10",
+      "src": "/gallery/nature/nature-10.webp",
+      "alt": "nature image 10",
+      "category": "nature",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAMEAQX/xAAhEAEAAQMCBwAAAAAAAAAAAAABAAIREgMhBCIxQVGRwf/EABYBAQEBAAAAAAAAAAAAAAAAAAIAA//EABgRAQADAQAAAAAAAAAAAAAAAAABEjFB/9oADAMBAAIRAxEAPwDmtjJxtfcIvk8HplOhjrlqtgb5fJrqUDYopQ73hrI4k4ZcHeLerCE04n//2Q==",
+      "sizeBytes": 5885960
+    },
+    {
+      "id": "nature-nature-11",
+      "src": "/gallery/nature/nature-11.webp",
+      "alt": "nature image 11",
+      "category": "nature",
+      "width": 3376,
+      "height": 6000,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAASAAoDASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAAAAQBAgMF/8QAIBABAAIABQUAAAAAAAAAAAAAAQARAwUSIUEiMTJRgf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFhEBAQEAAAAAAAAAAAAAAAAAAQAR/9oADAMBAAIRAxEAPwB3FAaeZTREnMHW9JtsF9pJmNnjX2BaOXGFdVvMxt9whDQv/9k=",
+      "sizeBytes": 625842
+    },
+    {
+      "id": "nature-nature-12",
+      "src": "/gallery/nature/nature-12.webp",
+      "alt": "nature image 12",
+      "category": "nature",
+      "width": 3468,
+      "height": 4624,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAANAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAgEE/8QAHhAAAQMEAwAAAAAAAAAAAAAAAQACAwQRIVEUgaH/xAAVAQEBAAAAAAAAAAAAAAAAAAACA//EABYRAAMAAAAAAAAAAAAAAAAAAAACEf/aAAwDAQACEQMRAD8ATJ6RzbtkB6Kdod+FYDUuxgYU5cm0axeqf//Z",
+      "sizeBytes": 1676074
+    }
+  ]
+}

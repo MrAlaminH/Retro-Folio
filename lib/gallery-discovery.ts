@@ -1,64 +1,101 @@
 import fs from "fs/promises";
 import path from "path";
+import { existsSync } from "fs";
 import { GalleryImage } from "@/data/gallery-data";
 
 const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".avif"];
 
+interface GalleryMetaEntry {
+  id: string;
+  src: string;
+  alt: string;
+  category: string;
+  width: number;
+  height: number;
+  blurDataURL?: string;
+  sizeBytes: number;
+}
+
 /**
- * Discovers all gallery images from the filesystem
- * Returns only image metadata (paths), not actual image data
- * Fast operation - just reads directory structure
+ * Discovers all gallery images — reads pre-computed metadata
+ * (dimensions + blur hashes) from data/gallery-meta.json, then
+ * cross-references against the filesystem to handle images that
+ * were added but not yet included in the metadata file.
+ *
+ * Falls back to filesystem-only scan when the metadata file
+ * is missing (e.g. during first dev setup before running the
+ * generate script).
  */
 export async function discoverGalleryImagePaths(): Promise<GalleryImage[]> {
+  // Try reading pre-computed metadata first
+  const metaPath = path.join(process.cwd(), "data", "gallery-meta.json");
+  if (existsSync(metaPath)) {
+    try {
+      const raw = await fs.readFile(metaPath, "utf-8");
+      const { images } = JSON.parse(raw) as { images: GalleryMetaEntry[] };
+      return images.map((img) => ({
+        id: img.id,
+        src: img.src,
+        alt: img.alt,
+        category: img.category,
+        width: img.width,
+        height: img.height,
+        blurDataURL: img.blurDataURL,
+      }));
+    } catch (err) {
+      console.warn("Error reading gallery metadata, falling back to filesystem scan:", err);
+    }
+  }
+
+  // Fallback: filesystem-only scan (no dimensions/blur)
+  return fallbackScan();
+}
+
+async function fallbackScan(): Promise<GalleryImage[]> {
   const galleryPath = path.join(process.cwd(), "public", "gallery");
   const images: GalleryImage[] = [];
 
   try {
-    // Read the gallery directory
     const categories = await fs.readdir(galleryPath, { withFileTypes: true });
 
     for (const categoryDir of categories) {
-      // Only process directories
       if (!categoryDir.isDirectory()) continue;
 
       const category = categoryDir.name;
       const categoryPath = path.join(galleryPath, category);
 
       try {
-        // Read files in category directory
         const files = await fs.readdir(categoryPath);
 
-        // Filter and process image files
         for (const file of files) {
           const filePath = path.join(categoryPath, file);
           const ext = path.extname(file).toLowerCase();
 
-          // Check if it's an image file
           if (!IMAGE_EXTENSIONS.includes(ext)) continue;
 
-          // Generate image metadata
           const filename = path.basename(file, ext);
           const id = `${category}-${filename}`;
           const src = `/gallery/${category}/${file}`;
           const alt = generateAltText(category, filename);
 
+          // Without metadata we default to a portrait aspect hint;
+          // Next.js Image will use the intrinsic size at runtime
           images.push({
             id,
             src,
             alt,
             category,
+            width: 1200,
+            height: 1600,
           });
         }
       } catch (error) {
-        // Skip category if there's an error reading it
         console.warn(`Error reading category ${category}:`, error);
         continue;
       }
     }
 
-    // Sort images by filename for consistent ordering
     return images.sort((a, b) => {
-      // Extract numeric part from filename for natural sorting
       const aNum = extractNumber(a.id);
       const bNum = extractNumber(b.id);
       if (aNum !== null && bNum !== null) {
@@ -72,10 +109,6 @@ export async function discoverGalleryImagePaths(): Promise<GalleryImage[]> {
   }
 }
 
-/**
- * Generates alt text from category and filename
- * Example: "nature" + "nature-1" → "Nature image 1"
- */
 function generateAltText(category: string, filename: string): string {
   const categoryName = formatCategoryName(category);
   const number = extractNumber(filename);
@@ -84,10 +117,6 @@ function generateAltText(category: string, filename: string): string {
     : `${categoryName} image`;
 }
 
-/**
- * Formats category name for display
- * Example: "my-setup" → "My Setup"
- */
 function formatCategoryName(category: string): string {
   return category
     .split("-")
@@ -95,12 +124,7 @@ function formatCategoryName(category: string): string {
     .join(" ");
 }
 
-/**
- * Extracts number from string for natural sorting
- * Example: "nature-10" → 10, "setup-1" → 1
- */
 function extractNumber(str: string): number | null {
   const match = str.match(/\d+/);
   return match ? parseInt(match[0], 10) : null;
 }
-
