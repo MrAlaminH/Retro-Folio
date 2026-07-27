@@ -24,14 +24,33 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     localStorage.setItem("font", font);
-    document.documentElement.style.setProperty(
-      "font-family",
-      font === "Kalam"
-        ? "'Kalam', cursive"
-        : font === "inter"
-        ? "'Inter', sans-serif"
-        : "'Departure Mono', monospace"
-    );
+
+    // Build font-family value
+    let fontFamily: string;
+    if (font === "Kalam") {
+      fontFamily = "'Kalam', cursive";
+    } else if (font === "inter") {
+      fontFamily = "'Inter', sans-serif";
+    } else {
+      fontFamily = "'Departure Mono', monospace";
+    }
+
+    document.documentElement.style.setProperty("font-family", fontFamily);
+
+    // Dynamically load Inter font only when selected
+    const linkId = "inter-font-preload";
+    const existingLink = document.getElementById(linkId);
+
+    if (font === "inter" && !existingLink) {
+      const link = document.createElement("link");
+      link.id = linkId;
+      link.rel = "stylesheet";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap";
+      document.head.appendChild(link);
+    } else if (font !== "inter" && existingLink) {
+      existingLink.remove();
+    }
   }, [font]);
 
   return (
