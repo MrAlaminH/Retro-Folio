@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import DecodeText from "../MatrixCursor/DecodeText";
 import {

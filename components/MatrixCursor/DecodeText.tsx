@@ -1,48 +1,78 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useRef, useCallback } from "react";
+
+const CHARS =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
 
 const DecodeText: React.FC<{ text: string }> = ({ text }) => {
-  const [decodedText, setDecodedText] = useState(text);
-  const [isDecoding, setIsDecoding] = useState(false);
+  const spanRef = useRef<HTMLSpanElement>(null);
+  const animationRef = useRef<number | null>(null);
+  const iterationRef = useRef(0);
 
-  const decodeEffect = useCallback(() => {
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-    let iteration = 0;
+  const animateDecode = useCallback(() => {
+    // Cancel any running animation
+    if (animationRef.current !== null) {
+      cancelAnimationFrame(animationRef.current);
+    }
 
-    const interval = setInterval(() => {
-      setDecodedText((prevText) =>
-        prevText
-          .split("")
-          .map((char, index) => {
-            if (index < iteration) {
-              return text[index];
-            }
-            return chars[Math.floor(Math.random() * chars.length)];
-          })
-          .join("")
-      );
+    iterationRef.current = 0;
+    const textLen = text.length;
 
-      if (iteration >= text.length) {
-        clearInterval(interval);
-        setIsDecoding(false);
+    const step = () => {
+      const iteration = iterationRef.current;
+      const span = spanRef.current;
+      if (!span) return;
+
+      // Build the decoded string directly
+      let result = "";
+      for (let i = 0; i < textLen; i++) {
+        if (i < iteration) {
+          result += text[i];
+        } else {
+          result += CHARS[Math.floor(Math.random() * CHARS.length)];
+        }
       }
-      iteration += 1 / 3;
-    }, 30);
+      // Update DOM directly — no React state involved
+      span.textContent = result;
+
+      if (iteration >= textLen) {
+        // Animation complete — ensure final text is correct
+        span.textContent = text;
+        animationRef.current = null;
+        return;
+      }
+
+      // Advance 1 character every ~5 frames (~83ms at 60fps) to match
+      // original ~90ms/character pace from the 30ms-interval implementation
+      iterationRef.current = iteration + 0.2;
+      animationRef.current = requestAnimationFrame(step);
+    };
+
+    animationRef.current = requestAnimationFrame(step);
   }, [text]);
 
-  useEffect(() => {
-    if (isDecoding) {
-      decodeEffect();
+  const handleMouseEnter = useCallback(() => {
+    animateDecode();
+  }, [animateDecode]);
+
+  const handleMouseLeave = useCallback(() => {
+    // Cancel animation and reset to original text
+    if (animationRef.current !== null) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
     }
-  }, [isDecoding, decodeEffect]);
+    if (spanRef.current) {
+      spanRef.current.textContent = text;
+    }
+  }, [text]);
 
   return (
     <span
-      onMouseEnter={() => setIsDecoding(true)}
-      onMouseLeave={() => setDecodedText(text)}
+      ref={spanRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      {decodedText}
+      {text}
     </span>
   );
 };

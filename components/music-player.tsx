@@ -11,6 +11,7 @@ export default function MusicPlayer() {
   const [autoplayBlocked, setAutoplayBlocked] = useState(false); // Track if autoplay was blocked by browser
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [hasError, setHasError] = useState(false);
+  const [audioSrc, setAudioSrc] = useState<string | undefined>(undefined);
 
   // All hooks must be called before any conditional returns
   const currentTrack =
@@ -21,6 +22,11 @@ export default function MusicPlayer() {
 
     // Mark that user has interacted
     userHasInteractedRef.current = true;
+
+    // Lazy-load audio source on first play attempt
+    if (!audioSrc && currentTrack) {
+      setAudioSrc(currentTrack.src);
+    }
 
     // Set volume to 30% (70% reduction from original)
     audioRef.current.volume = 0.3;
@@ -166,6 +172,10 @@ export default function MusicPlayer() {
   // Update audio source when track changes (playlist progression)
   useEffect(() => {
     if (audioRef.current && currentTrack) {
+      if (!audioSrc) {
+        setAudioSrc(currentTrack.src);
+        return;
+      }
       audioRef.current.load();
       // Set volume to 30% (70% reduction from original) - after load()
       audioRef.current.volume = 0.3;
@@ -180,7 +190,7 @@ export default function MusicPlayer() {
         });
       }
     }
-  }, [currentTrackIndex, currentTrack, isPlaying]);
+  }, [currentTrackIndex, currentTrack, isPlaying, audioSrc]);
 
   // Global interaction listener - retry autoplay after first user interaction
   useEffect(() => {
@@ -306,7 +316,7 @@ export default function MusicPlayer() {
     <>
       <audio
         ref={audioRef}
-        src={currentTrack.src}
+        src={audioSrc}
         onEnded={handleTrackEnd}
         onError={handleError}
         onLoadedData={handleLoadedData}

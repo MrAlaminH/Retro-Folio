@@ -1,8 +1,6 @@
-"use client";
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
-import { useRouter } from "next/navigation";
 import DecodeText from "../MatrixCursor/DecodeText";
 import { getProjectDate, getProjectRawDate } from "./hero-utils";
 
@@ -58,15 +56,6 @@ const projects: Project[] = projectsBase
   });
 
 export default function MyProjects() {
-  const [hoveredProjectIndex, setHoveredProjectIndex] = useState<number | null>(
-    null,
-  );
-  const router = useRouter();
-
-  const handleMoreProjects = () => {
-    router.push("/projects");
-  };
-
   return (
     <section className="mb-8">
       <h2 className="text-lg md:text-xl font-bold mb-4 text-green-500 dark:text-green-500">
@@ -78,8 +67,6 @@ export default function MyProjects() {
           <li
             key={index}
             className="group p-2 rounded-md ease-in-out cursor-pointer pb-2 border-b border-neutral-200 dark:border-neutral-800 last:border-b-0"
-            onMouseEnter={() => setHoveredProjectIndex(index)}
-            onMouseLeave={() => setHoveredProjectIndex(null)}
           >
             {/* Mobile: Stacked Layout */}
             <div className="flex flex-col md:hidden">
@@ -89,11 +76,7 @@ export default function MyProjects() {
                 </span>
               )}
               <div className="flex items-center">
-                <span
-                  className={`mr-2 text-green-500 dark:text-green-500 transition-transform duration-300 ${
-                    hoveredProjectIndex === index ? "transform rotate-90" : ""
-                  }`}
-                >
+                <span className="mr-2 text-green-500 dark:text-green-500 transition-transform duration-300 group-hover:rotate-90">
                   {">"}
                 </span>
                 <Link
@@ -123,11 +106,7 @@ export default function MyProjects() {
                     {project.date}
                   </span>
                 )}
-                <span
-                  className={`mr-2 text-green-500 dark:text-green-500 transition-transform duration-300 ${
-                    hoveredProjectIndex === index ? "transform rotate-90" : ""
-                  }`}
-                >
+                <span className="mr-2 text-green-500 dark:text-green-500 transition-transform duration-300 group-hover:rotate-90">
                   {">"}
                 </span>
                 <Link
@@ -160,12 +139,12 @@ export default function MyProjects() {
 
       {/* Check More Projects Button */}
       <div className="mt-4">
-        <button
-          className="text-green-500 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline"
-          onClick={handleMoreProjects}
+        <Link
+          href="/projects"
+          className="text-green-500 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline inline-block"
         >
           Check More Projects &gt;
-        </button>
+        </Link>
       </div>
     </section>
   );
