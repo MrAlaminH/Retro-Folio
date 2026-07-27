@@ -41,3 +41,6 @@ next-env.d.ts
 
 # skills
 skills-lock.json
+
+# planning docs (internal, not for production)
+plans/
