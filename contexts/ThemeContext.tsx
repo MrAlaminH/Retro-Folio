@@ -1,5 +1,6 @@
 "use client";
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect, useCallback } from "react";
+import { flushSync } from "react-dom";
 
 type Theme = "light" | "dark";
 
@@ -31,9 +32,20 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme, mounted]);
 
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
-  };
+  const toggleTheme = useCallback(() => {
+    const newTheme = theme === "light" ? "dark" : "light";
+
+    // Use View Transition API for a smooth diagonal wipe effect
+    if (typeof document !== "undefined" && document.startViewTransition) {
+      document.startViewTransition(() => {
+        flushSync(() => {
+          setTheme(newTheme);
+        });
+      });
+    } else {
+      setTheme(newTheme);
+    }
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
