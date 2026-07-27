@@ -3,19 +3,19 @@
 /**
  * ImageLightbox Component
  *
- * Uses native <img> tags (not Next.js <Image>) for lightbox display since
- * images are already optimized by the grid view and cached by the browser.
- * Native <img> provides instant navigation without re-optimization overhead.
+ * Uses Next.js <Image> with fill + sizes so fullscreen images get
+ * optimized WebP/AVIF variants with proper compression — same as the
+ * grid thumbnails. Adjacent images are preloaded via JS (new Image())
+ * for instant navigation without rendering hidden DOM elements.
  *
  * Preloading strategy:
- *   - Only the current image loads immediately (loading="eager")
- *   - Adjacent images (prev/next) are preloaded via hidden <img> elements
- *   - On navigation, updates the hidden preload targets to stay one ahead
- *   - No bulk preloading of the entire category — avoids burst network traffic
- *     for large categories (e.g. 12 nature images up to 5.7MB each)
+ *   - Current image: <Image> with priority, loads immediately
+ *   - Adjacent images (prev/next/next-next): JS preload via useEffect
+ *   - No bulk preloading of the entire category
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { GalleryImage } from "@/data/gallery-data";
 
@@ -34,6 +34,7 @@ export default function ImageLightbox({
 }: ImageLightboxProps) {
   const [activeIndex, setActiveIndex] = useState(currentIndex);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const preloadedRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     setActiveIndex(currentIndex);
@@ -65,6 +66,28 @@ export default function ImageLightbox({
     };
   }, [isOpen, images.length, onClose]);
 
+  // Preload adjacent images for instant navigation
+  useEffect(() => {
+    if (!isOpen || images.length <= 1) return;
+
+    const prevIndex = activeIndex > 0 ? activeIndex - 1 : images.length - 1;
+    const nextIndex = activeIndex < images.length - 1 ? activeIndex + 1 : 0;
+    const nextNextIndex = nextIndex < images.length - 1 ? nextIndex + 1 : 0;
+
+    const preload = (src: string) => {
+      if (preloadedRef.current.has(src)) return;
+      preloadedRef.current.add(src);
+      const img = new window.Image();
+      img.src = src;
+    };
+
+    preload(images[prevIndex].src);
+    preload(images[nextIndex].src);
+    if (nextNextIndex !== nextIndex) {
+      preload(images[nextNextIndex].src);
+    }
+  }, [isOpen, activeIndex, images]);
+
   const handlePrevious = useCallback(() => {
     setImageLoaded(false);
     setActiveIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
@@ -78,12 +101,6 @@ export default function ImageLightbox({
   if (!isOpen || images.length === 0) return null;
 
   const currentImage = images[activeIndex];
-  const prevIndex = activeIndex > 0 ? activeIndex - 1 : images.length - 1;
-  const nextIndex = activeIndex < images.length - 1 ? activeIndex + 1 : 0;
-
-  // Target the image two steps ahead for preloading (covers rapid clicking)
-  const nextNextIndex =
-    nextIndex < images.length - 1 ? nextIndex + 1 : 0;
 
   return (
     <div
@@ -143,33 +160,24 @@ export default function ImageLightbox({
             </div>
           )}
 
-          {/* Current image - using native img for faster loading */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            key={activeIndex}
-            src={currentImage.src}
-            alt={currentImage.alt}
-            className={`max-w-full max-h-[90vh] w-auto h-auto object-contain rounded-lg transition-opacity duration-200 ${
-              imageLoaded ? "opacity-100" : "opacity-0"
-            }`}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageLoaded(true)}
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
-          />
-
-          {/* Hidden preload: adjacent images for instant navigation */}
-          <div className="hidden" aria-hidden="true">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={images[prevIndex].src} alt="" loading="eager" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={images[nextIndex].src} alt="" loading="eager" />
-            {/* Preload one more ahead for rapid clicking */}
-            {nextNextIndex !== nextIndex && (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={images[nextNextIndex].src} alt="" loading="lazy" />
-            )}
+          {/* Current image — Next.js optimized */}
+          <div className="relative w-full h-full max-h-[90vh]">
+            <Image
+              key={activeIndex}
+              src={currentImage.src}
+              alt={currentImage.alt}
+              fill
+              sizes="(max-width: 1200px) 90vw, 1200px"
+              className={`rounded-lg transition-opacity duration-200 object-contain ${
+                imageLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              priority
+              quality={85}
+              placeholder={currentImage.blurDataURL ? "blur" : "empty"}
+              blurDataURL={currentImage.blurDataURL}
+              onLoad={() => setImageLoaded(true)}
+              onError={() => setImageLoaded(true)}
+            />
           </div>
         </div>
       </div>
