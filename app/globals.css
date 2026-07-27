@@ -18,17 +18,61 @@
   font-display: swap;
 }
 
+/* ═══════════════════════════════════════════
+   SMOOTH THEME TRANSITIONS
+   ═══════════════════════════════════════════ */
+
+/* Disable transitions during page load (toggled by inline script) */
+html.disable-transitions,
+html.disable-transitions *,
+html.disable-transitions *::before,
+html.disable-transitions *::after {
+  transition: none !important;
+}
+
+/* Core theme transition — 300ms ease-out (CRT phosphor persistence feel) */
+html,
+body {
+  transition: background-color 0.3s ease-out, color 0.3s ease-out,
+    border-color 0.3s ease-out;
+}
+
+/* Interactive elements — faster accent shift */
+a,
+button,
+input,
+textarea,
+select {
+  transition: background-color 0.2s ease-out, color 0.2s ease-out,
+    border-color 0.2s ease-out;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    transition: none !important;
+  }
+}
+
 :root {
   font-family: "Departure Mono", monospace;
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 255, 255, 255;
+  color-scheme: light;
 }
 
 .dark {
   --foreground-rgb: 255, 255, 255;
   --background-start-rgb: 28, 25, 23;
   --background-end-rgb: 28, 25, 23;
+  color-scheme: dark;
 }
 
 body {

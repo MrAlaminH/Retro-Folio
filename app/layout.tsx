@@ -69,6 +69,14 @@ export default function RootLayout({
                   } else {
                     document.documentElement.classList.add("dark");
                   }
+                  // Disable transitions on initial load to prevent flash
+                  document.documentElement.classList.add("disable-transitions");
+                  // Re-enable after first paint
+                  requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                      document.documentElement.classList.remove("disable-transitions");
+                    });
+                  });
                 } catch(e) {}
               })();
             `,
