@@ -39,7 +39,7 @@ export default function AboutMeToggle({ children, collapsedChildren }: AboutMeTo
       </div>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="text-green-500 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline active:scale-[0.97] transition-transform duration-150 origin-left"
+        className="text-green-500 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline active:scale-97 transition-transform duration-150 origin-left"
         aria-expanded={isExpanded}
       >
         {isExpanded ? "Learn less >" : "Learn more>"}

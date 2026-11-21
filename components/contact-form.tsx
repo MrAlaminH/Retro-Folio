@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export default function ContactForm() {
@@ -7,7 +7,20 @@ export default function ContactForm() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
+  // Visibility is separate from content: the message stays mounted while the
+  // disclosure collapses, so the exit animation actually renders.
+  const [alertVisible, setAlertVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Reset per submit, so a rapid second submit isn't hidden early by the
+  // first submit's timer.
+  const alertTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
+
+  const showAlert = (msg: string) => {
+    setAlertMessage(msg);
+    setAlertVisible(true);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,19 +40,20 @@ export default function ContactForm() {
       });
 
       if (response.ok) {
-        setAlertMessage("Message sent successfully!");
+        showAlert("Message sent successfully!");
         setEmail("");
         setSubject("");
         setMessage("");
       } else {
-        setAlertMessage("Failed to send message. Please try again later.");
+        showAlert("Failed to send message. Please try again later.");
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      setAlertMessage("An error occurred while sending your message.");
+      showAlert("An error occurred while sending your message.");
     } finally {
       setIsSubmitting(false);
-      setTimeout(() => setAlertMessage(""), 3000);
+      clearTimeout(alertTimerRef.current);
+      alertTimerRef.current = setTimeout(() => setAlertVisible(false), 3000);
     }
   };
 
@@ -50,7 +64,7 @@ export default function ContactForm() {
       <div
         className={cn(
           "disclosure",
-          alertMessage
+          alertVisible
             ? "grid-rows-[1fr] opacity-100"
             : "grid-rows-[0fr] opacity-0 invisible"
         )}
@@ -105,7 +119,7 @@ export default function ContactForm() {
       </div>
       <button
         type="submit"
-        className={`bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600 transition-[background-color,color,opacity,transform] duration-150 active:scale-[0.97] ${
+        className={`bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600 transition-[background-color,color,opacity,transform] duration-150 active:scale-97 ${
           isSubmitting ? "opacity-50 cursor-not-allowed" : ""
         }`}
         disabled={isSubmitting}

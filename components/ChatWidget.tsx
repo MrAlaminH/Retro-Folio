@@ -183,7 +183,7 @@ const ChatWidget = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15, ease: EASE_OUT_EXPO }}
-            className={`fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg flex items-center justify-center transition-transform duration-200 hover:scale-110 active:scale-90 ${
+            className={`fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg flex items-center justify-center transition-transform duration-200 hover:scale-110 active:scale-97 ${
               theme === "dark"
                 ? "bg-green-600 hover:bg-green-500"
                 : "bg-gray-200 hover:bg-gray-300"
@@ -241,7 +241,7 @@ const ChatWidget = () => {
               </div>
             </div>
             <button
-              className={`text-2xl font-bold w-10 h-10 flex items-center justify-center transition-transform duration-150 active:scale-90 ${
+              className={`text-2xl font-bold w-10 h-10 flex items-center justify-center transition-transform duration-150 active:scale-97 ${
                 theme === "dark"
                   ? "text-white hover:text-green-200"
                   : "text-black hover:text-gray-600"
@@ -317,7 +317,7 @@ const ChatWidget = () => {
               {quickMessages.map((qm) => (
                 <button
                   key={qm.id}
-                  className={`text-sm rounded-full px-3 py-1.5 border transition active:scale-95 flex-grow ${
+                  className={`text-sm rounded-full px-3 py-1.5 border transition active:scale-97 flex-grow ${
                     theme === "dark"
                       ? "bg-black hover:bg-green-100 text-green-400 border-green-200"
                       : "bg-white hover:bg-gray-200 text-gray-700 border-gray-300"
@@ -350,7 +350,7 @@ const ChatWidget = () => {
               disabled={loading}
             />
             <button
-              className={`rounded-lg px-4 py-2 font-semibold transition active:scale-95 disabled:opacity-50 ${
+              className={`rounded-lg px-4 py-2 font-semibold transition active:scale-97 disabled:opacity-50 ${
                 theme === "dark"
                   ? "bg-green-600 hover:bg-green-500 text-white"
                   : "bg-gray-300 hover:bg-gray-400 text-black"

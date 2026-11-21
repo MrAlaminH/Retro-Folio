@@ -83,6 +83,10 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      // One press language site-wide: subtle scale-down on :active.
+      scale: {
+        97: "0.97",
+      },
       // Motion tokens mirroring globals.css --ease-* / --duration-*.
       // Use as `ease-out-expo`, `duration-theme`, etc.
       transitionTimingFunction: {

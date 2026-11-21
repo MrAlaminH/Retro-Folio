@@ -388,13 +388,16 @@ body {
     0 2px 4px rgba(0, 0, 0, 0.3), 2px 2px 0 0 rgba(34, 197, 94, 0.15);
 }
 
-/* Brighter glow layer, animated on opacity only */
+/* Brighter glow layer, animated on opacity only. The static opacity is the
+   animation's resting frame — under reduced motion (animation: none) the
+   button rests at the same glow level instead of defaulting to 1. */
 .retro-button-pulse::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+  opacity: 0.4;
   box-shadow: 0 0 12px rgba(5, 46, 22, 0.3), 2px 2px 0 0 rgba(5, 46, 22, 0.3);
   animation: retro-pulse 3s ease-in-out infinite;
 }
@@ -425,6 +428,9 @@ body {
 /* Hover glow: static inset shadow, opacity breathing (16→20px equivalent) */
 .retro-button-pulse-glow {
   box-shadow: inset 0 0 18px rgba(5, 46, 22, 0.25);
+  /* Same reduced-motion resting frame as .retro-button-pulse::after —
+     retro-pulse-hover's low keyframe, not the 1 default. */
+  opacity: 0.65;
   animation: retro-pulse-hover 2s ease-in-out infinite;
 }
 
@@ -465,10 +471,11 @@ body {
 
 /* ─── Terminal page effects ─── */
 
-/* Boot progress bar — transform-only fill (the div itself is w-full) */
+/* Boot progress bar — transform-only fill (the div itself is w-full).
+   Linear: progress is read by its rate; ease-out would stall at the end. */
 .animate-load {
   transform-origin: left;
-  animation: terminal-load 2s var(--ease-out) both;
+  animation: terminal-load 2s linear both;
 }
 
 @keyframes terminal-load {

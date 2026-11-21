@@ -340,7 +340,7 @@ export default function MusicPlayer() {
       />
       <button
         onClick={handlePlayPause}
-        className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center active:scale-95"
+        className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center active:scale-97"
         aria-label={isPlaying ? "Pause music" : "Play music"}
         disabled={hasError}
       >

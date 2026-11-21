@@ -10,6 +10,7 @@ import {
   Shield,
   Server,
 } from "lucide-react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 type HistoryItem = string | { id: string; text: string };
 
@@ -255,17 +256,23 @@ const Component: React.FC = () => {
   const togglePower = () => {
     if (isPoweringOff) return;
     if (isPoweredOn) {
-      // Play the CRT collapse, then flip to offline.
-      // 350ms matches the .crt-power-off animation duration in globals.css
-      // (kept as a pair — reduced-motion users get an instant swap after
-      // the same beat).
-      setIsPoweringOff(true);
-      setTimeout(() => {
+      const powerOff = () => {
         setIsPoweredOn(false);
         setIsPoweringOff(false);
         setHistory([]);
         setIsBooting(true);
-      }, 350);
+      };
+      if (prefersReducedMotion()) {
+        // The .crt-power-off animation is suppressed, so waiting out the
+        // 350ms beat would be dead latency — flip immediately.
+        powerOff();
+      } else {
+        // Play the CRT collapse, then flip to offline.
+        // 350ms matches the .crt-power-off animation duration in globals.css
+        // (kept as a pair).
+        setIsPoweringOff(true);
+        setTimeout(powerOff, 350);
+      }
     } else {
       setIsPoweredOn(true);
       setTimeout(() => {

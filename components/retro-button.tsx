@@ -53,7 +53,7 @@ export default function RetroButton({
 
   const buttonContent = (
     <div
-      className={`group relative inline-flex items-center gap-2 px-4 py-2.5 text-xs md:text-sm leading-tight cursor-pointer transition-[transform,opacity] duration-150 ease-out hover:scale-105 active:scale-[0.98] retro-button-pulse ${className}`}
+      className={`group relative inline-flex items-center gap-2 px-4 py-2.5 text-xs md:text-sm leading-tight cursor-pointer transition-[transform,opacity] duration-150 ease-out hover:scale-105 active:scale-97 retro-button-pulse ${className}`}
       style={{
         background: backgroundGradient,
         border: `1px solid ${borderColor}`,

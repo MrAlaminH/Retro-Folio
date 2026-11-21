@@ -78,7 +78,7 @@ export default function Navbar() {
                   <MusicPlayer />
                   <button
                     onClick={handleCopyEmail}
-                    className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center active:scale-95"
+                    className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center active:scale-97"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +99,7 @@ export default function Navbar() {
                   <button
                     ref={ref}
                     onClick={toggleSwitchTheme}
-                    className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center active:scale-95"
+                    className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center active:scale-97"
                     aria-label={
                       isDarkMode ? "Switch to light mode" : "Switch to dark mode"
                     }

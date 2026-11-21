@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useCallback } from "react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 const CHARS =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
@@ -10,10 +11,6 @@ const CHARS =
 const FIRST_DECODE_MS_PER_CHAR = 90;
 // Repeat hovers re-commit to the full scramble; keep the brand, drop the wait.
 const REPEAT_DECODE_MS_PER_CHAR = 35;
-
-const prefersReducedMotion = () =>
-  typeof window !== "undefined" &&
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const DecodeText: React.FC<{ text: string }> = ({ text }) => {
   const spanRef = useRef<HTMLSpanElement>(null);

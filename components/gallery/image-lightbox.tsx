@@ -143,7 +143,7 @@ export default function ImageLightbox({
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition active:scale-90"
+            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition active:scale-97"
             aria-label="Close lightbox"
           >
             <X className="w-6 h-6" />
@@ -156,7 +156,7 @@ export default function ImageLightbox({
                 e.stopPropagation();
                 handlePrevious();
               }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white transition active:scale-90"
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white transition active:scale-97"
               aria-label="Previous image"
             >
               <ChevronLeft className="w-6 h-6" />
@@ -170,7 +170,7 @@ export default function ImageLightbox({
                 e.stopPropagation();
                 handleNext();
               }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white transition active:scale-90"
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white transition active:scale-97"
               aria-label="Next image"
             >
               <ChevronRight className="w-6 h-6" />

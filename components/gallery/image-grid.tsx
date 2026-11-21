@@ -34,7 +34,7 @@ export default function ImageGrid({
           return (
             <div
               key={image.id}
-              className={`relative w-full mb-4 break-inside-avoid overflow-hidden rounded-lg border-2 border-green-600 dark:border-green-500 shadow-[0_0_10px_rgba(0,128,0,0.3)] dark:shadow-[0_0_10px_rgba(0,255,0,0.3)] hover:shadow-[0_0_15px_rgba(0,128,0,0.5)] dark:hover:shadow-[0_0_15px_rgba(0,255,0,0.5)] transition-[box-shadow,border-color,transform] duration-200 group cursor-pointer active:scale-[0.99] ${
+              className={`relative w-full mb-4 break-inside-avoid overflow-hidden rounded-lg border-2 border-green-600 dark:border-green-500 shadow-[0_0_10px_rgba(0,128,0,0.3)] dark:shadow-[0_0_10px_rgba(0,255,0,0.3)] hover:shadow-[0_0_15px_rgba(0,128,0,0.5)] dark:hover:shadow-[0_0_15px_rgba(0,255,0,0.5)] transition-[box-shadow,border-color,transform] duration-200 group cursor-pointer active:scale-97 ${
                 batchIndex >= 0
                   ? "animate-in fade-in slide-in-from-bottom-2 duration-300 ease-out fill-mode-both"
                   : ""

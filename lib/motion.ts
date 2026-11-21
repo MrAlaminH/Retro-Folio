@@ -6,6 +6,14 @@ export const EASE_OUT_EXPO: [number, number, number, number] = [
 ];
 
 /**
+ * One-shot match-media check for event handlers and one-time setup —
+ * not reactive. For React-rendered motion use useReducedMotion() instead.
+ */
+export const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/**
  * Full `transform` strings are hardware-accelerated (unlike framer's
  * x/y/scale shorthands), but MotionConfig's reducedMotion="user" only
  * intercepts the shorthands — route literal transforms through here so
