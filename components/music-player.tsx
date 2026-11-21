@@ -21,7 +21,7 @@ type PlayerStatus =
   | "blocked"
   | "error";
 
-const VOLUME = 0.3; // -70% from full volume
+const VOLUME = 0.24; // -76% from full volume (20% quieter than the previous 0.3)
 
 export default function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
