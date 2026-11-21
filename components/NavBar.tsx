@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { EASE_OUT_EXPO, useEnterTransform } from "@/lib/motion";
 import { useFont } from "@/contexts/FontContext";
@@ -18,7 +19,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import Image from "next/image";
-import MusicPlayer from "@/components/music-player";
+
+const MusicPlayer = dynamic(() => import("@/components/music-player"), {
+  ssr: false,
+});
 
 const navItems = [
   { name: "Home", path: "/" },
