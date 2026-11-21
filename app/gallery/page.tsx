@@ -45,7 +45,7 @@ export default async function GalleryPage({}: GalleryPageProps) {
             </div>
           ) : (
             <div className="space-y-12">
-              {categories.map((category) => {
+              {categories.map((category, categoryIndex) => {
                 const categoryImages = imagesByCategory[category] || [];
                 const shouldPaginate =
                   categoryImages.length >= PAGINATION_THRESHOLD;
@@ -61,6 +61,7 @@ export default async function GalleryPage({}: GalleryPageProps) {
                       allImages={categoryImages}
                       showPagination={shouldPaginate}
                       imagesPerLoad={IMAGES_PER_LOAD}
+                      priority={categoryIndex === 0}
                     />
                   </div>
                 );

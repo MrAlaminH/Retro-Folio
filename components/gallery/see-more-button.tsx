@@ -10,6 +10,8 @@ interface SeeMoreButtonProps {
   allImages: GalleryImage[];
   imagesPerLoad?: number;
   hideSeeMoreButton?: boolean;
+  /** Forwarded to ImageGrid: eager-load + preload the first row. */
+  priority?: boolean;
 }
 
 export default function SeeMoreButton({
@@ -18,6 +20,7 @@ export default function SeeMoreButton({
   allImages,
   imagesPerLoad = 6,
   hideSeeMoreButton = false,
+  priority = false,
 }: SeeMoreButtonProps) {
   const [visibleCount, setVisibleCount] = useState(initialImages.length);
   // Index from which newly-appended images stagger in (Infinity = none;
@@ -43,12 +46,22 @@ export default function SeeMoreButton({
   }, [visibleCount, imagesPerLoad, allImages.length]);
 
   if (!hasMore && visibleCount === initialImages.length) {
-    return <ImageGrid images={visibleImages} animateFrom={animateFrom} />;
+    return (
+      <ImageGrid
+        images={visibleImages}
+        animateFrom={animateFrom}
+        priority={priority}
+      />
+    );
   }
 
   return (
     <>
-      <ImageGrid images={visibleImages} animateFrom={animateFrom} />
+      <ImageGrid
+        images={visibleImages}
+        animateFrom={animateFrom}
+        priority={priority}
+      />
       {hasMore && !hideSeeMoreButton && (
         <div className="flex justify-center mt-6">
           <button

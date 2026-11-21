@@ -29,7 +29,7 @@ export default function ImageGrid({
     <>
       <div className="columns-1 sm:columns-2 gap-6">
         {images.map((image, index) => {
-          const isPriority = priority && index < 6;
+          const isPriority = priority && index < 2;
           const batchIndex = index - animateFrom;
           return (
             <div

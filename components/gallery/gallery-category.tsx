@@ -8,6 +8,8 @@ interface GalleryCategoryProps {
   allImages: GalleryImage[];
   showPagination?: boolean;
   imagesPerLoad?: number;
+  /** Eager-load + preload the first row of images (above-the-fold category). */
+  priority?: boolean;
 }
 
 export default function GalleryCategory({
@@ -16,6 +18,7 @@ export default function GalleryCategory({
   allImages,
   showPagination = false,
   imagesPerLoad = 6,
+  priority = false,
 }: GalleryCategoryProps) {
   const displayName = getCategoryDisplayName(category);
 
@@ -30,6 +33,7 @@ export default function GalleryCategory({
           initialImages={initialImages}
           allImages={allImages}
           imagesPerLoad={imagesPerLoad}
+          priority={priority}
         />
       ) : (
         <SeeMoreButton
@@ -37,6 +41,7 @@ export default function GalleryCategory({
           initialImages={initialImages}
           allImages={allImages}
           imagesPerLoad={imagesPerLoad}
+          priority={priority}
           hideSeeMoreButton
         />
       )}
