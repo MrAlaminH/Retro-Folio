@@ -29,7 +29,8 @@ const themeColors: ThemeInput = {
   dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
 };
 
-// status instead of mounted/isLoading/error booleans with illegal combos.
+// One explicit fetch-lifecycle status instead of mounted/isLoading/error
+// booleans with illegal combos.
 type Status = "idle" | "loading" | "success" | "error";
 
 export function GitHubContributions({
