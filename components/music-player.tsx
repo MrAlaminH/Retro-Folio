@@ -187,6 +187,7 @@ export default function MusicPlayer() {
       <audio
         ref={audioRef}
         src={src}
+        preload="none"
         onEnded={handleTrackEnd}
         onError={handleError}
         onLoadedData={handleLoadedData}
