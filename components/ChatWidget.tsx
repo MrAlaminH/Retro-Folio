@@ -30,6 +30,7 @@ const ChatWidget = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [sessionId, setSessionId] = useState("");
 
   // Predefined quick messages
@@ -52,6 +53,36 @@ const ChatWidget = () => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, open]);
+
+  // Keep the mobile sheet within the visual viewport when the on-screen
+  // keyboard opens: iOS/Android shrink visualViewport while fixed elements
+  // stay glued to the layout viewport, which would hide the input behind
+  // the keyboard. Condition mirrors the `pc` screen in tailwind.config.ts
+  // (wide AND tall = desktop card). ponytail: no scroll-into-view after
+  // keyboard resize.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!open || !vv) return;
+    const isDesktopLike = () =>
+      window.innerWidth >= 640 && window.innerHeight >= 550;
+    const update = () => {
+      if (!panelRef.current) return;
+      if (!isDesktopLike()) {
+        panelRef.current.style.height = `${vv.height}px`;
+        panelRef.current.style.transform = `translateY(${vv.offsetTop}px)`;
+      } else {
+        panelRef.current.style.height = "";
+        panelRef.current.style.transform = "";
+      }
+    };
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+    };
+  }, [open]);
 
   // Format bot messages to be more readable
   const formatBotMessage = (text: string): string => {
@@ -159,14 +190,15 @@ const ChatWidget = () => {
       )}
       {open && (
         <div
-          className={`fixed bottom-6 right-6 z-50 w-96 max-w-full h-[600px] rounded-2xl shadow-2xl flex flex-col border-2 animate-fade-in ${
+          ref={panelRef}
+          className={`fixed inset-0 z-50 flex flex-col border-2 shadow-2xl animate-fade-in rounded-none pc:inset-auto pc:bottom-6 pc:right-6 pc:w-96 pc:h-[600px] pc:rounded-2xl ${
             theme === "dark"
               ? "bg-black border-green-400"
               : "bg-white border-gray-300"
           }`}
         >
           <div
-            className={`flex items-center justify-between px-5 py-4 rounded-t-2xl border-b-2 ${
+            className={`flex items-center justify-between px-5 py-4 pc:rounded-t-2xl border-b-2 ${
               theme === "dark"
                 ? "bg-gradient-to-r from-green-500 to-green-400 border-green-300"
                 : "bg-gradient-to-r from-gray-200 to-gray-100 border-gray-300"
@@ -189,7 +221,7 @@ const ChatWidget = () => {
               </div>
             </div>
             <button
-              className={`text-2xl font-bold ml-2 ${
+              className={`text-2xl font-bold w-10 h-10 flex items-center justify-center ${
                 theme === "dark"
                   ? "text-white hover:text-green-200"
                   : "text-black hover:text-gray-600"
@@ -201,7 +233,7 @@ const ChatWidget = () => {
             </button>
           </div>
           <div
-            className={`flex-1 overflow-y-auto px-4 py-3 ${
+            className={`flex-1 overflow-y-auto overscroll-contain px-4 py-3 ${
               theme === "dark" ? "bg-black" : "bg-white"
             }`}
             style={{ scrollbarWidth: "thin" }}
@@ -310,7 +342,7 @@ const ChatWidget = () => {
             </button>
           </div>
           <div
-            className={`text-center text-xs py-2 rounded-b-2xl border-t ${
+            className={`text-center text-xs py-2 pc:rounded-b-2xl border-t ${
               theme === "dark"
                 ? "bg-black text-green-400 border-green-100"
                 : "bg-white text-gray-500 border-gray-300"

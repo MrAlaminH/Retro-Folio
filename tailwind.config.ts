@@ -18,6 +18,12 @@ const config = {
       },
     },
     extend: {
+      // "desktop-like" viewport: wide AND tall. ChatWidget uses this so
+      // landscape phones (wide but short) still get the full-screen sheet
+      // instead of the 600px-tall desktop card.
+      screens: {
+        pc: { raw: "(min-width: 640px) and (min-height: 550px)" },
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
