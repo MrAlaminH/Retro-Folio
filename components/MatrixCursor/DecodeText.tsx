@@ -1,13 +1,24 @@
 "use client";
+
 import React, { useRef, useCallback } from "react";
 
 const CHARS =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
 
+// Wall-clock pace (ms per decoded char) — frame-rate independent, unlike a
+// per-frame counter which runs 2x fast on 120Hz displays.
+const FIRST_DECODE_MS_PER_CHAR = 90;
+// Repeat hovers re-commit to the full scramble; keep the brand, drop the wait.
+const REPEAT_DECODE_MS_PER_CHAR = 35;
+
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const DecodeText: React.FC<{ text: string }> = ({ text }) => {
   const spanRef = useRef<HTMLSpanElement>(null);
   const animationRef = useRef<number | null>(null);
-  const iterationRef = useRef(0);
+  const hasDecodedRef = useRef(false);
 
   const animateDecode = useCallback(() => {
     // Cancel any running animation
@@ -15,13 +26,22 @@ const DecodeText: React.FC<{ text: string }> = ({ text }) => {
       cancelAnimationFrame(animationRef.current);
     }
 
-    iterationRef.current = 0;
-    const textLen = text.length;
+    // The scramble is pure decoration — don't run it for reduced-motion users
+    if (prefersReducedMotion()) return;
 
-    const step = () => {
-      const iteration = iterationRef.current;
+    const msPerChar = hasDecodedRef.current
+      ? REPEAT_DECODE_MS_PER_CHAR
+      : FIRST_DECODE_MS_PER_CHAR;
+    hasDecodedRef.current = true;
+    const textLen = text.length;
+    let startTime: number | null = null;
+
+    const step = (now: number) => {
       const span = spanRef.current;
       if (!span) return;
+      if (startTime === null) startTime = now;
+
+      const iteration = (now - startTime) / msPerChar;
 
       // Build the decoded string directly
       let result = "";
@@ -42,9 +62,6 @@ const DecodeText: React.FC<{ text: string }> = ({ text }) => {
         return;
       }
 
-      // Advance 1 character every ~5 frames (~83ms at 60fps) to match
-      // original ~90ms/character pace from the 30ms-interval implementation
-      iterationRef.current = iteration + 0.2;
       animationRef.current = requestAnimationFrame(step);
     };
 

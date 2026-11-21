@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function ContactForm() {
   const [email, setEmail] = useState("");
@@ -43,13 +44,28 @@ export default function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {alertMessage && (
-        <div className="bg-green-500 text-white p-2 rounded mb-4">
-          {alertMessage}
+    <form onSubmit={handleSubmit}>
+      {/* Alert expands/collapses smoothly instead of teleporting and
+          shoving the form down (disclosure = grid-rows trick) */}
+      <div
+        className={cn(
+          "disclosure",
+          alertMessage
+            ? "grid-rows-[1fr] opacity-100"
+            : "grid-rows-[0fr] opacity-0 invisible"
+        )}
+        role="status"
+        aria-live="polite"
+      >
+        <div className="disclosure-inner">
+          {alertMessage && (
+            <div className="bg-green-500 text-white p-2 rounded mb-4">
+              {alertMessage}
+            </div>
+          )}
         </div>
-      )}
-      <div>
+      </div>
+      <div className="mb-4">
         <label htmlFor="email" className="block mb-1">
           Your Email
         </label>
@@ -62,7 +78,7 @@ export default function ContactForm() {
           required
         />
       </div>
-      <div>
+      <div className="mb-4">
         <label htmlFor="subject" className="block mb-1">
           Subject
         </label>
@@ -75,7 +91,7 @@ export default function ContactForm() {
           required
         />
       </div>
-      <div>
+      <div className="mb-4">
         <label htmlFor="message" className="block mb-1">
           Message
         </label>
@@ -89,7 +105,7 @@ export default function ContactForm() {
       </div>
       <button
         type="submit"
-        className={`bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600 transition-colors ${
+        className={`bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600 transition-[background-color,color,opacity,transform] duration-150 active:scale-[0.97] ${
           isSubmitting ? "opacity-50 cursor-not-allowed" : ""
         }`}
         disabled={isSubmitting}

@@ -64,31 +64,38 @@ export default function WorkExperienceExpandable({
         </div>
       </button>
 
-      {isExpanded && (
-        <div
-          id={`experience-details-${experience.id}`}
-          className="mt-2 sm:mt-3 pl-[44px] sm:pl-[60px] pt-2"
-        >
-          {experience.description && (
-            <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 mb-2 sm:mb-3 break-words">
-              {experience.description}
-            </p>
-          )}
-          {experience.achievements && experience.achievements.length > 0 && (
-            <ul className="list-none space-y-1.5 sm:space-y-2">
-              {experience.achievements.map((achievement, idx) => (
-                <li
-                  key={idx}
-                  className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 flex items-start gap-1.5 sm:gap-2"
-                >
-                  <span className="text-green-500 dark:text-green-500 mt-0.5 flex-shrink-0">•</span>
-                  <span className="break-words">{achievement}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+      <div
+        id={`experience-details-${experience.id}`}
+        className={cn(
+          "disclosure pl-[44px] sm:pl-[60px]",
+          isExpanded
+            ? "grid-rows-[1fr] opacity-100"
+            : "grid-rows-[0fr] opacity-0 invisible"
+        )}
+      >
+        <div className="disclosure-inner">
+          <div className="mt-2 sm:mt-3 pt-2">
+            {experience.description && (
+              <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 mb-2 sm:mb-3 break-words">
+                {experience.description}
+              </p>
+            )}
+            {experience.achievements && experience.achievements.length > 0 && (
+              <ul className="list-none space-y-1.5 sm:space-y-2">
+                {experience.achievements.map((achievement, idx) => (
+                  <li
+                    key={idx}
+                    className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 flex items-start gap-1.5 sm:gap-2"
+                  >
+                    <span className="text-green-500 dark:text-green-500 mt-0.5 flex-shrink-0">•</span>
+                    <span className="break-words">{achievement}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
-      )}
+      </div>
       {!isLast && (
         <hr className="border-neutral-200 dark:border-neutral-800 mt-4 sm:mt-6" />
       )}

@@ -30,12 +30,12 @@ const Projects = () => {
           {projectData.map((project) => (
             <div
               key={project.id}
-              className="border-2 border-green-600 dark:border-green-500 p-4 transition-all duration-200 hover:bg-green-100 dark:hover:bg-green-900 hover:bg-opacity-20 h-full flex flex-col shadow-[0_0_10px_rgba(0,128,0,0.3)] dark:shadow-[0_0_10px_rgba(0,255,0,0.3)] hover:shadow-[0_0_15px_rgba(0,128,0,0.5)] dark:hover:shadow-[0_0_15px_rgba(0,255,0,0.5)] relative group"
+              className="border-2 border-green-600 dark:border-green-500 p-4 transition-[background-color,box-shadow] duration-200 hover:bg-green-100 dark:hover:bg-green-900 hover:bg-opacity-20 h-full flex flex-col shadow-[0_0_10px_rgba(0,128,0,0.3)] dark:shadow-[0_0_10px_rgba(0,255,0,0.3)] hover:shadow-[0_0_15px_rgba(0,128,0,0.5)] dark:hover:shadow-[0_0_15px_rgba(0,255,0,0.5)] relative group"
             >
               <Link href={`/projects/${project.slug}`}>
                 <div className="relative w-full pt-[66.67%] mb-4 overflow-hidden cursor-pointer">
                   <Image
-                    className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-105"
+                    className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-200 ease-out group-hover:scale-105"
                     src={project.imageSrc}
                     alt={project.altText}
                     fill

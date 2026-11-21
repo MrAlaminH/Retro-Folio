@@ -12,12 +12,19 @@
  *   - Current image: <Image> with priority, loads immediately
  *   - Adjacent images (prev/next/next-next): JS preload via useEffect
  *   - No bulk preloading of the entire category
+ *
+ * Motion: the overlay fades and the image scales from center (~200ms,
+ * ease-out). Keyboard/button navigation to an already-loaded image
+ * swaps instantly — arrow keys are the highest-frequency action here
+ * and must not re-play a spinner + fade on every press.
  */
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { GalleryImage } from "@/data/gallery-data";
+import { EASE_OUT_EXPO, useEnterTransform } from "@/lib/motion";
 
 interface ImageLightboxProps {
   images: GalleryImage[];
@@ -35,11 +42,21 @@ export default function ImageLightbox({
   const [activeIndex, setActiveIndex] = useState(currentIndex);
   const [imageLoaded, setImageLoaded] = useState(false);
   const preloadedRef = useRef<Set<string>>(new Set());
+  const loadedSrcsRef = useRef<Set<string>>(new Set());
+  const imageEnter = useEnterTransform("scale(0.97)");
 
   useEffect(() => {
     setActiveIndex(currentIndex);
-    setImageLoaded(false);
   }, [currentIndex]);
+
+  // Navigating to an already-fetched image swaps instantly; only an
+  // unfetched one resets to the spinner + fade
+  useEffect(() => {
+    const src = images[activeIndex]?.src;
+    if (src && !loadedSrcsRef.current.has(src)) {
+      setImageLoaded(false);
+    }
+  }, [activeIndex, images]);
 
   // Keyboard and body scroll lock
   useEffect(() => {
@@ -49,10 +66,8 @@ export default function ImageLightbox({
       if (e.key === "Escape") {
         onClose();
       } else if (e.key === "ArrowLeft") {
-        setImageLoaded(false);
         setActiveIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
       } else if (e.key === "ArrowRight") {
-        setImageLoaded(false);
         setActiveIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
       }
     };
@@ -78,6 +93,8 @@ export default function ImageLightbox({
       if (preloadedRef.current.has(src)) return;
       preloadedRef.current.add(src);
       const img = new window.Image();
+      // Track completion so navigating to it skips the spinner + fade
+      img.onload = () => loadedSrcsRef.current.add(src);
       img.src = src;
     };
 
@@ -88,106 +105,128 @@ export default function ImageLightbox({
     }
   }, [isOpen, activeIndex, images]);
 
+  const currentImage = images[activeIndex];
+  // Already-fetched images render immediately (no spinner flash on nav)
+  const isCached =
+    !!currentImage && loadedSrcsRef.current.has(currentImage.src);
+
   const handlePrevious = useCallback(() => {
-    setImageLoaded(false);
     setActiveIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
   }, [images.length]);
 
   const handleNext = useCallback(() => {
-    setImageLoaded(false);
     setActiveIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
   }, [images.length]);
 
-  if (!isOpen || images.length === 0) return null;
+  if (images.length === 0) return null;
 
-  const currentImage = images[activeIndex];
+  const handleImageLoad = (src: string) => {
+    loadedSrcsRef.current.add(src);
+    setImageLoaded(true);
+  };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Image lightbox"
-    >
-      {/* Close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
-        aria-label="Close lightbox"
-      >
-        <X className="w-6 h-6" />
-      </button>
-
-      {/* Previous button */}
-      {images.length > 1 && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handlePrevious();
-          }}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
-          aria-label="Previous image"
+    <AnimatePresence>
+      {isOpen && currentImage && (
+        <motion.div
+          key="lightbox-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          onClick={onClose}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image lightbox"
         >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-      )}
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition active:scale-90"
+            aria-label="Close lightbox"
+          >
+            <X className="w-6 h-6" />
+          </button>
 
-      {/* Next button */}
-      {images.length > 1 && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleNext();
-          }}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
-          aria-label="Next image"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
-      )}
-
-      {/* Image container */}
-      <div
-        className="relative max-w-[90vw] max-h-[90vh] w-full h-full flex items-center justify-center p-4"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="relative w-full h-full flex items-center justify-center">
-          {/* Loading state */}
-          {!imageLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
-            </div>
+          {/* Previous button */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrevious();
+              }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white transition active:scale-90"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
           )}
 
-          {/* Current image — Next.js optimized */}
-          <div className="relative w-full h-full max-h-[90vh]">
-            <Image
-              key={activeIndex}
-              src={currentImage.src}
-              alt={currentImage.alt}
-              fill
-              sizes="(max-width: 1200px) 90vw, 1200px"
-              className={`rounded-lg transition-opacity duration-200 object-contain ${
-                imageLoaded ? "opacity-100" : "opacity-0"
-              }`}
-              priority
-              quality={85}
-              placeholder={currentImage.blurDataURL ? "blur" : "empty"}
-              blurDataURL={currentImage.blurDataURL}
-              onLoad={() => setImageLoaded(true)}
-              onError={() => setImageLoaded(true)}
-            />
-          </div>
-        </div>
-      </div>
+          {/* Next button */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNext();
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white transition active:scale-90"
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          )}
 
-      {/* Image counter */}
-      {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-black/50 text-white text-sm">
-          {activeIndex + 1} / {images.length}
-        </div>
+          {/* Image container — centered modal, so scaling from center is correct */}
+          <motion.div
+            initial={{ opacity: 0, transform: imageEnter }}
+            animate={{
+              opacity: 1,
+              transform: imageEnter === undefined ? undefined : "scale(1)",
+            }}
+            exit={{ opacity: 0, transform: imageEnter }}
+            transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+            className="relative max-w-[90vw] max-h-[90vh] w-full h-full flex items-center justify-center p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative w-full h-full flex items-center justify-center">
+              {/* Loading state — hidden when the image is already fetched */}
+              {!imageLoaded && !isCached && (
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
+
+              {/* Current image — Next.js optimized */}
+              <div className="relative w-full h-full max-h-[90vh]">
+                <Image
+                  key={activeIndex}
+                  src={currentImage.src}
+                  alt={currentImage.alt}
+                  fill
+                  sizes="(max-width: 1200px) 90vw, 1200px"
+                  className={`rounded-lg transition-opacity duration-200 object-contain ${
+                    imageLoaded || isCached ? "opacity-100" : "opacity-0"
+                  }`}
+                  priority
+                  quality={85}
+                  placeholder={currentImage.blurDataURL ? "blur" : "empty"}
+                  blurDataURL={currentImage.blurDataURL}
+                  onLoad={() => handleImageLoad(currentImage.src)}
+                  onError={() => setImageLoaded(true)}
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Image counter */}
+          {images.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-black/50 text-white text-sm">
+              {activeIndex + 1} / {images.length}
+            </div>
+          )}
+        </motion.div>
       )}
-    </div>
+    </AnimatePresence>
   );
 }

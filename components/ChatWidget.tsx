@@ -1,6 +1,8 @@
 "use client";
 import { useState, useRef, useEffect, useContext } from "react";
 import { BotMessageSquare } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { EASE_OUT_EXPO, useEnterTransform } from "@/lib/motion";
 import { ThemeContext } from "../contexts/ThemeContext";
 
 interface Message {
@@ -23,6 +25,7 @@ const ChatWidget = () => {
   }
   const { theme } = themeContext;
   const [open, setOpen] = useState(false);
+  const panelEnter = useEnterTransform("scale(0.96) translateY(12px)");
   const [messages, setMessages] = useState<Message[]>([
     { sender: "bot", text: "Hi there! 👋" },
     { sender: "bot", text: "How can I assist you today?" },
@@ -172,31 +175,48 @@ const ChatWidget = () => {
 
   return (
     <>
-      {!open && (
-        <button
-          className={`fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg flex items-center justify-center transition-transform duration-200 hover:scale-110 ${
-            theme === "dark"
-              ? "bg-green-600 hover:bg-green-500"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
-          onClick={() => setOpen(true)}
-          aria-label="Open chat"
-        >
-          <BotMessageSquare
-            size={32}
-            color={theme === "dark" ? "white" : "black"}
-          />
-        </button>
-      )}
-      {open && (
-        <div
-          ref={panelRef}
-          className={`fixed inset-0 z-50 flex flex-col border-2 shadow-2xl animate-fade-in rounded-none pc:inset-auto pc:bottom-6 pc:right-6 pc:w-96 pc:h-[600px] pc:rounded-2xl ${
-            theme === "dark"
-              ? "bg-black border-green-400"
-              : "bg-white border-gray-300"
-          }`}
-        >
+      <AnimatePresence>
+        {!open && (
+          <motion.button
+            key="chat-fab"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15, ease: EASE_OUT_EXPO }}
+            className={`fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-lg flex items-center justify-center transition-transform duration-200 hover:scale-110 active:scale-90 ${
+              theme === "dark"
+                ? "bg-green-600 hover:bg-green-500"
+                : "bg-gray-200 hover:bg-gray-300"
+            }`}
+            onClick={() => setOpen(true)}
+            aria-label="Open chat"
+          >
+            <BotMessageSquare
+              size={32}
+              color={theme === "dark" ? "white" : "black"}
+            />
+          </motion.button>
+        )}
+        {open && (
+          <motion.div
+            key="chat-panel"
+            initial={{ opacity: 0, transform: panelEnter }}
+            animate={{
+              opacity: 1,
+              transform: panelEnter === undefined ? undefined : "scale(1) translateY(0px)",
+            }}
+            exit={{ opacity: 0, transform: panelEnter }}
+            transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+            className="fixed inset-0 z-50 origin-bottom pc:inset-auto pc:bottom-6 pc:right-6 pc:w-96 pc:h-[600px] pc:origin-bottom-right"
+          >
+          <div
+            ref={panelRef}
+            className={`flex h-full w-full flex-col border-2 shadow-2xl rounded-none pc:rounded-2xl ${
+              theme === "dark"
+                ? "bg-black border-green-400"
+                : "bg-white border-gray-300"
+            }`}
+          >
           <div
             className={`flex items-center justify-between px-5 py-4 pc:rounded-t-2xl border-b-2 ${
               theme === "dark"
@@ -221,7 +241,7 @@ const ChatWidget = () => {
               </div>
             </div>
             <button
-              className={`text-2xl font-bold w-10 h-10 flex items-center justify-center ${
+              className={`text-2xl font-bold w-10 h-10 flex items-center justify-center transition-transform duration-150 active:scale-90 ${
                 theme === "dark"
                   ? "text-white hover:text-green-200"
                   : "text-black hover:text-gray-600"
@@ -297,7 +317,7 @@ const ChatWidget = () => {
               {quickMessages.map((qm) => (
                 <button
                   key={qm.id}
-                  className={`text-sm rounded-full px-3 py-1.5 border transition flex-grow ${
+                  className={`text-sm rounded-full px-3 py-1.5 border transition active:scale-95 flex-grow ${
                     theme === "dark"
                       ? "bg-black hover:bg-green-100 text-green-400 border-green-200"
                       : "bg-white hover:bg-gray-200 text-gray-700 border-gray-300"
@@ -330,7 +350,7 @@ const ChatWidget = () => {
               disabled={loading}
             />
             <button
-              className={`rounded-lg px-4 py-2 font-semibold transition disabled:opacity-50 ${
+              className={`rounded-lg px-4 py-2 font-semibold transition active:scale-95 disabled:opacity-50 ${
                 theme === "dark"
                   ? "bg-green-600 hover:bg-green-500 text-white"
                   : "bg-gray-300 hover:bg-gray-400 text-black"
@@ -350,8 +370,10 @@ const ChatWidget = () => {
           >
             Powered by MrAlaminH 🚀
           </div>
-        </div>
+          </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </>
   );
 };

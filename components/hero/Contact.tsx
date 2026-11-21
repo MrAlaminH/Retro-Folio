@@ -92,7 +92,7 @@ export default function Contact() {
             alt="Human evolution pixel art"
             width={800}
             height={200}
-            className="w-full h-auto object-contain opacity-90 dark:opacity-80 hover:opacity-100 dark:hover:opacity-90 transition-opacity duration-300"
+            className="w-full h-auto object-contain opacity-90 dark:opacity-80 hover:opacity-100 dark:hover:opacity-90 transition-opacity duration-150"
             loading="lazy"
             quality={85}
           />

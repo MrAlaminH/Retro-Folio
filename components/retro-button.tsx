@@ -51,13 +51,9 @@ export default function RetroButton({
     ? `rgba(34, 197, 94, 0.1)`
     : `rgba(5, 46, 22, 0.08)`;
 
-  const hoverGlow = isDark
-    ? `inset 0 0 16px rgba(34, 197, 94, 0.3)`
-    : `inset 0 0 16px rgba(5, 46, 22, 0.2)`;
-
   const buttonContent = (
     <div
-      className={`group relative inline-flex items-center gap-2 px-4 py-2.5 text-xs md:text-sm leading-tight cursor-pointer transition-all duration-300 hover:scale-105 retro-button-pulse ${className}`}
+      className={`group relative inline-flex items-center gap-2 px-4 py-2.5 text-xs md:text-sm leading-tight cursor-pointer transition-[transform,opacity] duration-150 ease-out hover:scale-105 active:scale-[0.98] retro-button-pulse ${className}`}
       style={{
         background: backgroundGradient,
         border: `1px solid ${borderColor}`,
@@ -94,14 +90,9 @@ export default function RetroButton({
         }}
       ></div>
 
-      {/* Pulsing glow effect */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div
-          className="w-full h-full retro-button-pulse-glow"
-          style={{
-            boxShadow: hoverGlow,
-          }}
-        ></div>
+      {/* Pulsing glow effect (shadow comes from .retro-button-pulse-glow in CSS) */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+        <div className="w-full h-full retro-button-pulse-glow"></div>
       </div>
     </div>
   );

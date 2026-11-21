@@ -66,7 +66,7 @@ export default function MyProjects() {
         {projects.map((project, index) => (
           <li
             key={index}
-            className="group p-2 rounded-md ease-in-out cursor-pointer pb-2 border-b border-neutral-200 dark:border-neutral-800 last:border-b-0"
+            className="group p-2 rounded-md cursor-pointer pb-2 border-b border-neutral-200 dark:border-neutral-800 last:border-b-0"
           >
             {/* Mobile: Stacked Layout */}
             <div className="flex flex-col md:hidden">
@@ -76,12 +76,12 @@ export default function MyProjects() {
                 </span>
               )}
               <div className="flex items-center">
-                <span className="mr-2 text-green-500 dark:text-green-500 transition-transform duration-300 group-hover:rotate-90">
+                <span className="mr-2 text-green-500 dark:text-green-500 transition-transform duration-150 ease-out group-hover:rotate-90">
                   {">"}
                 </span>
                 <Link
                   href={project.url}
-                  className="text-green-500 dark:text-green-400 ease-in-out"
+                  className="text-green-500 dark:text-green-400"
                 >
                   <span className="font-semibold text-green-500 dark:text-green-500 underline">
                     {project.name}
@@ -106,12 +106,12 @@ export default function MyProjects() {
                     {project.date}
                   </span>
                 )}
-                <span className="mr-2 text-green-500 dark:text-green-500 transition-transform duration-300 group-hover:rotate-90">
+                <span className="mr-2 text-green-500 dark:text-green-500 transition-transform duration-150 ease-out group-hover:rotate-90">
                   {">"}
                 </span>
                 <Link
                   href={project.url}
-                  className="text-green-500 dark:text-green-400 ease-in-out"
+                  className="text-green-500 dark:text-green-400"
                 >
                   <span className="font-semibold text-green-500 dark:text-green-500 underline">
                     {project.name}

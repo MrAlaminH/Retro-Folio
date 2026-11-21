@@ -8,6 +8,7 @@ export default function MusicPlayer() {
   const autoplayAttemptedRef = useRef(false);
   const userHasInteractedRef = useRef(false); // Track if user has manually paused
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasPlayed, setHasPlayed] = useState(false); // Frozen bars show only after first play
   const [autoplayBlocked, setAutoplayBlocked] = useState(false); // Track if autoplay was blocked by browser
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [hasError, setHasError] = useState(false);
@@ -42,6 +43,7 @@ export default function MusicPlayer() {
           setIsPlaying(false);
         });
         setIsPlaying(true);
+        setHasPlayed(true);
         setHasError(false);
       }
     } catch (error) {
@@ -106,6 +108,7 @@ export default function MusicPlayer() {
         .then(() => {
           console.log("Autoplay successful");
           setIsPlaying(true);
+          setHasPlayed(true);
           setHasError(false);
           setAutoplayBlocked(false);
         })
@@ -152,6 +155,7 @@ export default function MusicPlayer() {
             .then(() => {
               console.log("Autoplay successful (fallback)");
               setIsPlaying(true);
+              setHasPlayed(true);
               setHasError(false);
               setAutoplayBlocked(false);
             })
@@ -224,6 +228,7 @@ export default function MusicPlayer() {
           .then(() => {
             console.log("Autoplay successful after user interaction");
             setIsPlaying(true);
+            setHasPlayed(true);
             setHasError(false);
             setAutoplayBlocked(false);
             listenersActive = false;
@@ -283,9 +288,10 @@ export default function MusicPlayer() {
     };
   }, []);
 
-  // Equalizer bars component
+  // Equalizer bars component — stays mounted while paused (frozen
+  // mid-bounce via .equalizer-paused) so play/pause doesn't pop
   const EqualizerBars = () => {
-    if (!isPlaying) return null;
+    if (!isPlaying && !hasPlayed) return null;
 
     // Different animation classes for each bar to create random bouncing effect
     const barClasses = [
@@ -296,7 +302,11 @@ export default function MusicPlayer() {
     ];
 
     return (
-      <div className="flex items-end gap-0.5 ml-1 h-3">
+      <div
+        className={`flex items-end gap-0.5 ml-1 h-3 ${
+          isPlaying ? "" : "equalizer-paused"
+        }`}
+      >
         {[0, 1, 2, 3].map((index) => (
           <div
             key={index}
@@ -330,15 +340,23 @@ export default function MusicPlayer() {
       />
       <button
         onClick={handlePlayPause}
-        className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center"
+        className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center active:scale-95"
         aria-label={isPlaying ? "Pause music" : "Play music"}
         disabled={hasError}
       >
-        {isPlaying ? (
-          <Volume2 className="h-3 w-3" />
-        ) : (
-          <VolumeX className="h-3 w-3" />
-        )}
+        {/* Crossfade play/pause icons instead of a hard swap */}
+        <span className="relative inline-flex h-3 w-3">
+          <Volume2
+            className={`absolute inset-0 h-3 w-3 transition-opacity duration-150 ${
+              isPlaying ? "opacity-100" : "opacity-0"
+            }`}
+          />
+          <VolumeX
+            className={`absolute inset-0 h-3 w-3 transition-opacity duration-150 ${
+              isPlaying ? "opacity-0" : "opacity-100"
+            }`}
+          />
+        </span>
         <span className="ml-1">{isPlaying ? "Pause" : "Play"}</span>
         <EqualizerBars />
       </button>

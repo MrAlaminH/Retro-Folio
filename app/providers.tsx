@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
+import { MotionConfig } from "framer-motion";
 
 export function PHProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -14,5 +15,11 @@ export function PHProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
+  return (
+    <PostHogProvider client={posthog}>
+      {/* All framer-motion animations respect prefers-reduced-motion:
+          transforms are skipped, opacity/color feedback is kept. */}
+      <MotionConfig reducedMotion="user">{children}</MotionConfig>
+    </PostHogProvider>
+  );
 }

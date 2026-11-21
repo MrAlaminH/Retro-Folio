@@ -20,9 +20,10 @@ export default function SeeMoreButton({
   hideSeeMoreButton = false,
 }: SeeMoreButtonProps) {
   const [visibleCount, setVisibleCount] = useState(initialImages.length);
-  const [isLoading, setIsLoading] = useState(false);
+  // Index from which newly-appended images stagger in (Infinity = none;
+  // initial render shows instantly so the first paint isn't delayed)
+  const [animateFrom, setAnimateFrom] = useState<number>(Infinity);
 
-  // Use allImages prop directly (no API call needed)
   const hasMore = useMemo(
     () => visibleCount < allImages.length,
     [visibleCount, allImages.length],
@@ -33,33 +34,29 @@ export default function SeeMoreButton({
     [allImages, visibleCount],
   );
 
+  // Loads are instant (local slice) — no loading state needed
   const handleLoadMore = useCallback(() => {
-    setIsLoading(true);
-    // Use requestAnimationFrame for smoother UX
-    requestAnimationFrame(() => {
-      setVisibleCount((prev) =>
-        Math.min(prev + imagesPerLoad, allImages.length),
-      );
-      setIsLoading(false);
-    });
-  }, [imagesPerLoad, allImages.length]);
+    setAnimateFrom(visibleCount);
+    setVisibleCount((prev) =>
+      Math.min(prev + imagesPerLoad, allImages.length),
+    );
+  }, [visibleCount, imagesPerLoad, allImages.length]);
 
   if (!hasMore && visibleCount === initialImages.length) {
-    return <ImageGrid images={visibleImages} />;
+    return <ImageGrid images={visibleImages} animateFrom={animateFrom} />;
   }
 
   return (
     <>
-      <ImageGrid images={visibleImages} />
+      <ImageGrid images={visibleImages} animateFrom={animateFrom} />
       {hasMore && !hideSeeMoreButton && (
         <div className="flex justify-center mt-6">
           <button
             onClick={handleLoadMore}
-            disabled={isLoading}
-            className="bg-green-600 dark:bg-green-500 text-white px-6 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+            className="bg-green-600 dark:bg-green-500 text-white px-6 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600 transition-[background-color,color,transform] duration-150 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
             aria-label={`Load more ${category} images`}
           >
-            {isLoading ? "Loading..." : "See More"}
+            See More
           </button>
         </div>
       )}

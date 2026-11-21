@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
+import { motion, AnimatePresence } from "framer-motion";
+import { EASE_OUT_EXPO, useEnterTransform } from "@/lib/motion";
 import { useFont } from "@/contexts/FontContext";
 import {
   ThemeAnimationType,
@@ -30,6 +32,7 @@ export default function Navbar() {
   const [showCopyMessage, setShowCopyMessage] = useState(false);
   const pathname = usePathname();
   const { font, setFont } = useFont();
+  const toastEnter = useEnterTransform("translateY(-8px) scale(0.97)");
 
   // Theme switch animation. Runs uncontrolled so the hook owns persistence
   // (localStorage.theme) and the `.dark` class toggle; ThemeContext mirrors it
@@ -75,7 +78,7 @@ export default function Navbar() {
                   <MusicPlayer />
                   <button
                     onClick={handleCopyEmail}
-                    className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center"
+                    className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center active:scale-95"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -96,7 +99,7 @@ export default function Navbar() {
                   <button
                     ref={ref}
                     onClick={toggleSwitchTheme}
-                    className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center"
+                    className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center active:scale-95"
                     aria-label={
                       isDarkMode ? "Switch to light mode" : "Switch to dark mode"
                     }
@@ -200,16 +203,28 @@ export default function Navbar() {
           </ul>
         </nav>
       </header>
-      {showCopyMessage && (
-        <div className="fixed top-4 right-4">
-          <Alert
-            variant="default"
-            className="text-green-700 dark:text-green-500"
+      <AnimatePresence>
+        {showCopyMessage && (
+          <motion.div
+            key="copy-toast"
+            initial={{ opacity: 0, transform: toastEnter }}
+            animate={{
+              opacity: 1,
+              transform: toastEnter === undefined ? undefined : "translateY(0px) scale(1)",
+            }}
+            exit={{ opacity: 0, transform: toastEnter }}
+            transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+            className="fixed top-4 right-4"
           >
-            Email copied to clipboard!
-          </Alert>
-        </div>
-      )}
+            <Alert
+              variant="default"
+              className="text-green-700 dark:text-green-500"
+            >
+              Email copied to clipboard!
+            </Alert>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

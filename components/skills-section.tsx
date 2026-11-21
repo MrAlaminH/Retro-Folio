@@ -31,7 +31,7 @@ export function SkillsSection({ className }: SkillsSectionProps) {
                 "bg-neutral-50 dark:bg-neutral-800",
                 "border border-dotted border-neutral-300 dark:border-neutral-600",
                 "text-neutral-900 dark:text-gray-100",
-                "transition-all duration-200",
+                "transition-[background-color,border-color] duration-150",
                 "hover:bg-neutral-100 dark:hover:bg-neutral-700",
                 "hover:border-green-500/60 dark:hover:border-green-500/60",
                 "focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-900",
@@ -42,7 +42,7 @@ export function SkillsSection({ className }: SkillsSectionProps) {
               <IconComponent
                 className={cn(
                   "w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 text-neutral-900 dark:text-gray-100",
-                  "transition-transform duration-200",
+                  "transition-transform duration-150 ease-out",
                   "group-hover:scale-110"
                 )}
                 aria-hidden="true"

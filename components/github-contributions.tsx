@@ -5,6 +5,7 @@ import GitHubCalendar from "react-github-calendar";
 import { ActivityCalendar } from "react-activity-calendar";
 import type { ThemeInput } from "react-activity-calendar";
 import { motion } from "framer-motion";
+import { EASE_OUT_EXPO, useEnterTransform } from "@/lib/motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import DecodeText from "./MatrixCursor/DecodeText";
 import type { GitHubContribution } from "@/lib/github";
@@ -34,6 +35,7 @@ export function GitHubContributions({
   className = "",
 }: GitHubContributionsProps) {
   const { theme } = useTheme();
+  const panelEnter = useEnterTransform("translateY(16px)");
   const [mounted, setMounted] = React.useState(false);
   const [contributions, setContributions] = React.useState<
     GitHubContribution[] | null
@@ -145,9 +147,9 @@ export function GitHubContributions({
         {/* Fallback to direct fetch if API fails */}
         <motion.div
           className="relative overflow-hidden rounded-xl border border-green-600/40 dark:border-green-500/40 bg-transparent mt-4"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+          initial={{ opacity: 0, transform: panelEnter }}
+          animate={{ opacity: 1, transform: panelEnter === undefined ? undefined : "translateY(0px)" }}
+          transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
         >
           <div
             className={`${
@@ -183,9 +185,9 @@ export function GitHubContributions({
 
       <motion.div
         className="relative overflow-hidden rounded-xl border border-green-600/40 dark:border-green-500/40 bg-transparent"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        initial={{ opacity: 0, transform: panelEnter }}
+        animate={{ opacity: 1, transform: panelEnter === undefined ? undefined : "translateY(0px)" }}
+        transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
       >
         <div
           className={`${

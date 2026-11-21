@@ -25,6 +25,7 @@ const Component: React.FC = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isBooting, setIsBooting] = useState<boolean>(true);
   const [isPoweredOn, setIsPoweredOn] = useState<boolean>(true);
+  const [isPoweringOff, setIsPoweringOff] = useState<boolean>(false);
   const [accessGranted, setAccessGranted] = useState<boolean>(false);
   const [isAIThinking, setIsAIThinking] = useState<boolean>(false);
   const [matrixMode, setMatrixMode] = useState<boolean>(false);
@@ -252,11 +253,21 @@ const Component: React.FC = () => {
   };
 
   const togglePower = () => {
-    setIsPoweredOn(!isPoweredOn);
+    if (isPoweringOff) return;
     if (isPoweredOn) {
-      setHistory([]);
-      setIsBooting(true);
+      // Play the CRT collapse, then flip to offline.
+      // 350ms matches the .crt-power-off animation duration in globals.css
+      // (kept as a pair — reduced-motion users get an instant swap after
+      // the same beat).
+      setIsPoweringOff(true);
+      setTimeout(() => {
+        setIsPoweredOn(false);
+        setIsPoweringOff(false);
+        setHistory([]);
+        setIsBooting(true);
+      }, 350);
     } else {
+      setIsPoweredOn(true);
       setTimeout(() => {
         setIsBooting(false);
         bootSequence();
@@ -290,7 +301,9 @@ const Component: React.FC = () => {
 
             {/* Monitor Screen */}
             <div
-              className="flex-grow bg-black p-4 relative overflow-hidden"
+              className={`flex-grow bg-black p-4 relative overflow-hidden ${
+                isPoweringOff ? "crt-power-off" : ""
+              }`}
               style={{ minHeight: "60vh" }}
             >
               {isPoweredOn ? (
@@ -317,7 +330,7 @@ const Component: React.FC = () => {
                           HedaOS v3.1337
                         </h1>
                         <div className="w-64 h-2 bg-green-900 rounded-full">
-                          <div className="w-0 h-full bg-green-500 rounded-full animate-load"></div>
+                          <div className="w-full h-full bg-green-500 rounded-full animate-load"></div>
                         </div>
                       </div>
                     </div>
@@ -335,7 +348,7 @@ const Component: React.FC = () => {
                         />
                       )}
                       {history.map((item, index) => (
-                        <div key={index} className="mb-1 typewriter">
+                        <div key={index} className="mb-1">
                           {typeof item === "string" ? item : item.text}
                         </div>
                       ))}

@@ -38,11 +38,12 @@ html.disable-transitions *::after {
 }
 
 /* ─── Fallback: CSS property transitions (non-VT browsers) ─── */
+/* One action (theme change) → one duration; color/state changes use `ease`. */
 
 html,
 body {
-  transition: background-color 0.35s ease-in-out, color 0.35s ease-in-out,
-    border-color 0.35s ease-in-out;
+  transition: background-color var(--duration-theme) ease,
+    color var(--duration-theme) ease, border-color var(--duration-theme) ease;
 }
 
 a,
@@ -50,11 +51,15 @@ button,
 input,
 textarea,
 select {
-  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out,
-    border-color 0.25s ease-in-out;
+  transition: background-color var(--duration-fast) ease,
+    color var(--duration-fast) ease, border-color var(--duration-fast) ease,
+    opacity var(--duration-fast) ease, transform 160ms var(--ease-out);
 }
 
-/* ─── Respect reduced motion preferences ─── */
+/* ─── Respect reduced motion preferences ───
+   Fewer and gentler animations, not zero: keep short color/opacity
+   feedback (incl. the theme-switch color fade), drop all movement.
+   JS-driven motion (MatrixCursor, DecodeText) checks this itself. */
 @media (prefers-reduced-motion: reduce) {
   html,
   body,
@@ -63,7 +68,44 @@ select {
   input,
   textarea,
   select {
-    transition: none !important;
+    transition-property: background-color, color, border-color, opacity;
+  }
+
+  /* Ambient/decorative movement loops stop; static states remain */
+  .glitch,
+  .glitch::before,
+  .glitch::after,
+  .typewriter p,
+  .equalizer-bar-1,
+  .equalizer-bar-2,
+  .equalizer-bar-3,
+  .equalizer-bar-4,
+  .retro-button-pulse::after,
+  .retro-button-pulse-glow,
+  .retro-button-scanline,
+  .retro-button-pulse-slow,
+  .animate-blink,
+  .animate-load,
+  .glitch-effect,
+  .crt-power-off {
+    animation: none !important;
+  }
+
+  /* Height reveals become instant swaps */
+  .disclosure {
+    transition: none;
+  }
+
+  /* The glitch pseudo-elements would otherwise sit statically on the text */
+  .glitch::before,
+  .glitch::after {
+    display: none;
+  }
+
+  /* Typewriter: reveal the full text, hide the moving caret */
+  .typewriter p {
+    clip-path: none;
+    border-right-color: transparent;
   }
 }
 
@@ -73,6 +115,13 @@ select {
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 255, 255, 255;
   color-scheme: light;
+
+  /* Motion tokens — the single source for curves and durations */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* entrances, UI response */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); /* on-screen movement */
+  --duration-fast: 150ms; /* hovers, color/state changes */
+  --duration-ui: 200ms; /* entrances, popovers, lightbox */
+  --duration-theme: 350ms; /* non-VT theme-switch fallback */
 }
 
 .dark {
@@ -171,32 +220,26 @@ body {
   white-space: nowrap;
   margin: 0 auto;
   letter-spacing: 0.15em;
-  animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+  /* clip-path reveal: same typewriter cadence, no per-step layout reflow */
+  animation: typing 3.5s steps(40, end) both, blink-caret 0.75s step-end
+    infinite;
 }
 
+/* height:0→auto is not interpolable — on multi-line (mobile) layouts the
+   reveal can't work, so show the text and keep only the caret blink */
 @media (max-width: 640px) {
   .typewriter p {
     white-space: normal;
-    animation: typing-mobile 3.5s steps(40, end),
-      blink-caret 0.75s step-end infinite;
+    animation: blink-caret 0.75s step-end infinite;
   }
 }
 
 @keyframes typing {
   from {
-    width: 0;
+    clip-path: inset(0 100% 0 0);
   }
   to {
-    width: 100%;
-  }
-}
-
-@keyframes typing-mobile {
-  from {
-    height: 0;
-  }
-  to {
-    height: auto;
+    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -306,71 +349,58 @@ body {
   animation-delay: 0.1s;
 }
 
-/* Retro Button Animations */
-/* Dark theme pulse glow */
-@keyframes pulse-glow {
+/* Retro Button Animations
+   The breathing glow is compositor-friendly: the box-shadow layers are
+   static (painted once) and only an overlay's `opacity` animates. */
+@keyframes retro-pulse {
   0%,
   100% {
-    box-shadow: inset 0 1px 0 0 rgba(34, 197, 94, 0.2),
-      inset 0 -1px 0 0 rgba(0, 0, 0, 0.3),
-      inset 1px 0 0 0 rgba(34, 197, 94, 0.2),
-      inset -1px 0 0 0 rgba(0, 0, 0, 0.3),
-      0 0 8px rgba(34, 197, 94, 0.1),
-      0 2px 4px rgba(0, 0, 0, 0.3),
-      2px 2px 0 0 rgba(34, 197, 94, 0.15);
+    opacity: 0.4;
   }
   50% {
-    box-shadow: inset 0 1px 0 0 rgba(34, 197, 94, 0.3),
-      inset 0 -1px 0 0 rgba(0, 0, 0, 0.3),
-      inset 1px 0 0 0 rgba(34, 197, 94, 0.3),
-      inset -1px 0 0 0 rgba(0, 0, 0, 0.3),
-      0 0 12px rgba(34, 197, 94, 0.2),
-      0 2px 4px rgba(0, 0, 0, 0.3),
-      2px 2px 0 0 rgba(34, 197, 94, 0.2);
+    opacity: 0.85;
   }
 }
 
-/* Light theme pulse glow */
-@keyframes pulse-glow-light {
+@keyframes retro-pulse-hover {
   0%,
   100% {
-    box-shadow: inset 0 1px 0 0 rgba(5, 46, 22, 0.15),
-      inset 0 -1px 0 0 rgba(0, 0, 0, 0.1),
-      inset 1px 0 0 0 rgba(5, 46, 22, 0.15),
-      inset -1px 0 0 0 rgba(0, 0, 0, 0.1),
-      0 0 8px rgba(5, 46, 22, 0.08),
-      0 2px 4px rgba(0, 0, 0, 0.1),
-      2px 2px 0 0 rgba(5, 46, 22, 0.12);
+    opacity: 0.65;
   }
   50% {
-    box-shadow: inset 0 1px 0 0 rgba(5, 46, 22, 0.2),
-      inset 0 -1px 0 0 rgba(0, 0, 0, 0.1),
-      inset 1px 0 0 0 rgba(5, 46, 22, 0.2),
-      inset -1px 0 0 0 rgba(0, 0, 0, 0.1),
-      0 0 12px rgba(5, 46, 22, 0.12),
-      0 2px 4px rgba(0, 0, 0, 0.1),
-      2px 2px 0 0 rgba(5, 46, 22, 0.15);
+    opacity: 1;
   }
 }
 
-@keyframes pulse-glow-hover {
-  0%,
-  100% {
-    box-shadow: inset 0 0 16px rgba(34, 197, 94, 0.3);
-  }
-  50% {
-    box-shadow: inset 0 0 20px rgba(34, 197, 94, 0.5);
-  }
+/* Base glow: the former keyframes' resting frame, now a static shadow */
+.retro-button-pulse {
+  position: relative;
+  box-shadow: inset 0 1px 0 0 rgba(5, 46, 22, 0.15),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.1), inset 1px 0 0 0 rgba(5, 46, 22, 0.15),
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.1), 0 0 8px rgba(5, 46, 22, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.1), 2px 2px 0 0 rgba(5, 46, 22, 0.12);
 }
 
-@keyframes pulse-glow-hover-light {
-  0%,
-  100% {
-    box-shadow: inset 0 0 16px rgba(5, 46, 22, 0.2);
-  }
-  50% {
-    box-shadow: inset 0 0 20px rgba(5, 46, 22, 0.3);
-  }
+.dark .retro-button-pulse {
+  box-shadow: inset 0 1px 0 0 rgba(34, 197, 94, 0.2),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.3), inset 1px 0 0 0 rgba(34, 197, 94, 0.2),
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.3), 0 0 8px rgba(34, 197, 94, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.3), 2px 2px 0 0 rgba(34, 197, 94, 0.15);
+}
+
+/* Brighter glow layer, animated on opacity only */
+.retro-button-pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: 0 0 12px rgba(5, 46, 22, 0.3), 2px 2px 0 0 rgba(5, 46, 22, 0.3);
+  animation: retro-pulse 3s ease-in-out infinite;
+}
+
+.dark .retro-button-pulse::after {
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.35), 2px 2px 0 0 rgba(34, 197, 94, 0.35);
 }
 
 @keyframes scanline {
@@ -392,20 +422,14 @@ body {
   }
 }
 
-.retro-button-pulse {
-  animation: pulse-glow-light 3s ease-in-out infinite;
-}
-
-.dark .retro-button-pulse {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
+/* Hover glow: static inset shadow, opacity breathing (16→20px equivalent) */
 .retro-button-pulse-glow {
-  animation: pulse-glow-hover-light 2s ease-in-out infinite;
+  box-shadow: inset 0 0 18px rgba(5, 46, 22, 0.25);
+  animation: retro-pulse-hover 2s ease-in-out infinite;
 }
 
 .dark .retro-button-pulse-glow {
-  animation: pulse-glow-hover 2s ease-in-out infinite;
+  box-shadow: inset 0 0 18px rgba(34, 197, 94, 0.4);
 }
 
 .retro-button-scanline {
@@ -414,4 +438,125 @@ body {
 
 .retro-button-pulse-slow {
   animation: pulse-slow 2s ease-in-out infinite;
+}
+
+/* Music player: bars stay mounted and freeze mid-bounce when paused */
+.equalizer-paused .equalizer-bar {
+  animation-play-state: paused;
+}
+
+/* Expand/collapse (disclosures, alerts): grid-rows trick — CSS-only,
+   interruptible, no JS height measuring. Pair with grid-rows-[0fr]/[1fr],
+   opacity-0/100 and `invisible` utilities, and a .disclosure-inner child.
+   `visibility` transitions discretely: stays visible while collapsing,
+   hidden at the end — collapsed content is unfocusable and out of the
+   accessibility tree. */
+.disclosure {
+  display: grid;
+  transition: grid-template-rows var(--duration-ui) var(--ease-out),
+    opacity var(--duration-fast) ease,
+    visibility var(--duration-ui) linear;
+}
+
+.disclosure > .disclosure-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ─── Terminal page effects ─── */
+
+/* Boot progress bar — transform-only fill (the div itself is w-full) */
+.animate-load {
+  transform-origin: left;
+  animation: terminal-load 2s var(--ease-out) both;
+}
+
+@keyframes terminal-load {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Prompt cursor */
+.animate-blink {
+  animation: terminal-blink 1s step-end infinite;
+}
+
+@keyframes terminal-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* CRT scanline overlay (static, cheap) */
+.bg-scan-lines {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(34, 197, 94, 0.04) 2px,
+    rgba(34, 197, 94, 0.04) 3px
+  );
+}
+
+/* Occasional subtle CRT flicker — idle most of the cycle */
+.glitch-effect {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(34, 197, 94, 0.025);
+  opacity: 0;
+  animation: crt-flicker 8s linear infinite;
+}
+
+@keyframes crt-flicker {
+  0%,
+  91%,
+  94%,
+  100% {
+    opacity: 0;
+  }
+  92% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.4;
+  }
+  95% {
+    opacity: 0.7;
+  }
+}
+
+/* CRT power-off: classic line-collapse (rare, high-emotion moment) */
+.crt-power-off {
+  animation: crt-power-off 350ms var(--ease-in-out) both;
+}
+
+@keyframes crt-power-off {
+  0% {
+    transform: scaleY(1);
+    filter: brightness(1);
+    opacity: 1;
+  }
+  55% {
+    transform: scaleY(0.008) scaleX(1.1);
+    filter: brightness(2.5);
+    opacity: 1;
+  }
+  80% {
+    transform: scaleY(0.004) scaleX(1.2);
+    filter: brightness(3);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scaleY(0.002);
+    opacity: 0;
+  }
 }

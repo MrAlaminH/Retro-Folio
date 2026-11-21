@@ -9,6 +9,11 @@ const config = {
     './src/**/*.{ts,tsx}',
 	],
   prefix: "",
+  // Gate hover variants behind @media (hover: hover) so touch devices
+  // don't get sticky false hovers on tap (matches Tailwind v4 default).
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     container: {
       center: true,
@@ -73,15 +78,23 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "equalizer": {
-          "0%, 100%": { height: "30%" },
-          "50%": { height: "100%" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "equalizer": "equalizer 1.2s ease-in-out infinite",
+      },
+      // Motion tokens mirroring globals.css --ease-* / --duration-*.
+      // Use as `ease-out-expo`, `duration-theme`, etc.
+      transitionTimingFunction: {
+        "out-expo": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "in-out-quart": "cubic-bezier(0.77, 0, 0.175, 1)",
+      },
+      transitionDuration: {
+        "150": "150ms",
+        "160": "160ms",
+        "200": "200ms",
+        "250": "250ms",
+        theme: "350ms",
       },
       fontFamily: {
         'Kalam': ['Kalam', 'cursive'],

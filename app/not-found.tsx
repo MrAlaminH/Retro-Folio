@@ -59,7 +59,7 @@ export default function Custom404() {
       </div>
 
       <Link href="/" className="relative px-6 py-3 group">
-        <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform translate-x-1 translate-y-1 bg-green-700 group-hover:-translate-x-0 group-hover:-translate-y-0"></span>
+        <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-green-700 group-hover:-translate-x-0 group-hover:-translate-y-0"></span>
         <span className="absolute inset-0 w-full h-full bg-black border-2 border-green-400 group-hover:bg-green-400"></span>
         <span className="relative text-green-400 group-hover:text-black">
           Return to Home Base

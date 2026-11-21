@@ -23,6 +23,7 @@ export default function MatrixCursor() {
   const lastMoveTimeRef = useRef(0);
   const rafIdRef = useRef<number | null>(null);
   const lastFadeTimeRef = useRef(0);
+  const kickRenderRef = useRef<(() => void) | null>(null);
 
   const matrixChars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"'#&_(),.;:?!\\|{}<>[]^~";
@@ -32,12 +33,16 @@ export default function MatrixCursor() {
     [matrixChars]
   );
 
-  // Detect mobile/touch devices — same as before
+  // Detect mobile/touch devices and reduced-motion users — the trail is
+  // pure decoration, so it disables entirely for them
   useEffect(() => {
     const isTouchDevice =
       "ontouchstart" in window || navigator.maxTouchPoints > 0;
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    isEnabledRef.current = !isTouchDevice && !isMobile;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    isEnabledRef.current = !isTouchDevice && !isMobile && !reducedMotion;
   }, []);
 
   // Mouse move handler — writes to ref (no state update)
@@ -58,6 +63,11 @@ export default function MatrixCursor() {
       });
       if (trail.length > TRAIL_LENGTH) {
         trail.length = TRAIL_LENGTH;
+      }
+
+      // Restart the render loop if it idled out (empty trail)
+      if (trail.length === 1 && kickRenderRef.current) {
+        kickRenderRef.current();
       }
     };
 
@@ -103,6 +113,7 @@ export default function MatrixCursor() {
       ctx.font = `${MAX_FONT_SIZE}px monospace`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(34, 197, 94, 0.5)";
 
       for (let i = 0; i < trailRef.current.length; i++) {
         const p = trailRef.current[i];
@@ -116,20 +127,35 @@ export default function MatrixCursor() {
         );
         ctx.font = `${fontSize}px monospace`;
         ctx.fillStyle = `rgba(34, 197, 94, ${opacity})`;
-        ctx.shadowColor = "rgba(34, 197, 94, 0.5)";
-        ctx.shadowBlur = 5;
+        // shadowBlur is costly per glyph — glow only the lead glyphs
+        ctx.shadowBlur = i < 3 ? 5 : 0;
         ctx.fillText(p.char, p.x, p.y);
+      }
+
+      // Idle out: nothing left to draw, stop the loop until the next
+      // mousemove kicks it back on
+      if (trailRef.current.length === 0) {
+        rafIdRef.current = null;
+        return;
       }
 
       rafIdRef.current = requestAnimationFrame(render);
     };
 
+    kickRenderRef.current = () => {
+      if (rafIdRef.current === null) {
+        rafIdRef.current = requestAnimationFrame(render);
+      }
+    };
+
     rafIdRef.current = requestAnimationFrame(render);
 
     return () => {
-      if (rafIdRef.current) {
+      if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
       }
+      kickRenderRef.current = null;
       window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
