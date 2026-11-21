@@ -49,15 +49,11 @@ export default async function GalleryPage({}: GalleryPageProps) {
                 const categoryImages = imagesByCategory[category] || [];
                 const shouldPaginate =
                   categoryImages.length >= PAGINATION_THRESHOLD;
-                const initialImages = shouldPaginate
-                  ? categoryImages.slice(0, IMAGES_PER_LOAD)
-                  : categoryImages;
 
                 return (
                   <div key={category} id={`category-${category}`}>
                     <GalleryCategory
                       category={category}
-                      initialImages={initialImages}
                       allImages={categoryImages}
                       showPagination={shouldPaginate}
                       imagesPerLoad={IMAGES_PER_LOAD}

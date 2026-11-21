@@ -4,7 +4,6 @@ import DecodeText from "@/components/MatrixCursor/DecodeText";
 
 interface GalleryCategoryProps {
   category: string;
-  initialImages: GalleryImage[];
   allImages: GalleryImage[];
   showPagination?: boolean;
   imagesPerLoad?: number;
@@ -14,7 +13,6 @@ interface GalleryCategoryProps {
 
 export default function GalleryCategory({
   category,
-  initialImages,
   allImages,
   showPagination = false,
   imagesPerLoad = 6,
@@ -30,7 +28,6 @@ export default function GalleryCategory({
       {showPagination ? (
         <SeeMoreButton
           category={category}
-          initialImages={initialImages}
           allImages={allImages}
           imagesPerLoad={imagesPerLoad}
           priority={priority}
@@ -38,7 +35,6 @@ export default function GalleryCategory({
       ) : (
         <SeeMoreButton
           category={category}
-          initialImages={initialImages}
           allImages={allImages}
           imagesPerLoad={imagesPerLoad}
           priority={priority}
