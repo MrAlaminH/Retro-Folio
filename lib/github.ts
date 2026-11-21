@@ -56,8 +56,8 @@ export async function fetchUserPullRequests(
       method: "GET",
       headers,
       signal: AbortSignal.timeout(8000),
-      // Let Next.js handle caching; this is runtime data.
-      cache: "no-store",
+      // Cached for an hour; the route layer also memoizes via unstable_cache.
+      next: { revalidate: 3600 },
     });
 
     if (!response.ok) {
