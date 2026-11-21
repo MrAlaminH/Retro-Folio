@@ -29,7 +29,6 @@ const themeColors: ThemeInput = {
   dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
 };
 
-// Same fetch-lifecycle machine as github-pull-requests.tsx — one explicit
 // status instead of mounted/isLoading/error booleans with illegal combos.
 type Status = "idle" | "loading" | "success" | "error";
 
