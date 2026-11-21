@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: "Kalam";
-  src: url("../public/fonts/Kalam-Regular.ttf") format("truetype");
+  src: url("../public/fonts/Kalam-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: "Departure Mono";
-  src: url("../public/fonts/DepartureMono-Regular.woff") format("woff");
+  src: url("/fonts/DepartureMono-Regular.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
