@@ -27,7 +27,7 @@ const Projects = () => {
           <DecodeText text="Recent Projects" />
         </h2>
         <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-          {projectData.map((project) => (
+          {projectData.map((project, index) => (
             <div
               key={project.id}
               className="border-2 border-green-600 dark:border-green-500 p-4 transition-[background-color,box-shadow] duration-200 hover:bg-green-100 dark:hover:bg-green-900 hover:bg-opacity-20 h-full flex flex-col shadow-[0_0_10px_rgba(0,128,0,0.3)] dark:shadow-[0_0_10px_rgba(0,255,0,0.3)] hover:shadow-[0_0_15px_rgba(0,128,0,0.5)] dark:hover:shadow-[0_0_15px_rgba(0,255,0,0.5)] relative group"
@@ -40,7 +40,8 @@ const Projects = () => {
                     alt={project.altText}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    loading="lazy"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    priority={index === 0}
                     quality={85}
                   />
                 </div>
