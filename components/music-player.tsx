@@ -109,12 +109,10 @@ export default function MusicPlayer() {
     attemptAutoplay();
   };
 
-  // The SSR'd <audio> may finish loading before React attaches onLoadedData;
-  // if so, make the one autoplay attempt here instead.
+  // With preload="none" nothing loads until play() is called, so the mount
+  // effect makes the one autoplay attempt directly (play() starts loading).
   useEffect(() => {
-    if (audioRef.current && audioRef.current.readyState >= 2) {
-      attemptAutoplay();
-    }
+    attemptAutoplay();
   }, [attemptAutoplay]);
 
   // While autoplay is blocked, retry on the first interaction anywhere.
