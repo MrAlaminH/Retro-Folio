@@ -32,24 +32,19 @@ const ChatWidget = () => {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [conversationStarted, setConversationStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const [sessionId, setSessionId] = useState("");
+  // Lazy init: generated once on first render — no effect/machine needed.
+  const [sessionId] = useState(
+    () => `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+  );
 
   // Predefined quick messages
   const quickMessages: QuickMessage[] = [
     { id: "get-started", text: "I'd like to get started" },
     { id: "learn-more", text: "Tell me more about MrAlaminH" },
   ];
-
-  // Generate a session ID on component mount
-  useEffect(() => {
-    if (!sessionId) {
-      setSessionId(
-        `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
-      );
-    }
-  }, [sessionId]);
 
   useEffect(() => {
     if (open) {
@@ -114,9 +109,14 @@ const ChatWidget = () => {
     setMessages((msgs) => [...msgs, userMsg]);
     setInput("");
     setLoading(true);
+    setConversationStarted(true);
 
     try {
       const url = `${WEBHOOK_URL}?action=sendMessage`;
+
+      // Don't leave the user on "Typing…" forever if the webhook hangs.
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const res = await fetch(url, {
         method: "POST",
@@ -125,7 +125,9 @@ const ChatWidget = () => {
           chatInput: messageText,
           sessionId: sessionId,
         }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       const data = await res.json();
       console.log("Response from n8n:", data);
@@ -158,7 +160,13 @@ const ChatWidget = () => {
       console.error("Error sending message:", e);
       setMessages((msgs) => [
         ...msgs,
-        { sender: "bot", text: "Sorry, something went wrong." },
+        {
+          sender: "bot",
+          text:
+            e instanceof DOMException && e.name === "AbortError"
+              ? "Sorry, that took too long — please try again."
+              : "Sorry, something went wrong.",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -306,7 +314,7 @@ const ChatWidget = () => {
             )}
             <div ref={messagesEndRef} />
           </div>
-          {messages.length <= 2 && (
+          {!conversationStarted && (
             <div
               className={`p-3 border-t flex flex-wrap gap-2 ${
                 theme === "dark"

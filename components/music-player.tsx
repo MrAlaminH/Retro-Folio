@@ -3,280 +3,140 @@ import React, { useRef, useState, useEffect } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import { musicTracks } from "@/config/music-config";
 
+// Player lifecycle as one explicit status instead of a pile of booleans:
+//
+//   idle ──play()──▶ loading ──ok──▶ playing ⇄ paused (user pause)
+//                     │                │
+//                     │                └─track end─▶ next track (still playing)
+//                     ├─fail (no gesture yet)─▶ blocked ──interaction──▶ loading
+//                     └─fail (load/media)─────▶ error ──click──▶ loading
+//
+// Every playback start goes through startPlayback(), which is the only place
+// that sets "loading"/"playing"; failure handling is per-transition.
+type PlayerStatus =
+  | "idle"
+  | "loading"
+  | "playing"
+  | "paused"
+  | "blocked"
+  | "error";
+
+const VOLUME = 0.3; // -70% from full volume
+
 export default function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const autoplayAttemptedRef = useRef(false);
-  const userHasInteractedRef = useRef(false); // Track if user has manually paused
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [hasPlayed, setHasPlayed] = useState(false); // Frozen bars show only after first play
-  const [autoplayBlocked, setAutoplayBlocked] = useState(false); // Track if autoplay was blocked by browser
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const [hasError, setHasError] = useState(false);
-  const [audioSrc, setAudioSrc] = useState<string | undefined>(undefined);
+  const autoplayAttemptedRef = useRef(false); // one autoplay attempt per mount
+  const resumeOnLoadRef = useRef(false); // continue playlist after track switch
+  const [status, setStatus] = useState<PlayerStatus>("idle");
+  const [hasPlayed, setHasPlayed] = useState(false); // frozen bars show only after first play
+  const [trackIndex, setTrackIndex] = useState(0);
+  const [src, setSrc] = useState<string | undefined>(musicTracks[0]?.src);
 
-  // All hooks must be called before any conditional returns
-  const currentTrack =
-    musicTracks.length > 0 ? musicTracks[currentTrackIndex] : null;
+  const currentTrack = musicTracks.length > 0 ? musicTracks[trackIndex] : null;
+  // "loading" counts as active so the button/eq bars react immediately,
+  // matching the old optimistic flip (cached audio resolves in ~a frame).
+  const active = status === "playing" || status === "loading";
+
+  const startPlayback = React.useCallback(
+    (audio: HTMLAudioElement, onFailure: () => void) => {
+      audio.volume = VOLUME;
+      setStatus("loading");
+      audio
+        .play()
+        .then(() => {
+          setStatus("playing");
+          setHasPlayed(true);
+        })
+        .catch(onFailure);
+    },
+    []
+  );
 
   const handlePlayPause = () => {
-    if (!audioRef.current) return;
-
-    // Mark that user has interacted
-    userHasInteractedRef.current = true;
-
-    // Lazy-load audio source on first play attempt
-    if (!audioSrc && currentTrack) {
-      setAudioSrc(currentTrack.src);
+    const audio = audioRef.current;
+    if (!audio || status === "loading") return;
+    if (status === "playing") {
+      audio.pause();
+      setStatus("paused");
+      return;
     }
-
-    // Set volume to 30% (70% reduction from original)
-    audioRef.current.volume = 0.3;
-
-    try {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        audioRef.current.play().catch((error) => {
-          console.warn("Failed to play audio:", error);
-          setHasError(true);
-          setIsPlaying(false);
-        });
-        setIsPlaying(true);
-        setHasPlayed(true);
-        setHasError(false);
-      }
-    } catch (error) {
-      console.warn("Error toggling audio:", error);
-      setHasError(true);
-      setIsPlaying(false);
-    }
+    // idle/paused/blocked/error → (re)start. A click is a user gesture, so a
+    // failure here is a load/media problem, not autoplay policy.
+    startPlayback(audio, () => setStatus("error"));
   };
 
   const handleTrackEnd = () => {
-    // Only continue playing if it was playing when track ended
-    // (This handles natural track progression, not user pause)
-    if (!isPlaying) return;
-
-    if (musicTracks.length > 1) {
-      // Playlist: move to next song
-      const nextIndex = (currentTrackIndex + 1) % musicTracks.length;
-      setCurrentTrackIndex(nextIndex);
-      // Audio will auto-play when src changes (handled by useEffect)
-    } else {
-      // Single song: restart (loop) only if it was playing
-      if (audioRef.current && isPlaying) {
-        audioRef.current.volume = 0.3;
-        audioRef.current.currentTime = 0;
-        audioRef.current.play().catch((error) => {
-          console.warn("Failed to replay audio:", error);
-        });
-      }
-    }
+    // Single track loops via the `loop` attribute (ended never fires there).
+    if (musicTracks.length <= 1 || status !== "playing") return;
+    resumeOnLoadRef.current = true;
+    setTrackIndex((i) => (i + 1) % musicTracks.length);
   };
 
   const handleError = () => {
     console.warn("Audio loading error");
-    setHasError(true);
-    setIsPlaying(false);
+    setStatus("error");
   };
+
+  // Follow the selected track (mount + playlist progression): swap the
+  // element's src and let the browser load; continuation happens in
+  // handleLoadedData. Kept off `status` deps on purpose — pause/play must
+  // never reload the track (that used to rewind the song to 0:00).
+  useEffect(() => {
+    if (currentTrack) setSrc(currentTrack.src);
+  }, [trackIndex, currentTrack]);
+
+  const attemptAutoplay = React.useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || autoplayAttemptedRef.current) return;
+    autoplayAttemptedRef.current = true;
+    startPlayback(audio, () => {
+      console.log(
+        "Autoplay blocked by browser policy; will retry on first interaction."
+      );
+      setStatus("blocked");
+    });
+  }, [startPlayback]);
 
   const handleLoadedData = () => {
-    // Primary autoplay mechanism - fires when audio data is loaded
     const audio = audioRef.current;
-
-    // Set volume to 30% (70% reduction from original)
-    if (audio) {
-      audio.volume = 0.3;
-    }
-
-    // Only attempt autoplay if:
-    // 1. Audio element exists
-    // 2. User hasn't manually interacted yet
-    // 3. We haven't already attempted autoplay
-    if (
-      audio &&
-      !userHasInteractedRef.current &&
-      !autoplayAttemptedRef.current
-    ) {
-      autoplayAttemptedRef.current = true;
-
-      // Ensure volume is set before playing
-      audio.volume = 0.3;
-      audio
-        .play()
-        .then(() => {
-          console.log("Autoplay successful");
-          setIsPlaying(true);
-          setHasPlayed(true);
-          setHasError(false);
-          setAutoplayBlocked(false);
-        })
-        .catch((error) => {
-          // Autoplay blocked by browser - this is expected in many browsers
-          console.log(
-            "Autoplay blocked by browser policy. User can click to play."
-          );
-          setIsPlaying(false);
-          setAutoplayBlocked(true);
-          // Don't reset autoplayAttemptedRef - we tried once, that's enough
-        });
-    }
-  };
-
-  // Fallback autoplay attempt (only if onLoadedData didn't fire)
-  // This is a minimal fallback - primary autoplay happens in handleLoadedData
-  useEffect(() => {
-    const audio = audioRef.current;
-
-    // Only attempt if:
-    // 1. Audio exists and track exists
-    // 2. User hasn't interacted
-    // 3. We haven't attempted autoplay yet
-    // 4. Audio is already loaded (readyState >= 2 means data is available)
-    if (
-      audio &&
-      currentTrack &&
-      !userHasInteractedRef.current &&
-      !autoplayAttemptedRef.current &&
-      audio.readyState >= 2
-    ) {
-      // Small delay to let onLoadedData have first chance
-      const timeoutId = setTimeout(() => {
-        if (
-          !userHasInteractedRef.current &&
-          !autoplayAttemptedRef.current &&
-          audioRef.current
-        ) {
-          autoplayAttemptedRef.current = true;
-          audioRef.current.volume = 0.3;
-          audioRef.current
-            .play()
-            .then(() => {
-              console.log("Autoplay successful (fallback)");
-              setIsPlaying(true);
-              setHasPlayed(true);
-              setHasError(false);
-              setAutoplayBlocked(false);
-            })
-            .catch((error) => {
-              console.log("Autoplay blocked by browser policy (fallback).");
-              setIsPlaying(false);
-              setAutoplayBlocked(true);
-            });
-        }
-      }, 100);
-
-      return () => {
-        clearTimeout(timeoutId);
-      };
-    }
-  }, [currentTrack]);
-
-  // Update audio source when track changes (playlist progression)
-  useEffect(() => {
-    if (audioRef.current && currentTrack) {
-      if (!audioSrc) {
-        setAudioSrc(currentTrack.src);
-        return;
-      }
-      audioRef.current.load();
-      // Set volume to 30% (70% reduction from original) - after load()
-      audioRef.current.volume = 0.3;
-      // Only auto-play next track if the previous track was playing
-      // This handles playlist progression when a track ends naturally
-      if (isPlaying) {
-        // Ensure volume is set before playing
-        audioRef.current.volume = 0.3;
-        audioRef.current.play().catch((error) => {
-          console.warn("Failed to play next track:", error);
-          setIsPlaying(false);
-        });
-      }
-    }
-  }, [currentTrackIndex, currentTrack, isPlaying, audioSrc]);
-
-  // Global interaction listener - retry autoplay after first user interaction
-  useEffect(() => {
-    // Check if we should set up listeners
-    // Only set up if autoplay was blocked and user hasn't manually interacted
-    if (!autoplayBlocked || userHasInteractedRef.current || isPlaying) {
+    if (!audio) return;
+    audio.volume = VOLUME;
+    if (resumeOnLoadRef.current) {
+      resumeOnLoadRef.current = false;
+      startPlayback(audio, () => setStatus("error"));
       return;
     }
+    attemptAutoplay();
+  };
 
-    let listenersActive = true;
-
-    const handleUserInteraction = () => {
-      if (!listenersActive) return;
-
-      const audio = audioRef.current;
-
-      // Only attempt to play if:
-      // 1. Audio exists
-      // 2. Autoplay was blocked
-      // 3. User hasn't manually paused
-      // 4. Audio is not currently playing
-      if (
-        audio &&
-        autoplayBlocked &&
-        !userHasInteractedRef.current &&
-        !isPlaying
-      ) {
-        audio.volume = 0.3;
-        audio
-          .play()
-          .then(() => {
-            console.log("Autoplay successful after user interaction");
-            setIsPlaying(true);
-            setHasPlayed(true);
-            setHasError(false);
-            setAutoplayBlocked(false);
-            listenersActive = false;
-            // Remove listeners after successful playback
-            removeListeners();
-          })
-          .catch((error) => {
-            console.log("Failed to play after user interaction:", error);
-            // Keep listeners in case user interacts again
-          });
-      } else {
-        // Remove listeners if conditions aren't met
-        listenersActive = false;
-        removeListeners();
-      }
-    };
-
-    const removeListeners = () => {
-      document.removeEventListener("click", handleUserInteraction);
-      document.removeEventListener("keydown", handleUserInteraction);
-      document.removeEventListener("touchstart", handleUserInteraction);
-      document.removeEventListener("mousedown", handleUserInteraction);
-    };
-
-    // Add event listeners for various user interactions
-    document.addEventListener("click", handleUserInteraction, { once: true });
-    document.addEventListener("keydown", handleUserInteraction, { once: true });
-    document.addEventListener("touchstart", handleUserInteraction, {
-      once: true,
-    });
-    document.addEventListener("mousedown", handleUserInteraction, {
-      once: true,
-    });
-
-    // Cleanup: remove listeners on unmount or when dependencies change
-    return () => {
-      listenersActive = false;
-      removeListeners();
-    };
-  }, [autoplayBlocked, isPlaying]);
-
-  // Set initial volume when component mounts
+  // The SSR'd <audio> may finish loading before React attaches onLoadedData;
+  // if so, make the one autoplay attempt here instead.
   useEffect(() => {
-    if (audioRef.current) {
-      // Set volume to 30% (70% reduction from original)
-      audioRef.current.volume = 0.3;
+    if (audioRef.current && audioRef.current.readyState >= 2) {
+      attemptAutoplay();
     }
-  }, []);
+  }, [attemptAutoplay]);
+
+  // While autoplay is blocked, retry on the first interaction anywhere.
+  // The listeners live exactly as long as the "blocked" state: success flips
+  // status so the cleanup removes them, a failure leaves them armed (they are
+  // re-attached because startPlayback passes through "loading" → re-render).
+  useEffect(() => {
+    if (status !== "blocked") return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    const tryPlay = () => startPlayback(audio, () => setStatus("blocked"));
+    document.addEventListener("click", tryPlay);
+    document.addEventListener("keydown", tryPlay);
+    document.addEventListener("touchstart", tryPlay);
+    document.addEventListener("mousedown", tryPlay);
+    return () => {
+      document.removeEventListener("click", tryPlay);
+      document.removeEventListener("keydown", tryPlay);
+      document.removeEventListener("touchstart", tryPlay);
+      document.removeEventListener("mousedown", tryPlay);
+    };
+  }, [status, startPlayback]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -291,7 +151,7 @@ export default function MusicPlayer() {
   // Equalizer bars component — stays mounted while paused (frozen
   // mid-bounce via .equalizer-paused) so play/pause doesn't pop
   const EqualizerBars = () => {
-    if (!isPlaying && !hasPlayed) return null;
+    if (!active && !hasPlayed) return null;
 
     // Different animation classes for each bar to create random bouncing effect
     const barClasses = [
@@ -304,7 +164,7 @@ export default function MusicPlayer() {
     return (
       <div
         className={`flex items-end gap-0.5 ml-1 h-3 ${
-          isPlaying ? "" : "equalizer-paused"
+          active ? "" : "equalizer-paused"
         }`}
       >
         {[0, 1, 2, 3].map((index) => (
@@ -326,38 +186,31 @@ export default function MusicPlayer() {
     <>
       <audio
         ref={audioRef}
-        src={audioSrc}
+        src={src}
         onEnded={handleTrackEnd}
         onError={handleError}
         onLoadedData={handleLoadedData}
-        onCanPlay={() => {
-          // Set volume whenever audio can play
-          if (audioRef.current) {
-            audioRef.current.volume = 0.3;
-          }
-        }}
         loop={musicTracks.length === 1}
       />
       <button
         onClick={handlePlayPause}
         className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-bold py-1 px-2 rounded flex items-center active:scale-97"
-        aria-label={isPlaying ? "Pause music" : "Play music"}
-        disabled={hasError}
+        aria-label={active ? "Pause music" : "Play music"}
       >
         {/* Crossfade play/pause icons instead of a hard swap */}
         <span className="relative inline-flex h-3 w-3">
           <Volume2
             className={`absolute inset-0 h-3 w-3 transition-opacity duration-150 ${
-              isPlaying ? "opacity-100" : "opacity-0"
+              active ? "opacity-100" : "opacity-0"
             }`}
           />
           <VolumeX
             className={`absolute inset-0 h-3 w-3 transition-opacity duration-150 ${
-              isPlaying ? "opacity-0" : "opacity-100"
+              active ? "opacity-0" : "opacity-100"
             }`}
           />
         </span>
-        <span className="ml-1">{isPlaying ? "Pause" : "Play"}</span>
+        <span className="ml-1">{active ? "Pause" : "Play"}</span>
         <EqualizerBars />
       </button>
     </>

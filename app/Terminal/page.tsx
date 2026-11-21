@@ -21,12 +21,20 @@ interface MatrixChar {
   speed: number;
 }
 
+// Machine lifecycle: offline ──power──▶ booting ──boot log done──▶ ready,
+// booting|ready ──power──▶ (crt collapse, 350ms) ──▶ offline. Every
+// transition through go()/powerOff() clears pending timers + overlays, so
+// sequences can't keep firing into a different phase (the old six-boolean
+// version leaked boot/hack/matrix timers across power cycles).
+type Phase = "offline" | "booting" | "ready";
+
 const Component: React.FC = () => {
   const [input, setInput] = useState<string>("");
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [isBooting, setIsBooting] = useState<boolean>(true);
-  const [isPoweredOn, setIsPoweredOn] = useState<boolean>(true);
-  const [isPoweringOff, setIsPoweringOff] = useState<boolean>(false);
+  const [phase, setPhase] = useState<Phase>("booting");
+  // Transient 350ms CRT-collapse overlay on the current phase
+  // (matches .crt-power-off in globals.css — kept as a pair).
+  const [poweringOff, setPoweringOff] = useState<boolean>(false);
   const [accessGranted, setAccessGranted] = useState<boolean>(false);
   const [isAIThinking, setIsAIThinking] = useState<boolean>(false);
   const [matrixMode, setMatrixMode] = useState<boolean>(false);
@@ -34,11 +42,48 @@ const Component: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const phaseRef = useRef<Phase>("booting");
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // Single timer registry: boot, hack, matrix, scan, encrypt, exit and the
+  // CRT beat all register here; clearTimers() runs on every transition.
+  const later = React.useCallback((fn: () => void, ms: number) => {
+    timersRef.current.push(setTimeout(fn, ms));
+  }, []);
+  const clearTimers = React.useCallback(() => {
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+  }, []);
+  const go = React.useCallback((next: Phase) => {
+    phaseRef.current = next;
+    setPhase(next);
+  }, []);
+
+  const bootSequence = React.useCallback(() => {
+    const bootMessages = [
+      "Initializing HedaOS v3.1337...",
+      "Establishing secure connection...",
+      "HedaOS v3.1337 ready. Welcome, Agent.",
+      'Type "help" for available commands',
+    ];
+
+    let delay = 0;
+    bootMessages.forEach((msg, index) => {
+      later(() => {
+        setHistory((prev) => [...prev, msg]);
+        if (index === bootMessages.length - 1) {
+          go("ready");
+        }
+      }, delay);
+      delay += Math.random() * 1000 + 500;
+    });
+  }, [later, go]);
 
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
     bootSequence();
-  }, []);
+    return clearTimers;
+  }, [bootSequence, clearTimers]);
 
   useEffect(() => {
     if (outputRef.current) {
@@ -97,26 +142,6 @@ const Component: React.FC = () => {
     };
   }, [matrixMode]);
 
-  const bootSequence = () => {
-    const bootMessages = [
-      "Initializing HedaOS v3.1337...",
-      "Establishing secure connection...",
-      "HedaOS v3.1337 ready. Welcome, Agent.",
-    ];
-
-    let delay = 0;
-    bootMessages.forEach((msg, index) => {
-      setTimeout(() => {
-        setHistory((prev) => [...prev, msg]);
-        if (index === bootMessages.length - 1) {
-          setIsBooting(false);
-          setHistory((prev) => [...prev, 'Type "help" for available commands']);
-        }
-      }, delay);
-      delay += Math.random() * 1000 + 500;
-    });
-  };
-
   const simulateHacking = () => {
     const hackingSteps = [
       "Bypassing firewall...",
@@ -129,7 +154,7 @@ const Component: React.FC = () => {
 
     let delay = 0;
     hackingSteps.forEach((step, index) => {
-      setTimeout(() => {
+      later(() => {
         setHistory((prev) => [...prev, step]);
         if (index === hackingSteps.length - 1) {
           setAccessGranted(true);
@@ -179,6 +204,9 @@ const Component: React.FC = () => {
 
       try {
         const aiResponse = await getAIResponse(query);
+        // Drop the answer if the terminal was powered off mid-query —
+        // it must not leak into the next boot's history.
+        if (phaseRef.current !== "ready") return;
         setHistory((prev) =>
           prev
             .filter(
@@ -188,6 +216,7 @@ const Component: React.FC = () => {
         );
       } catch (error) {
         console.error("Error getting AI response:", error);
+        if (phaseRef.current !== "ready") return;
         setHistory((prev) =>
           prev
             .filter(
@@ -213,11 +242,11 @@ const Component: React.FC = () => {
         case "matrix":
           newHistory.push("Activating Matrix mode...");
           setMatrixMode(true);
-          setTimeout(() => setMatrixMode(false), 30000);
+          later(() => setMatrixMode(false), 30000);
           break;
         case "exit":
           newHistory.push("System shutdown initiated...");
-          setTimeout(() => {
+          later(() => {
             setHistory(["System rebooted. Welcome back, Agent."]);
             setAccessGranted(false);
           }, 2000);
@@ -230,7 +259,7 @@ const Component: React.FC = () => {
           break;
         case "scan":
           newHistory.push("Scanning nearby networks...");
-          setTimeout(() => {
+          later(() => {
             setHistory((prev) => [
               ...prev,
               "3 vulnerable networks detected. Type 'hack' to exploit.",
@@ -239,7 +268,7 @@ const Component: React.FC = () => {
           break;
         case "encrypt":
           newHistory.push("Encrypting all communications...");
-          setTimeout(() => {
+          later(() => {
             setHistory((prev) => [
               ...prev,
               "All channels secured. You're now invisible.",
@@ -253,32 +282,35 @@ const Component: React.FC = () => {
     }
   };
 
+  // The single transition into "offline": kills every outstanding timer
+  // (boot, hack, matrix, scan, encrypt, exit) and resets overlays, so
+  // nothing keeps running against a dark screen or leaks into the reboot.
+  const powerOff = () => {
+    clearTimers();
+    go("offline");
+    setPoweringOff(false);
+    setHistory([]);
+    setAccessGranted(false);
+    setMatrixMode(false);
+    setIsAIThinking(false);
+  };
+
   const togglePower = () => {
-    if (isPoweringOff) return;
-    if (isPoweredOn) {
-      const powerOff = () => {
-        setIsPoweredOn(false);
-        setIsPoweringOff(false);
-        setHistory([]);
-        setIsBooting(true);
-      };
+    if (poweringOff) return;
+    if (phase === "offline") {
+      go("booting");
+      // Dramatic pause on the boot screen before the log starts (only on
+      // power-cycling; the initial page mount boots immediately).
+      later(bootSequence, 3000);
+    } else {
       if (prefersReducedMotion()) {
         // The .crt-power-off animation is suppressed, so waiting out the
         // 350ms beat would be dead latency — flip immediately.
         powerOff();
       } else {
-        // Play the CRT collapse, then flip to offline.
-        // 350ms matches the .crt-power-off animation duration in globals.css
-        // (kept as a pair).
-        setIsPoweringOff(true);
-        setTimeout(powerOff, 350);
+        setPoweringOff(true);
+        later(powerOff, 350);
       }
-    } else {
-      setIsPoweredOn(true);
-      setTimeout(() => {
-        setIsBooting(false);
-        bootSequence();
-      }, 3000);
     }
   };
 
@@ -309,11 +341,11 @@ const Component: React.FC = () => {
             {/* Monitor Screen */}
             <div
               className={`flex-grow bg-black p-4 relative overflow-hidden ${
-                isPoweringOff ? "crt-power-off" : ""
+                poweringOff ? "crt-power-off" : ""
               }`}
               style={{ minHeight: "60vh" }}
             >
-              {isPoweredOn ? (
+              {phase !== "offline" ? (
                 <>
                   <div className="absolute inset-0 bg-green-500 opacity-5 pointer-events-none"></div>
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-green-900 opacity-5 pointer-events-none"></div>
@@ -329,7 +361,7 @@ const Component: React.FC = () => {
                     </div>
                   )}
 
-                  {isBooting ? (
+                  {phase === "booting" ? (
                     <div className="h-full flex items-center justify-center">
                       <div className="text-center">
                         <Terminal className="w-16 h-16 mb-4 mx-auto animate-pulse text-green-500" />

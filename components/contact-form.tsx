@@ -2,29 +2,34 @@
 import React, { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
+// One submit machine instead of parallel isSubmitting/alert flags — the
+// outcome drives the alert's color too (failures must not look successful).
+type Status = "idle" | "submitting" | "success" | "error";
+
 export default function ContactForm() {
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
   const [alertMessage, setAlertMessage] = useState("");
   // Visibility is separate from content: the message stays mounted while the
   // disclosure collapses, so the exit animation actually renders.
   const [alertVisible, setAlertVisible] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   // Reset per submit, so a rapid second submit isn't hidden early by the
   // first submit's timer.
   const alertTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined
   );
 
-  const showAlert = (msg: string) => {
+  const showAlert = (msg: string, kind: "success" | "error") => {
+    setStatus(kind);
     setAlertMessage(msg);
     setAlertVisible(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setStatus("submitting");
 
     const formData = new FormData();
     formData.append("access_key", "f287cf62-319c-4651-be84-ff27611ea0ec");
@@ -40,18 +45,17 @@ export default function ContactForm() {
       });
 
       if (response.ok) {
-        showAlert("Message sent successfully!");
+        showAlert("Message sent successfully!", "success");
         setEmail("");
         setSubject("");
         setMessage("");
       } else {
-        showAlert("Failed to send message. Please try again later.");
+        showAlert("Failed to send message. Please try again later.", "error");
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      showAlert("An error occurred while sending your message.");
+      showAlert("An error occurred while sending your message.", "error");
     } finally {
-      setIsSubmitting(false);
       clearTimeout(alertTimerRef.current);
       alertTimerRef.current = setTimeout(() => setAlertVisible(false), 3000);
     }
@@ -73,7 +77,12 @@ export default function ContactForm() {
       >
         <div className="disclosure-inner">
           {alertMessage && (
-            <div className="bg-green-500 text-white p-2 rounded mb-4">
+            <div
+              className={cn(
+                "p-2 rounded mb-4 text-white",
+                status === "error" ? "bg-red-500" : "bg-green-500"
+              )}
+            >
               {alertMessage}
             </div>
           )}
@@ -120,11 +129,11 @@ export default function ContactForm() {
       <button
         type="submit"
         className={`bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600 transition-[background-color,color,opacity,transform] duration-150 active:scale-97 ${
-          isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+          status === "submitting" ? "opacity-50 cursor-not-allowed" : ""
         }`}
-        disabled={isSubmitting}
+        disabled={status === "submitting"}
       >
-        {isSubmitting ? "Sending..." : "Send"}
+        {status === "submitting" ? "Sending..." : "Send"}
       </button>
     </form>
   );

@@ -29,6 +29,10 @@ const themeColors: ThemeInput = {
   dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
 };
 
+// Same fetch-lifecycle machine as github-pull-requests.tsx — one explicit
+// status instead of mounted/isLoading/error booleans with illegal combos.
+type Status = "idle" | "loading" | "success" | "error";
+
 export function GitHubContributions({
   username,
   compact = false,
@@ -36,25 +40,18 @@ export function GitHubContributions({
 }: GitHubContributionsProps) {
   const { theme } = useTheme();
   const panelEnter = useEnterTransform("translateY(16px)");
-  const [mounted, setMounted] = React.useState(false);
+  const [status, setStatus] = React.useState<Status>("idle");
   const [contributions, setContributions] = React.useState<
     GitHubContribution[] | null
   >(null);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  React.useEffect(() => {
-    if (!mounted) return;
-
     let isMounted = true;
 
     async function fetchContributions() {
-      setIsLoading(true);
-      setError(null);
+      setStatus("loading");
+      setErrorMessage(null);
 
       try {
         const params = new URLSearchParams({ username });
@@ -82,7 +79,7 @@ export function GitHubContributions({
         }
 
         setContributions(data.contributions);
-        setIsLoading(false);
+        setStatus("success");
       } catch (error) {
         console.error("Error fetching GitHub contributions from client", {
           username,
@@ -91,12 +88,12 @@ export function GitHubContributions({
 
         if (!isMounted) return;
 
-        setError(
+        setErrorMessage(
           error instanceof Error
             ? error.message
             : "Failed to load GitHub contributions."
         );
-        setIsLoading(false);
+        setStatus("error");
       }
     }
 
@@ -105,11 +102,11 @@ export function GitHubContributions({
     return () => {
       isMounted = false;
     };
-  }, [mounted, username]);
+  }, [username]);
 
   const colorScheme = theme === "dark" ? "dark" : "light";
 
-  if (!mounted || isLoading) {
+  if (status === "idle" || status === "loading") {
     return (
       <section
         aria-label="GitHub contributions loading"
@@ -124,7 +121,7 @@ export function GitHubContributions({
     );
   }
 
-  if (error) {
+  if (status === "error") {
     return (
       <section
         aria-labelledby="github-contributions-heading"
@@ -138,7 +135,7 @@ export function GitHubContributions({
         </h2>
         <div className="rounded-xl border border-red-500/40 bg-red-50 dark:bg-red-900/10 p-4">
           <p className="text-red-600 dark:text-red-400 text-sm">
-            Failed to load contributions: {error}
+            Failed to load contributions: {errorMessage}
           </p>
           <p className="text-red-500 dark:text-red-500 text-xs mt-2">
             Falling back to direct GitHub fetch...
