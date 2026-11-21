@@ -50,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -64,10 +64,17 @@ export default function RootLayout({
               (function() {
                 try {
                   var theme = localStorage.getItem("theme");
-                  if (theme === "light") {
-                    document.documentElement.classList.remove("dark");
-                  } else {
+                  if (!theme) {
+                    // Claim the dark default before react-theme-switch-animation
+                    // mounts, else its hook initializes as light and flips
+                    // first-time visitors to light after hydration.
+                    theme = "dark";
+                    localStorage.setItem("theme", "dark");
+                  }
+                  if (theme === "dark") {
                     document.documentElement.classList.add("dark");
+                  } else {
+                    document.documentElement.classList.remove("dark");
                   }
                   // Disable transitions on initial load to prevent flash
                   document.documentElement.classList.add("disable-transitions");
@@ -77,7 +84,10 @@ export default function RootLayout({
                       document.documentElement.classList.remove("disable-transitions");
                     });
                   });
-                } catch(e) {}
+                } catch(e) {
+                  // Storage blocked/unavailable — still paint dark.
+                  document.documentElement.classList.add("dark");
+                }
               })();
             `,
           }}
