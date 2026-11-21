@@ -33,6 +33,17 @@ interface ImageLightboxProps {
   onClose: () => void;
 }
 
+/**
+ * ponytail: hand-rolls next/image's default loader URL for a fixed 1200px
+ * candidate (the fixed branch of the lightbox's sizes descriptor). The
+ * displayed image still picks its srcset candidate per viewport — preloading
+ * this one URL covers desktop and still beats fetching multi-hundred-KB raw
+ * originals. Upgrade path: next/image custom loader or getImageProps if
+ * exact per-viewport preloading ever matters.
+ */
+const optimizedSrc = (src: string) =>
+  `/_next/image?url=${encodeURIComponent(src)}&w=1200&q=85`;
+
 export default function ImageLightbox({
   images,
   currentIndex,
@@ -53,7 +64,7 @@ export default function ImageLightbox({
   // unfetched one resets to the spinner + fade
   useEffect(() => {
     const src = images[activeIndex]?.src;
-    if (src && !loadedSrcsRef.current.has(src)) {
+    if (src && !loadedSrcsRef.current.has(optimizedSrc(src))) {
       setImageLoaded(false);
     }
   }, [activeIndex, images]);
@@ -90,12 +101,13 @@ export default function ImageLightbox({
     const nextNextIndex = nextIndex < images.length - 1 ? nextIndex + 1 : 0;
 
     const preload = (src: string) => {
-      if (preloadedRef.current.has(src)) return;
-      preloadedRef.current.add(src);
+      const url = optimizedSrc(src);
+      if (preloadedRef.current.has(url)) return;
+      preloadedRef.current.add(url);
       const img = new window.Image();
       // Track completion so navigating to it skips the spinner + fade
-      img.onload = () => loadedSrcsRef.current.add(src);
-      img.src = src;
+      img.onload = () => loadedSrcsRef.current.add(url);
+      img.src = url;
     };
 
     preload(images[prevIndex].src);
@@ -108,7 +120,8 @@ export default function ImageLightbox({
   const currentImage = images[activeIndex];
   // Already-fetched images render immediately (no spinner flash on nav)
   const isCached =
-    !!currentImage && loadedSrcsRef.current.has(currentImage.src);
+    !!currentImage &&
+    loadedSrcsRef.current.has(optimizedSrc(currentImage.src));
 
   const handlePrevious = useCallback(() => {
     setActiveIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
@@ -121,7 +134,7 @@ export default function ImageLightbox({
   if (images.length === 0) return null;
 
   const handleImageLoad = (src: string) => {
-    loadedSrcsRef.current.add(src);
+    loadedSrcsRef.current.add(optimizedSrc(src));
     setImageLoaded(true);
   };
 
