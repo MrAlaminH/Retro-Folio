@@ -42,7 +42,14 @@ export async function GET() {
 
     // Try to get count from Redis
     const count = await redis.get(VISITOR_COUNT_KEY);
-    return NextResponse.json({ count: count ? parseInt(count, 10) : 0 });
+    return NextResponse.json(
+      { count: count ? parseInt(count, 10) : 0 },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching visitor count:", error);
     // Fallback to 0 if Redis is not configured or error occurs
