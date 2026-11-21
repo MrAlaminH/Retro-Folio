@@ -4,6 +4,8 @@ import OpenAI from 'openai'; // Adjusted import based on the latest library vers
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
   baseURL: process.env.OPENAI_API_BASE, // Ensure API key is provided
+  timeout: 20000, // fail fast instead of holding the lambda until platform timeout
+  maxRetries: 1,
 });
 
 // Named export for handling POST requests
@@ -18,6 +20,7 @@ export async function POST(req: NextRequest) {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini-2024-07-18',
       messages: [{ role: 'user', content: message }],
+      max_tokens: 400, // short answers fit the terminal pane; caps runaway latency/cost
     });
 
     if (completion.choices.length) {
