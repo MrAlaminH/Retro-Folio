@@ -5,25 +5,28 @@ const VISITOR_COUNT_KEY = "visitor_count";
 
 // Create a reusable Redis client (singleton pattern)
 let redisClient: ReturnType<typeof createClient> | null = null;
+let connectPromise: Promise<unknown> | null = null;
 
 const getRedisClient = async () => {
   if (!process.env.REDIS_URL) {
     return null;
   }
 
-  // Reuse existing client if available and connected
-  if (redisClient && redisClient.isOpen) {
-    return redisClient;
+  // Create the client exactly once.
+  if (!redisClient) {
+    redisClient = createClient({ url: process.env.REDIS_URL });
   }
 
-  // Create new client
-  redisClient = createClient({
-    url: process.env.REDIS_URL,
-  });
-
-  // Connect if not already connected
+  // Share one connect() across concurrent callers: B awaits A's connect
+  // instead of creating a second client. Reset on failure so a later
+  // request can retry.
   if (!redisClient.isOpen) {
-    await redisClient.connect();
+    connectPromise ??= redisClient
+      .connect()
+      .finally(() => {
+        connectPromise = null;
+      });
+    await connectPromise;
   }
 
   return redisClient;
