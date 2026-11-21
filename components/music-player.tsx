@@ -23,6 +23,43 @@ type PlayerStatus =
 
 const VOLUME = 0.24; // -76% from full volume (20% quieter than the previous 0.3)
 
+// Equalizer bars — stays mounted while paused (frozen mid-bounce via
+// .equalizer-paused) so play/pause doesn't pop. Defined at module scope so
+// React keeps the DOM subtree (and its CSS animation position) across
+// MusicPlayer re-renders.
+function EqualizerBars({
+  active,
+  hasPlayed,
+}: {
+  active: boolean;
+  hasPlayed: boolean;
+}) {
+  if (!active && !hasPlayed) return null;
+
+  // Different animation classes for each bar to create random bouncing effect
+  const barClasses = [
+    "equalizer-bar equalizer-bar-1",
+    "equalizer-bar equalizer-bar-2",
+    "equalizer-bar equalizer-bar-3",
+    "equalizer-bar equalizer-bar-4",
+  ];
+
+  return (
+    <div
+      className={`flex items-end gap-0.5 ml-1 h-3 ${
+        active ? "" : "equalizer-paused"
+      }`}
+    >
+      {[0, 1, 2, 3].map((index) => (
+        <div
+          key={index}
+          className={`${barClasses[index]} w-0.5 h-full bg-green-500 rounded-full`}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const autoplayAttemptedRef = useRef(false); // one autoplay attempt per mount
@@ -146,35 +183,6 @@ export default function MusicPlayer() {
     };
   }, []);
 
-  // Equalizer bars component — stays mounted while paused (frozen
-  // mid-bounce via .equalizer-paused) so play/pause doesn't pop
-  const EqualizerBars = () => {
-    if (!active && !hasPlayed) return null;
-
-    // Different animation classes for each bar to create random bouncing effect
-    const barClasses = [
-      "equalizer-bar equalizer-bar-1",
-      "equalizer-bar equalizer-bar-2",
-      "equalizer-bar equalizer-bar-3",
-      "equalizer-bar equalizer-bar-4",
-    ];
-
-    return (
-      <div
-        className={`flex items-end gap-0.5 ml-1 h-3 ${
-          active ? "" : "equalizer-paused"
-        }`}
-      >
-        {[0, 1, 2, 3].map((index) => (
-          <div
-            key={index}
-            className={`${barClasses[index]} w-0.5 h-full bg-green-500 rounded-full`}
-          />
-        ))}
-      </div>
-    );
-  };
-
   // If no tracks configured, don't render the player
   if (musicTracks.length === 0 || !currentTrack) {
     return null;
@@ -210,7 +218,7 @@ export default function MusicPlayer() {
           />
         </span>
         <span className="ml-1">{active ? "Pause" : "Play"}</span>
-        <EqualizerBars />
+        <EqualizerBars active={active} hasPlayed={hasPlayed} />
       </button>
     </>
   );
