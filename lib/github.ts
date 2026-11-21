@@ -55,6 +55,7 @@ export async function fetchUserPullRequests(
     const response = await fetch(url, {
       method: "GET",
       headers,
+      signal: AbortSignal.timeout(8000),
       // Let Next.js handle caching; this is runtime data.
       cache: "no-store",
     });
@@ -122,6 +123,7 @@ export async function fetchGitHubContributions(
     const response = await fetch(url, {
       method: "GET",
       headers,
+      signal: AbortSignal.timeout(8000),
       // Use revalidate for caching at fetch level
       next: { revalidate: 3600 },
     });
