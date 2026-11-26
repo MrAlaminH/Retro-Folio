@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 
 type Font = "Kalam" | "inter" | "departureMono";
 
@@ -53,10 +59,10 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [font]);
 
+  const fontValue = useMemo(() => ({ font, setFont }), [font]);
+
   return (
-    <FontContext.Provider value={{ font, setFont }}>
-      {children}
-    </FontContext.Provider>
+    <FontContext.Provider value={fontValue}>{children}</FontContext.Provider>
   );
 };
 

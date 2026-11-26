@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 
 type Theme = "light" | "dark";
 
@@ -47,8 +53,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => observer.disconnect();
   }, []);
 
+  const themeValue = useMemo(() => ({ theme }), [theme]);
+
   return (
-    <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={themeValue}>{children}</ThemeContext.Provider>
   );
 };
 
