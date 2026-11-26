@@ -1,4 +1,5 @@
 import React from "react";
+import { fetchGitHubContributions, GitHubContribution } from "@/lib/github";
 import { GitHubContributions } from "./github-contributions";
 import { SkillsSection } from "./skills-section";
 import { WorkExperienceSection } from "./work-experience-section";
@@ -6,7 +7,17 @@ import AboutMe from "./hero/AboutMe";
 import MyProjects from "./hero/MyProjects";
 import Contact from "./hero/Contact";
 
-export default function Portfolio() {
+export default async function Portfolio() {
+  let contributions: GitHubContribution[] | null = null;
+  try {
+    contributions = await fetchGitHubContributions("MrAlaminH");
+  } catch (error) {
+    console.error(
+      "GitHub contributions fetch failed; client will use fallback",
+      error
+    );
+  }
+
   return (
     <div className="bg-transparent text-black dark:text-gray-100 min-h-screen p-4 flex justify-center text-sm ">
       <div className="w-full max-w-3xl">
@@ -22,7 +33,12 @@ export default function Portfolio() {
           <hr className="border-green-700 dark:border-green-500 my-8" />
           <SkillsSection />
           <hr className="border-green-700 dark:border-green-500 my-8" />
-          <GitHubContributions username="MrAlaminH" compact className="mt-6" />
+          <GitHubContributions
+            username="MrAlaminH"
+            compact
+            className="mt-6"
+            contributions={contributions}
+          />
 
           <hr className="border-green-700 dark:border-green-500 my-8" />
 

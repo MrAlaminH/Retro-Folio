@@ -14,14 +14,8 @@ interface GitHubContributionsProps {
   username: string;
   compact?: boolean;
   className?: string;
-}
-
-interface GitHubCalendarResponse {
-  success: boolean;
-  contributions: GitHubContribution[];
-  count: number;
-  cached?: boolean;
-  error?: string;
+  /** Server-fetched contributions; null = fetch failed → browser fallback. */
+  contributions: GitHubContribution[] | null;
 }
 
 const themeColors: ThemeInput = {
@@ -29,99 +23,20 @@ const themeColors: ThemeInput = {
   dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
 };
 
-// One explicit fetch-lifecycle status instead of mounted/isLoading/error
-// booleans with illegal combos.
-type Status = "idle" | "loading" | "success" | "error";
-
 export function GitHubContributions({
   username,
   compact = false,
   className = "",
+  contributions,
 }: GitHubContributionsProps) {
   const { theme } = useTheme();
   const panelEnter = useEnterTransform("translateY(16px)");
-  const [status, setStatus] = React.useState<Status>("idle");
-  const [contributions, setContributions] = React.useState<
-    GitHubContribution[] | null
-  >(null);
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    let isMounted = true;
-
-    async function fetchContributions() {
-      setStatus("loading");
-      setErrorMessage(null);
-
-      try {
-        const params = new URLSearchParams({ username });
-        const response = await fetch(`/api/github-calendar?${params}`);
-
-        if (!response.ok) {
-          const text = await response.text().catch(() => "<no-body>");
-          console.error("Failed to fetch GitHub calendar", {
-            status: response.status,
-            statusText: response.statusText,
-            body: text,
-          });
-          throw new Error(
-            `Request failed with status ${response.status}: ${response.statusText}`
-          );
-        }
-
-        const data = (await response.json()) as GitHubCalendarResponse;
-
-        if (!isMounted) return;
-
-        if (!data.success) {
-          console.error("GitHub calendar API returned error", data);
-          throw new Error(data.error || "Unknown error from calendar API");
-        }
-
-        setContributions(data.contributions);
-        setStatus("success");
-      } catch (error) {
-        console.error("Error fetching GitHub contributions from client", {
-          username,
-          error,
-        });
-
-        if (!isMounted) return;
-
-        setErrorMessage(
-          error instanceof Error
-            ? error.message
-            : "Failed to load GitHub contributions."
-        );
-        setStatus("error");
-      }
-    }
-
-    fetchContributions();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [username]);
 
   const colorScheme = theme === "dark" ? "dark" : "light";
 
-  if (status === "idle" || status === "loading") {
-    return (
-      <section
-        aria-label="GitHub contributions loading"
-        className={`mt-8 w-full ${className}`}
-      >
-        <div
-          className={`w-full ${
-            compact ? "h-[120px]" : "h-[160px]"
-          } rounded-xl bg-neutral-200 dark:bg-neutral-800 animate-pulse`}
-        />
-      </section>
-    );
-  }
+  const hasData = !!contributions && contributions.length > 0;
 
-  if (status === "error") {
+  if (contributions === null) {
     return (
       <section
         aria-labelledby="github-contributions-heading"
@@ -135,7 +50,8 @@ export function GitHubContributions({
         </h2>
         <div className="rounded-xl border border-red-500/40 bg-red-50 dark:bg-red-900/10 p-4">
           <p className="text-red-600 dark:text-red-400 text-sm">
-            Failed to load contributions: {errorMessage}
+            Failed to load contributions: Couldn&apos;t load contributions from
+            the API.
           </p>
           <p className="text-red-500 dark:text-red-500 text-xs mt-2">
             Falling back to direct GitHub fetch...
@@ -191,7 +107,7 @@ export function GitHubContributions({
             compact ? "p-3" : "p-4"
           } bg-black/5 dark:bg-white/5 backdrop-blur-sm`}
         >
-          {contributions && contributions.length > 0 ? (
+          {hasData ? (
             <ActivityCalendar
               data={contributions}
               colorScheme={colorScheme}
