@@ -4,8 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
 import dynamic from "next/dynamic";
-import { motion, AnimatePresence } from "framer-motion";
-import { EASE_OUT_EXPO, useEnterTransform } from "@/lib/motion";
 import { useFont } from "@/contexts/FontContext";
 import {
   ThemeAnimationType,
@@ -36,7 +34,6 @@ export default function Navbar() {
   const [showCopyMessage, setShowCopyMessage] = useState(false);
   const pathname = usePathname();
   const { font, setFont } = useFont();
-  const toastEnter = useEnterTransform("translateY(-8px) scale(0.97)");
 
   // Theme switch animation. Runs uncontrolled so the hook owns persistence
   // (localStorage.theme) and the `.dark` class toggle; ThemeContext mirrors it
@@ -207,28 +204,15 @@ export default function Navbar() {
           </ul>
         </nav>
       </header>
-      <AnimatePresence>
-        {showCopyMessage && (
-          <motion.div
-            key="copy-toast"
-            initial={{ opacity: 0, transform: toastEnter }}
-            animate={{
-              opacity: 1,
-              transform: toastEnter === undefined ? undefined : "translateY(0px) scale(1)",
-            }}
-            exit={{ opacity: 0, transform: toastEnter }}
-            transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
-            className="fixed top-4 right-4"
-          >
-            <Alert
-              variant="default"
-              className="text-green-700 dark:text-green-500"
-            >
-              Email copied to clipboard!
-            </Alert>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        className="copy-toast fixed top-4 right-4"
+        data-shown={showCopyMessage ? "true" : "false"}
+        aria-hidden={!showCopyMessage}
+      >
+        <Alert variant="default" className="text-green-700 dark:text-green-500">
+          Email copied to clipboard!
+        </Alert>
+      </div>
     </div>
   );
 }

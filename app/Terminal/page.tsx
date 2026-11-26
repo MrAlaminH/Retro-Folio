@@ -10,7 +10,7 @@ import {
   Shield,
   Server,
 } from "lucide-react";
-import { prefersReducedMotion } from "@/lib/motion";
+import { prefersReducedMotion } from "@/lib/reduced-motion";
 
 type HistoryItem = string | { id: string; text: string };
 

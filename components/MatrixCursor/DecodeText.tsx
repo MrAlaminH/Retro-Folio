@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useCallback } from "react";
-import { prefersReducedMotion } from "@/lib/motion";
+import { prefersReducedMotion } from "@/lib/reduced-motion";
 
 const CHARS =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
