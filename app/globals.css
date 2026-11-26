@@ -144,6 +144,12 @@ select {
   .copy-toast {
     transition-property: opacity; /* keep the fade, drop the movement */
   }
+  /* The hidden state's offset/scale would snap mid-fade otherwise — neutralise
+     it so reduced-motion users get a pure opacity fade, matching the framer
+     version this replaced. */
+  .copy-toast[data-shown="false"] {
+    transform: none;
+  }
 }
 
 .dark {
