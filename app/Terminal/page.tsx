@@ -167,25 +167,31 @@ const Component: React.FC = () => {
 
   const getAIResponse = async (query: string): Promise<string> => {
     setIsAIThinking(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: query }),
+        signal: controller.signal,
       });
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error from API:", errorData.error);
-        setIsAIThinking(false);
         return `Error: ${errorData.error || "Unable to get AI response"}`;
       }
       const data = await response.json();
-      setIsAIThinking(false);
       return data.result;
     } catch (error: any) {
+      if (error?.name === "AbortError") {
+        return "Error: AI request timed out";
+      }
       console.error("Network or unexpected error:", error.message);
-      setIsAIThinking(false);
       return "Error: Unable to get AI response";
+    } finally {
+      clearTimeout(timeoutId);
+      setIsAIThinking(false);
     }
   };
 
