@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect, useContext, memo } from "react";
 import { BotMessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { EASE_OUT_EXPO, useEnterTransform } from "@/lib/motion";
@@ -17,6 +17,73 @@ interface QuickMessage {
 
 const WEBHOOK_URL =
   "https://n8n.deployify.xyz/webhook/4dcdb776-e47d-4d1a-8739-4f02c73b2c91/chat";
+
+// Predefined quick messages
+const quickMessages: QuickMessage[] = [
+  { id: "get-started", text: "I'd like to get started" },
+  { id: "learn-more", text: "Tell me more about MrAlaminH" },
+];
+
+const MessageList = memo(function MessageList({
+  messages,
+  loading,
+  theme,
+}: {
+  messages: Message[];
+  loading: boolean;
+  theme: string;
+}) {
+  return (
+    <>
+      {messages.map((msg, i) => (
+        <div
+          key={i}
+          className={`flex mb-3 ${
+            msg.sender === "user" ? "justify-end" : "justify-start"
+          }`}
+        >
+          <div
+            className={`max-w-[75%] px-4 py-2 rounded-xl text-sm shadow ${
+              msg.sender === "user"
+                ? theme === "dark"
+                  ? "bg-green-500 text-white rounded-br-none"
+                  : "bg-gray-300 text-black rounded-br-none"
+                : theme === "dark"
+                ? "bg-black text-green-400 border border-green-200 rounded-bl-none"
+                : "bg-gray-100 text-gray-700 border border-gray-300 rounded-bl-none"
+            }`}
+          >
+            {msg.sender === "bot" ? (
+              <div className="whitespace-pre-line">{msg.text}</div>
+            ) : (
+              msg.text
+            )}
+          </div>
+        </div>
+      ))}
+      {loading && (
+        <div className="flex justify-start mb-2">
+          <div
+            className={`px-4 py-2 rounded-xl rounded-bl-none text-sm shadow flex items-center gap-2 ${
+              theme === "dark"
+                ? "bg-black border border-green-200 text-green-400"
+                : "bg-gray-100 border border-gray-300 text-gray-700"
+            }`}
+          >
+            <span className="animate-bounce">...</span>
+            <span
+              className={`text-xs ${
+                theme === "dark" ? "text-green-400" : "text-gray-500"
+              }`}
+            >
+              Typing
+            </span>
+          </div>
+        </div>
+      )}
+    </>
+  );
+});
 
 const ChatWidget = () => {
   const themeContext = useContext(ThemeContext);
@@ -39,12 +106,6 @@ const ChatWidget = () => {
   const [sessionId] = useState(
     () => `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
   );
-
-  // Predefined quick messages
-  const quickMessages: QuickMessage[] = [
-    { id: "get-started", text: "I'd like to get started" },
-    { id: "learn-more", text: "Tell me more about MrAlaminH" },
-  ];
 
   useEffect(() => {
     if (open) {
@@ -266,52 +327,7 @@ const ChatWidget = () => {
             }`}
             style={{ scrollbarWidth: "thin" }}
           >
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex mb-3 ${
-                  msg.sender === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[75%] px-4 py-2 rounded-xl text-sm shadow ${
-                    msg.sender === "user"
-                      ? theme === "dark"
-                        ? "bg-green-500 text-white rounded-br-none"
-                        : "bg-gray-300 text-black rounded-br-none"
-                      : theme === "dark"
-                      ? "bg-black text-green-400 border border-green-200 rounded-bl-none"
-                      : "bg-gray-100 text-gray-700 border border-gray-300 rounded-bl-none"
-                  }`}
-                >
-                  {msg.sender === "bot" ? (
-                    <div className="whitespace-pre-line">{msg.text}</div>
-                  ) : (
-                    msg.text
-                  )}
-                </div>
-              </div>
-            ))}
-            {loading && (
-              <div className="flex justify-start mb-2">
-                <div
-                  className={`px-4 py-2 rounded-xl rounded-bl-none text-sm shadow flex items-center gap-2 ${
-                    theme === "dark"
-                      ? "bg-black border border-green-200 text-green-400"
-                      : "bg-gray-100 border border-gray-300 text-gray-700"
-                  }`}
-                >
-                  <span className="animate-bounce">...</span>
-                  <span
-                    className={`text-xs ${
-                      theme === "dark" ? "text-green-400" : "text-gray-500"
-                    }`}
-                  >
-                    Typing
-                  </span>
-                </div>
-              </div>
-            )}
+            <MessageList messages={messages} loading={loading} theme={theme} />
             <div ref={messagesEndRef} />
           </div>
           {!conversationStarted && (
