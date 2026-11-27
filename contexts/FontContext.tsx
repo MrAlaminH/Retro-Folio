@@ -5,9 +5,10 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useCallback,
+  useRef,
 } from "react";
-
-type Font = "Kalam" | "inter" | "departureMono";
+import { Font, getFontFamily, parseStoredFont } from "@/lib/font";
 
 interface FontContextType {
   font: Font;
@@ -16,50 +17,63 @@ interface FontContextType {
 
 const FontContext = createContext<FontContextType | undefined>(undefined);
 
+function applyFontToDom(nextFont: Font) {
+  document.documentElement.style.setProperty(
+    "font-family",
+    getFontFamily(nextFont)
+  );
+
+  // Dynamically load Inter font only when selected
+  const linkId = "inter-font-preload";
+  const existingLink = document.getElementById(linkId);
+
+  if (nextFont === "inter" && !existingLink) {
+    const link = document.createElement("link");
+    link.id = linkId;
+    link.rel = "stylesheet";
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap";
+    document.head.appendChild(link);
+  } else if (nextFont !== "inter" && existingLink) {
+    existingLink.remove();
+  }
+}
+
 export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [font, setFont] = useState<Font>("departureMono");
+  const [font, setFontState] = useState<Font>("departureMono");
+  const hydratedRef = useRef(false);
 
   useEffect(() => {
-    const savedFont = localStorage.getItem("font") as Font | null;
-    if (savedFont) {
-      setFont(savedFont);
+    let saved: Font = "departureMono";
+    try {
+      saved = parseStoredFont(localStorage.getItem("font"));
+    } catch {
+      /* storage unavailable */
+    }
+    hydratedRef.current = true;
+    applyFontToDom(saved);
+    if (saved !== "departureMono") {
+      setFontState(saved);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("font", font);
-
-    // Build font-family value
-    let fontFamily: string;
-    if (font === "Kalam") {
-      fontFamily = "'Kalam', cursive";
-    } else if (font === "inter") {
-      fontFamily = "'Inter', sans-serif";
-    } else {
-      fontFamily = "'Departure Mono', monospace";
-    }
-
-    document.documentElement.style.setProperty("font-family", fontFamily);
-
-    // Dynamically load Inter font only when selected
-    const linkId = "inter-font-preload";
-    const existingLink = document.getElementById(linkId);
-
-    if (font === "inter" && !existingLink) {
-      const link = document.createElement("link");
-      link.id = linkId;
-      link.rel = "stylesheet";
-      link.href =
-        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap";
-      document.head.appendChild(link);
-    } else if (font !== "inter" && existingLink) {
-      existingLink.remove();
-    }
+    if (!hydratedRef.current) return;
+    applyFontToDom(font);
   }, [font]);
 
-  const fontValue = useMemo(() => ({ font, setFont }), [font]);
+  const setFont = useCallback((nextFont: Font) => {
+    setFontState(nextFont);
+    try {
+      localStorage.setItem("font", nextFont);
+    } catch {
+      /* storage unavailable */
+    }
+  }, []);
+
+  const fontValue = useMemo(() => ({ font, setFont }), [font, setFont]);
 
   return (
     <FontContext.Provider value={fontValue}>{children}</FontContext.Provider>
