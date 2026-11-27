@@ -3,6 +3,7 @@ import { useState, useRef, useEffect, useContext, memo } from "react";
 import { BotMessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { EASE_OUT_EXPO, useEnterTransform } from "@/lib/motion";
+import { extractChatReply, formatBotMessage } from "@/lib/chat-reply";
 import { ThemeContext } from "../contexts/ThemeContext";
 
 interface Message {
@@ -143,26 +144,6 @@ const ChatWidget = () => {
     };
   }, [open]);
 
-  // Format bot messages to be more readable
-  const formatBotMessage = (text: string): string => {
-    if (/\d+\.\s+/.test(text)) {
-      return text;
-    }
-
-    let formattedText = text.split(/\n\n|\n/).join("\n\n");
-
-    if (text.includes(", ") && !text.includes("\n") && text.length > 100) {
-      const parts = text.split(": ");
-      if (parts.length > 1) {
-        const intro = parts[0] + ":";
-        const items = parts[1].split(", ").map((item) => "• " + item.trim());
-        formattedText = `${intro}\n\n${items.join("\n")}`;
-      }
-    }
-
-    return formattedText;
-  };
-
   const sendMessage = async (messageText = input) => {
     if (!messageText.trim()) return;
 
@@ -172,12 +153,12 @@ const ChatWidget = () => {
     setLoading(true);
     setConversationStarted(true);
 
+    // Don't leave the user on "Typing…" forever if the webhook hangs.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     try {
       const url = `${WEBHOOK_URL}?action=sendMessage`;
-
-      // Don't leave the user on "Typing…" forever if the webhook hangs.
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const res = await fetch(url, {
         method: "POST",
@@ -188,30 +169,13 @@ const ChatWidget = () => {
         }),
         signal: controller.signal,
       });
-      clearTimeout(timeoutId);
 
-      const data = await res.json();
-      console.log("Response from n8n:", data);
-
-      let reply = "";
-
-      if (Array.isArray(data) && data.length > 0) {
-        if (data[0]?.output) {
-          reply = data[0].output;
-        }
-      } else if (typeof data === "object") {
-        if (data.response) {
-          reply = data.response;
-        } else if (data.reply) {
-          reply = data.reply;
-        } else if (data.output) {
-          reply = data.output;
-        }
+      if (!res.ok) {
+        throw new Error(`Webhook returned HTTP ${res.status}`);
       }
 
-      reply = reply.trim();
-
-      const formattedReply = formatBotMessage(reply);
+      const data: unknown = await res.json();
+      const formattedReply = formatBotMessage(extractChatReply(data));
 
       setMessages((msgs) => [
         ...msgs,
@@ -230,6 +194,7 @@ const ChatWidget = () => {
         },
       ]);
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };
@@ -367,6 +332,7 @@ const ChatWidget = () => {
                   : "border-gray-300 bg-white text-gray-700 focus:ring-gray-400"
               }`}
               type="text"
+              aria-label="Chat message"
               placeholder="Type your message..."
               value={input}
               onChange={(e) => setInput(e.target.value)}

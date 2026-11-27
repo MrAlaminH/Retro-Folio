@@ -44,6 +44,7 @@ const Component: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const phaseRef = useRef<Phase>("booting");
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const aiControllerRef = useRef<AbortController | null>(null);
 
   // Single timer registry: boot, hack, matrix, scan, encrypt, exit and the
   // CRT beat all register here; clearTimers() runs on every transition.
@@ -82,7 +83,11 @@ const Component: React.FC = () => {
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
     bootSequence();
-    return clearTimers;
+    return () => {
+      clearTimers();
+      aiControllerRef.current?.abort();
+      aiControllerRef.current = null;
+    };
   }, [bootSequence, clearTimers]);
 
   useEffect(() => {
@@ -167,7 +172,9 @@ const Component: React.FC = () => {
 
   const getAIResponse = async (query: string): Promise<string> => {
     setIsAIThinking(true);
+    aiControllerRef.current?.abort();
     const controller = new AbortController();
+    aiControllerRef.current = controller;
     const timeoutId = setTimeout(() => controller.abort(), 25000);
     try {
       const response = await fetch("/api/chat", {
@@ -177,21 +184,27 @@ const Component: React.FC = () => {
         signal: controller.signal,
       });
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error from API:", errorData.error);
-        return `Error: ${errorData.error || "Unable to get AI response"}`;
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Error from API:", errorData?.error);
+        return `Error: ${errorData?.error || "Unable to get AI response"}`;
       }
       const data = await response.json();
       return data.result;
-    } catch (error: any) {
-      if (error?.name === "AbortError") {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === "AbortError") {
         return "Error: AI request timed out";
       }
-      console.error("Network or unexpected error:", error.message);
+      console.error(
+        "Network or unexpected error:",
+        error instanceof Error ? error.message : error
+      );
       return "Error: Unable to get AI response";
     } finally {
       clearTimeout(timeoutId);
-      setIsAIThinking(false);
+      if (aiControllerRef.current === controller) {
+        aiControllerRef.current = null;
+        setIsAIThinking(false);
+      }
     }
   };
 
@@ -293,6 +306,8 @@ const Component: React.FC = () => {
   // nothing keeps running against a dark screen or leaks into the reboot.
   const powerOff = () => {
     clearTimers();
+    aiControllerRef.current?.abort();
+    aiControllerRef.current = null;
     go("offline");
     setPoweringOff(false);
     setHistory([]);

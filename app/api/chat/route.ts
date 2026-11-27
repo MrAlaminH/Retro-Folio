@@ -1,47 +1,37 @@
-import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai'; // Adjusted import based on the latest library version
+import type { NextRequest } from "next/server";
+import OpenAI from "openai";
+import {
+  CHAT_MAX_TOKENS,
+  CHAT_TIMEOUT_MS,
+  createChatHandler,
+  createRateLimiter,
+} from "@/lib/chat";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-  baseURL: process.env.OPENAI_API_BASE, // Ensure API key is provided
-  timeout: 20000, // fail fast instead of holding the lambda until platform timeout
-  maxRetries: 1,
+  apiKey: process.env.OPENAI_API_KEY || "",
+  baseURL: process.env.OPENAI_API_BASE,
+  // No retries: client aborts at 25s, so server worst-case stays <= 20s.
+  timeout: CHAT_TIMEOUT_MS,
+  maxRetries: 0,
 });
 
-// Named export for handling POST requests
-export async function POST(req: NextRequest) {
-  const { message } = await req.json();
+const checkRateLimit = createRateLimiter({
+  maxRequests: 20,
+  windowMs: 60_000,
+});
 
-  if (!message) {
-    return NextResponse.json({ error: 'Message content is required' }, { status: 400 });
-  }
-
-  try {
+const handleChatPost = createChatHandler({
+  checkRateLimit,
+  complete: async (message) => {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini-2024-07-18',
-      messages: [{ role: 'user', content: message }],
-      max_tokens: 400, // short answers fit the terminal pane; caps runaway latency/cost
+      model: "gpt-4o-mini-2024-07-18",
+      messages: [{ role: "user", content: message }],
+      max_tokens: CHAT_MAX_TOKENS,
     });
+    return completion.choices[0]?.message?.content;
+  },
+});
 
-    if (completion.choices.length) {
-      return NextResponse.json({ result: completion.choices[0].message.content }, { status: 200 });
-    } else {
-      return NextResponse.json({ error: 'No response from OpenAI' }, { status: 500 });
-    }
-  } catch (error: any) {
-    // Improved error handling
-    if (error.response) {
-      // API error from OpenAI
-      console.error('OpenAI API error:', error.response.data);
-      return NextResponse.json({ error: error.response.data.error.message }, { status: error.response.status });
-    } else if (error.request) {
-      // Network or request error
-      console.error('Network error or no response received:', error.message);
-      return NextResponse.json({ error: 'No response received from OpenAI API' }, { status: 500 });
-    } else {
-      // Other errors (e.g., setup, coding)
-      console.error('Unexpected error:', error.message);
-      return NextResponse.json({ error: 'Unexpected error occurred' }, { status: 500 });
-    }
-  }
+export async function POST(req: NextRequest) {
+  return handleChatPost(req);
 }
