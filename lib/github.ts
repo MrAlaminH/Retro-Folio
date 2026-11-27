@@ -200,7 +200,6 @@ export async function fetchGitHubContributions(
     const response = await fetchImpl(url, {
       method: "GET",
       headers,
-      signal: AbortSignal.timeout(8000),
       // Use revalidate for caching at fetch level
       next: { revalidate: 3600 },
       signal: AbortSignal.timeout(GITHUB_FETCH_TIMEOUT_MS),
