@@ -43,7 +43,9 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [font, setFontState] = useState<Font>("departureMono");
-  const hydratedRef = useRef(false);
+  // The mount effect below applies the stored font; skip this effect's first
+  // run so it can't re-apply the default state over it (flash / Inter re-add).
+  const mountedRef = useRef(false);
 
   useEffect(() => {
     let saved: Font = "departureMono";
@@ -52,7 +54,6 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch {
       /* storage unavailable */
     }
-    hydratedRef.current = true;
     applyFontToDom(saved);
     if (saved !== "departureMono") {
       setFontState(saved);
@@ -60,7 +61,10 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
-    if (!hydratedRef.current) return;
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      return;
+    }
     applyFontToDom(font);
   }, [font]);
 
