@@ -26,7 +26,7 @@ const themeColors: ThemeInput = {
 // GitHub's current HTML exposes ~51 cells (one per week, Sunday-dated), not the
 // ~365 daily entries ActivityCalendar needs; only accept a near-full year so a
 // sparse series falls back to the full-year client calendar instead.
-// shortcut: weekly-only markup, revisit if GitHub restores daily <td>/<rect>.
+// ponytail: weekly-only markup, revisit if GitHub restores daily <td>/<rect>.
 const MIN_DAILY_ENTRIES = 300;
 
 export function GitHubContributions({
@@ -43,7 +43,6 @@ export function GitHubContributions({
     !!contributions && contributions.length >= MIN_DAILY_ENTRIES;
   const calendarProps = {
     colorScheme,
-    fontSize: compact ? 14 : 12,
     blockSize: 12,
     blockMargin: compact ? 2 : 3,
     showWeekdayLabels: !compact,
@@ -89,7 +88,11 @@ export function GitHubContributions({
           } bg-black/5 dark:bg-white/5 backdrop-blur-sm`}
         >
           {hasData ? (
-            <ActivityCalendar data={contributions} {...calendarProps} />
+            <ActivityCalendar
+              data={contributions}
+              {...calendarProps}
+              fontSize={compact ? 14 : 12}
+            />
           ) : (
             <GitHubCalendar
               username={username}

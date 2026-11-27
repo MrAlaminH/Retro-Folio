@@ -64,9 +64,9 @@ export async function fetchUserPullRequests(
     const response = await fetch(url, {
       method: "GET",
       headers,
-      // Let Next.js handle caching; this is runtime data.
-      // ponytail: route layer (unstable_cache, 1h) owns caching; keep upstream fresh.
-      cache: "no-store",
+      // 1h data cache (plan 005); the route layer's unstable_cache owns the
+      // response cache on top of this.
+      next: { revalidate: 3600 },
       signal: AbortSignal.timeout(GITHUB_FETCH_TIMEOUT_MS),
     });
 

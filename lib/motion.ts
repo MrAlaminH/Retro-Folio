@@ -1,7 +1,5 @@
 import { useReducedMotion } from "framer-motion";
 
-export { prefersReducedMotion } from "./reduced-motion";
-
 /** Strong ease-out for entrances/UI response — mirrors --ease-out in globals.css. */
 export const EASE_OUT_EXPO: [number, number, number, number] = [
   0.23, 1, 0.32, 1,
