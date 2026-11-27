@@ -6,20 +6,27 @@ import ImageGrid from "./image-grid";
 
 interface SeeMoreButtonProps {
   category: string;
-  initialImages: GalleryImage[];
   allImages: GalleryImage[];
   imagesPerLoad?: number;
   hideSeeMoreButton?: boolean;
+  /** Forwarded to ImageGrid: eager-load + preload the first row. */
+  priority?: boolean;
 }
 
 export default function SeeMoreButton({
   category,
-  initialImages,
   allImages,
   imagesPerLoad = 6,
   hideSeeMoreButton = false,
+  priority = false,
 }: SeeMoreButtonProps) {
-  const [visibleCount, setVisibleCount] = useState(initialImages.length);
+  // `hideSeeMoreButton` is true exactly when the category does not paginate,
+  // so it also tells us the initial count (all vs first page).
+  const [visibleCount, setVisibleCount] = useState(() =>
+    hideSeeMoreButton
+      ? allImages.length
+      : Math.min(imagesPerLoad, allImages.length),
+  );
   // Index from which newly-appended images stagger in (Infinity = none;
   // initial render shows instantly so the first paint isn't delayed)
   const [animateFrom, setAnimateFrom] = useState<number>(Infinity);
@@ -42,13 +49,23 @@ export default function SeeMoreButton({
     );
   }, [visibleCount, imagesPerLoad, allImages.length]);
 
-  if (!hasMore && visibleCount === initialImages.length) {
-    return <ImageGrid images={visibleImages} animateFrom={animateFrom} />;
+  if (!hasMore) {
+    return (
+      <ImageGrid
+        images={visibleImages}
+        animateFrom={animateFrom}
+        priority={priority}
+      />
+    );
   }
 
   return (
     <>
-      <ImageGrid images={visibleImages} animateFrom={animateFrom} />
+      <ImageGrid
+        images={visibleImages}
+        animateFrom={animateFrom}
+        priority={priority}
+      />
       {hasMore && !hideSeeMoreButton && (
         <div className="flex justify-center mt-6">
           <button

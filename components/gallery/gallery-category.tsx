@@ -4,18 +4,19 @@ import DecodeText from "@/components/MatrixCursor/DecodeText";
 
 interface GalleryCategoryProps {
   category: string;
-  initialImages: GalleryImage[];
   allImages: GalleryImage[];
   showPagination?: boolean;
   imagesPerLoad?: number;
+  /** Eager-load + preload the first row of images (above-the-fold category). */
+  priority?: boolean;
 }
 
 export default function GalleryCategory({
   category,
-  initialImages,
   allImages,
   showPagination = false,
   imagesPerLoad = 6,
+  priority = false,
 }: GalleryCategoryProps) {
   const displayName = getCategoryDisplayName(category);
 
@@ -27,16 +28,16 @@ export default function GalleryCategory({
       {showPagination ? (
         <SeeMoreButton
           category={category}
-          initialImages={initialImages}
           allImages={allImages}
           imagesPerLoad={imagesPerLoad}
+          priority={priority}
         />
       ) : (
         <SeeMoreButton
           category={category}
-          initialImages={initialImages}
           allImages={allImages}
           imagesPerLoad={imagesPerLoad}
+          priority={priority}
           hideSeeMoreButton
         />
       )}
