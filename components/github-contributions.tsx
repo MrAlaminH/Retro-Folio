@@ -32,57 +32,16 @@ export function GitHubContributions({
   const { theme } = useTheme();
   const panelEnter = useEnterTransform("translateY(16px)");
 
-  const colorScheme = theme === "dark" ? "dark" : "light";
-
+  const colorScheme: "light" | "dark" = theme === "dark" ? "dark" : "light";
   const hasData = !!contributions && contributions.length > 0;
-
-  if (contributions === null) {
-    return (
-      <section
-        aria-labelledby="github-contributions-heading"
-        className={`mt-8 ${className}`}
-      >
-        <h2
-          id="github-contributions-heading"
-          className="text-lg md:text-xl font-bold mb-3 text-green-500 dark:text-green-500"
-        >
-          <DecodeText text="GitHub Contributions @ MrAlaminH" />
-        </h2>
-        <div className="rounded-xl border border-red-500/40 bg-red-50 dark:bg-red-900/10 p-4">
-          <p className="text-red-600 dark:text-red-400 text-sm">
-            Failed to load contributions: Couldn&apos;t load contributions from
-            the API.
-          </p>
-          <p className="text-red-500 dark:text-red-500 text-xs mt-2">
-            Falling back to direct GitHub fetch...
-          </p>
-        </div>
-        {/* Fallback to direct fetch if API fails */}
-        <motion.div
-          className="relative overflow-hidden rounded-xl border border-green-600/40 dark:border-green-500/40 bg-transparent mt-4"
-          initial={{ opacity: 0, transform: panelEnter }}
-          animate={{ opacity: 1, transform: panelEnter === undefined ? undefined : "translateY(0px)" }}
-          transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
-        >
-          <div
-            className={`${
-              compact ? "p-3" : "p-4"
-            } bg-black/5 dark:bg-white/5 backdrop-blur-sm`}
-          >
-            <GitHubCalendar
-              username={username}
-              colorScheme={colorScheme}
-              fontSize={compact ? 14 : 12}
-              blockSize={compact ? 12 : 12}
-              blockMargin={compact ? 2 : 3}
-              showWeekdayLabels={!compact}
-              theme={themeColors}
-            />
-          </div>
-        </motion.div>
-      </section>
-    );
-  }
+  const calendarProps = {
+    colorScheme,
+    fontSize: compact ? 14 : 12,
+    blockSize: 12,
+    blockMargin: compact ? 2 : 3,
+    showWeekdayLabels: !compact,
+    theme: themeColors,
+  };
 
   return (
     <section
@@ -96,10 +55,25 @@ export function GitHubContributions({
         <DecodeText text="GitHub Contributions @ MrAlaminH" />
       </h2>
 
+      {contributions === null && (
+        <div className="rounded-xl border border-red-500/40 bg-red-50 dark:bg-red-900/10 p-4 mb-4">
+          <p className="text-red-600 dark:text-red-400 text-sm">
+            Failed to load contributions: Couldn&apos;t load contributions from
+            the API.
+          </p>
+          <p className="text-red-500 dark:text-red-500 text-xs mt-2">
+            Falling back to direct GitHub fetch...
+          </p>
+        </div>
+      )}
+
       <motion.div
         className="relative overflow-hidden rounded-xl border border-green-600/40 dark:border-green-500/40 bg-transparent"
         initial={{ opacity: 0, transform: panelEnter }}
-        animate={{ opacity: 1, transform: panelEnter === undefined ? undefined : "translateY(0px)" }}
+        animate={{
+          opacity: 1,
+          transform: panelEnter === undefined ? undefined : "translateY(0px)",
+        }}
         transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
       >
         <div
@@ -108,25 +82,9 @@ export function GitHubContributions({
           } bg-black/5 dark:bg-white/5 backdrop-blur-sm`}
         >
           {hasData ? (
-            <ActivityCalendar
-              data={contributions}
-              colorScheme={colorScheme}
-              fontSize={compact ? 14 : 12}
-              blockSize={compact ? 12 : 12}
-              blockMargin={compact ? 2 : 3}
-              showWeekdayLabels={!compact}
-              theme={themeColors}
-            />
+            <ActivityCalendar data={contributions} {...calendarProps} />
           ) : (
-            <GitHubCalendar
-              username={username}
-              colorScheme={colorScheme}
-              fontSize={compact ? 11 : 12}
-              blockSize={compact ? 12 : 12}
-              blockMargin={compact ? 2 : 3}
-              showWeekdayLabels={!compact}
-              theme={themeColors}
-            />
+            <GitHubCalendar username={username} {...calendarProps} />
           )}
         </div>
       </motion.div>
