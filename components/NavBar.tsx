@@ -1,10 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
-import { motion, AnimatePresence } from "framer-motion";
-import { EASE_OUT_EXPO, useEnterTransform } from "@/lib/motion";
+import dynamic from "next/dynamic";
 import { useFont } from "@/contexts/FontContext";
 import {
   ThemeAnimationType,
@@ -18,7 +17,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import Image from "next/image";
-import MusicPlayer from "@/components/music-player";
+
+const MusicPlayer = dynamic(() => import("@/components/music-player"), {
+  ssr: false,
+});
 
 const navItems = [
   { name: "Home", path: "/" },
@@ -30,9 +32,17 @@ const navItems = [
 export default function Navbar() {
   const email = "itsalamin999@gmail.com";
   const [showCopyMessage, setShowCopyMessage] = useState(false);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
   const { font, setFont } = useFont();
-  const toastEnter = useEnterTransform("translateY(-8px) scale(0.97)");
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) {
+        clearTimeout(copyTimerRef.current);
+      }
+    };
+  }, []);
 
   // Theme switch animation. Runs uncontrolled so the hook owns persistence
   // (localStorage.theme) and the `.dark` class toggle; ThemeContext mirrors it
@@ -44,10 +54,22 @@ export default function Navbar() {
   });
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText(email).then(() => {
-      setShowCopyMessage(true);
-      setTimeout(() => setShowCopyMessage(false), 3000);
-    });
+    if (!navigator.clipboard?.writeText) return;
+    navigator.clipboard
+      .writeText(email)
+      .then(() => {
+        if (copyTimerRef.current !== null) {
+          clearTimeout(copyTimerRef.current);
+        }
+        setShowCopyMessage(true);
+        copyTimerRef.current = setTimeout(() => {
+          setShowCopyMessage(false);
+          copyTimerRef.current = null;
+        }, 3000);
+      })
+      .catch((error) => {
+        console.error("Failed to copy email to clipboard:", error);
+      });
   };
 
   return (
@@ -203,28 +225,22 @@ export default function Navbar() {
           </ul>
         </nav>
       </header>
-      <AnimatePresence>
-        {showCopyMessage && (
-          <motion.div
-            key="copy-toast"
-            initial={{ opacity: 0, transform: toastEnter }}
-            animate={{
-              opacity: 1,
-              transform: toastEnter === undefined ? undefined : "translateY(0px) scale(1)",
-            }}
-            exit={{ opacity: 0, transform: toastEnter }}
-            transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
-            className="fixed top-4 right-4"
-          >
-            <Alert
-              variant="default"
-              className="text-green-700 dark:text-green-500"
-            >
-              Email copied to clipboard!
-            </Alert>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <span className="sr-only" role="status" aria-live="polite">
+        {showCopyMessage ? "Email copied to clipboard!" : ""}
+      </span>
+      <div
+        className="copy-toast fixed top-4 right-4 z-50"
+        data-shown={showCopyMessage ? "true" : "false"}
+        aria-hidden="true"
+      >
+        <Alert
+          role="presentation"
+          variant="default"
+          className="text-green-700 dark:text-green-500"
+        >
+          Email copied to clipboard!
+        </Alert>
+      </div>
     </div>
   );
 }

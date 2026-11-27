@@ -124,6 +124,37 @@ select {
   --duration-theme: 350ms; /* non-VT theme-switch fallback */
 }
 
+/* Copy-email toast: enter/exit via CSS so framer-motion stays out of
+   the navbar's module graph. Exit = reverse transition, no AnimatePresence. */
+.copy-toast {
+  /* --duration-ui (200ms) mirrors the framer transition this replaces. */
+  transition: opacity var(--duration-ui) var(--ease-out),
+    transform var(--duration-ui) var(--ease-out),
+    visibility var(--duration-ui) linear;
+}
+.copy-toast[data-shown="false"] {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  visibility: hidden;
+  pointer-events: none;
+}
+.copy-toast[data-shown="true"] {
+  opacity: 1;
+  transform: translateY(0px) scale(1);
+  visibility: visible;
+}
+@media (prefers-reduced-motion: reduce) {
+  .copy-toast {
+    transition-property: opacity, visibility; /* keep the fade, drop the movement */
+  }
+  /* The hidden state's offset/scale would snap mid-fade otherwise — neutralise
+     it so reduced-motion users get a pure opacity fade, matching the framer
+     version this replaced. */
+  .copy-toast[data-shown="false"] {
+    transform: none;
+  }
+}
+
 .dark {
   --foreground-rgb: 255, 255, 255;
   --background-start-rgb: 28, 25, 23;

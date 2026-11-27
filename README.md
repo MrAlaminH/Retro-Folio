@@ -32,7 +32,7 @@ Floating chatbot bubble powered by **n8n** webhook — visitors can ask question
 Browse categorized photo galleries (Nature, My Setup, Random Clicks) with lightbox viewer and pagination.
 
 ### 📊 GitHub Integration
-Interactive contribution calendar and PR activity feed pulled live from GitHub.
+Interactive contribution calendar fetched on the server with a client-side fallback.
 
 ### 📝 Project Showcase
 Curated project cards with detailed markdown-driven case study pages for each project.
@@ -56,7 +56,7 @@ Privacy-conscious analytics via **PostHog** (self-hosted) + **Vercel Analytics**
 | **Language**        | TypeScript (strict)                                                          |
 | **Styling**         | Tailwind CSS 3, CSS animations (glitch, typewriter, scanlines, equalizer)    |
 | **UI Components**   | shadcn/ui (Radix primitives)                                                 |
-| **Animation**       | CSS transitions, keyframe animations                                        |
+| **Animation**       | Framer Motion, CSS transitions, keyframe animations                         |
 | **Icons**           | lucide-react, react-icons (SiNextdotjs, SiTailwindcss, etc.)                 |
 | **AI / Chat**       | OpenAI SDK (GPT-4o-mini), n8n webhook                                        |
 | **Analytics**       | PostHog (self-hosted), Vercel Analytics                                      |
@@ -78,13 +78,8 @@ cd Retro-Folio
 npm install
 
 # Set up environment variables
-# Copy .env.example (or add the following):
-#   NEXT_PUBLIC_POSTHOG_KEY=
-#   NEXT_PUBLIC_POSTHOG_HOST=
-#   OPENAI_API_KEY=
-#   OPENAI_API_BASE=
-#   GITHUB_TOKEN=
-#   REDIS_URL=
+cp .env.example .env.local
+# Fill in the values in .env.local as needed
 
 # Start the development server
 npm run dev
@@ -101,6 +96,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the result.
 | `npm run start`| Start production server    |
 | `npm run lint` | Run ESLint                 |
 | `npm run typecheck` | Run TypeScript checks |
+| `npm test`     | Run automated test suite   |
 
 ---
 

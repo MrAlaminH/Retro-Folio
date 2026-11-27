@@ -1,8 +1,9 @@
 "use client";
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect, useContext, memo } from "react";
 import { BotMessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { EASE_OUT_EXPO, useEnterTransform } from "@/lib/motion";
+import { extractChatReply, formatBotMessage } from "@/lib/chat-reply";
 import { ThemeContext } from "../contexts/ThemeContext";
 
 interface Message {
@@ -17,6 +18,73 @@ interface QuickMessage {
 
 const WEBHOOK_URL =
   "https://n8n.deployify.xyz/webhook/4dcdb776-e47d-4d1a-8739-4f02c73b2c91/chat";
+
+// Predefined quick messages
+const quickMessages: QuickMessage[] = [
+  { id: "get-started", text: "I'd like to get started" },
+  { id: "learn-more", text: "Tell me more about MrAlaminH" },
+];
+
+const MessageList = memo(function MessageList({
+  messages,
+  loading,
+  theme,
+}: {
+  messages: Message[];
+  loading: boolean;
+  theme: string;
+}) {
+  return (
+    <>
+      {messages.map((msg, i) => (
+        <div
+          key={i}
+          className={`flex mb-3 ${
+            msg.sender === "user" ? "justify-end" : "justify-start"
+          }`}
+        >
+          <div
+            className={`max-w-[75%] px-4 py-2 rounded-xl text-sm shadow ${
+              msg.sender === "user"
+                ? theme === "dark"
+                  ? "bg-green-500 text-white rounded-br-none"
+                  : "bg-gray-300 text-black rounded-br-none"
+                : theme === "dark"
+                ? "bg-black text-green-400 border border-green-200 rounded-bl-none"
+                : "bg-gray-100 text-gray-700 border border-gray-300 rounded-bl-none"
+            }`}
+          >
+            {msg.sender === "bot" ? (
+              <div className="whitespace-pre-line">{msg.text}</div>
+            ) : (
+              msg.text
+            )}
+          </div>
+        </div>
+      ))}
+      {loading && (
+        <div className="flex justify-start mb-2">
+          <div
+            className={`px-4 py-2 rounded-xl rounded-bl-none text-sm shadow flex items-center gap-2 ${
+              theme === "dark"
+                ? "bg-black border border-green-200 text-green-400"
+                : "bg-gray-100 border border-gray-300 text-gray-700"
+            }`}
+          >
+            <span className="animate-bounce">...</span>
+            <span
+              className={`text-xs ${
+                theme === "dark" ? "text-green-400" : "text-gray-500"
+              }`}
+            >
+              Typing
+            </span>
+          </div>
+        </div>
+      )}
+    </>
+  );
+});
 
 const ChatWidget = () => {
   const themeContext = useContext(ThemeContext);
@@ -39,12 +107,6 @@ const ChatWidget = () => {
   const [sessionId] = useState(
     () => `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
   );
-
-  // Predefined quick messages
-  const quickMessages: QuickMessage[] = [
-    { id: "get-started", text: "I'd like to get started" },
-    { id: "learn-more", text: "Tell me more about MrAlaminH" },
-  ];
 
   useEffect(() => {
     if (open) {
@@ -82,26 +144,6 @@ const ChatWidget = () => {
     };
   }, [open]);
 
-  // Format bot messages to be more readable
-  const formatBotMessage = (text: string): string => {
-    if (/\d+\.\s+/.test(text)) {
-      return text;
-    }
-
-    let formattedText = text.split(/\n\n|\n/).join("\n\n");
-
-    if (text.includes(", ") && !text.includes("\n") && text.length > 100) {
-      const parts = text.split(": ");
-      if (parts.length > 1) {
-        const intro = parts[0] + ":";
-        const items = parts[1].split(", ").map((item) => "• " + item.trim());
-        formattedText = `${intro}\n\n${items.join("\n")}`;
-      }
-    }
-
-    return formattedText;
-  };
-
   const sendMessage = async (messageText = input) => {
     if (!messageText.trim()) return;
 
@@ -111,12 +153,12 @@ const ChatWidget = () => {
     setLoading(true);
     setConversationStarted(true);
 
+    // Don't leave the user on "Typing…" forever if the webhook hangs.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     try {
       const url = `${WEBHOOK_URL}?action=sendMessage`;
-
-      // Don't leave the user on "Typing…" forever if the webhook hangs.
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const res = await fetch(url, {
         method: "POST",
@@ -127,30 +169,13 @@ const ChatWidget = () => {
         }),
         signal: controller.signal,
       });
-      clearTimeout(timeoutId);
 
-      const data = await res.json();
-      console.log("Response from n8n:", data);
-
-      let reply = "";
-
-      if (Array.isArray(data) && data.length > 0) {
-        if (data[0]?.output) {
-          reply = data[0].output;
-        }
-      } else if (typeof data === "object") {
-        if (data.response) {
-          reply = data.response;
-        } else if (data.reply) {
-          reply = data.reply;
-        } else if (data.output) {
-          reply = data.output;
-        }
+      if (!res.ok) {
+        throw new Error(`Webhook returned HTTP ${res.status}`);
       }
 
-      reply = reply.trim();
-
-      const formattedReply = formatBotMessage(reply);
+      const data: unknown = await res.json();
+      const formattedReply = formatBotMessage(extractChatReply(data));
 
       setMessages((msgs) => [
         ...msgs,
@@ -169,6 +194,7 @@ const ChatWidget = () => {
         },
       ]);
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };
@@ -266,52 +292,7 @@ const ChatWidget = () => {
             }`}
             style={{ scrollbarWidth: "thin" }}
           >
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex mb-3 ${
-                  msg.sender === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[75%] px-4 py-2 rounded-xl text-sm shadow ${
-                    msg.sender === "user"
-                      ? theme === "dark"
-                        ? "bg-green-500 text-white rounded-br-none"
-                        : "bg-gray-300 text-black rounded-br-none"
-                      : theme === "dark"
-                      ? "bg-black text-green-400 border border-green-200 rounded-bl-none"
-                      : "bg-gray-100 text-gray-700 border border-gray-300 rounded-bl-none"
-                  }`}
-                >
-                  {msg.sender === "bot" ? (
-                    <div className="whitespace-pre-line">{msg.text}</div>
-                  ) : (
-                    msg.text
-                  )}
-                </div>
-              </div>
-            ))}
-            {loading && (
-              <div className="flex justify-start mb-2">
-                <div
-                  className={`px-4 py-2 rounded-xl rounded-bl-none text-sm shadow flex items-center gap-2 ${
-                    theme === "dark"
-                      ? "bg-black border border-green-200 text-green-400"
-                      : "bg-gray-100 border border-gray-300 text-gray-700"
-                  }`}
-                >
-                  <span className="animate-bounce">...</span>
-                  <span
-                    className={`text-xs ${
-                      theme === "dark" ? "text-green-400" : "text-gray-500"
-                    }`}
-                  >
-                    Typing
-                  </span>
-                </div>
-              </div>
-            )}
+            <MessageList messages={messages} loading={loading} theme={theme} />
             <div ref={messagesEndRef} />
           </div>
           {!conversationStarted && (
@@ -351,6 +332,7 @@ const ChatWidget = () => {
                   : "border-gray-300 bg-white text-gray-700 focus:ring-gray-400"
               }`}
               type="text"
+              aria-label="Chat message"
               placeholder="Type your message..."
               value={input}
               onChange={(e) => setInput(e.target.value)}

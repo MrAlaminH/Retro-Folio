@@ -6,6 +6,11 @@ import fs from "fs/promises";
 import path from "path";
 import { Globe, Code } from "lucide-react";
 import NotFound from "@/app/not-found";
+import contentImageMeta from "@/data/content-image-meta.json";
+
+const imageDims = new Map(
+  contentImageMeta.images.map((img) => [img.url, img] as const)
+);
 
 export async function generateStaticParams() {
   return projectData.map((project) => ({
@@ -59,15 +64,22 @@ const ProjectPage = async ({ params }: { params: { slug: string } }) => {
               <ol className="list-decimal pl-5 mb-4" {...props} />
             ),
             li: ({ node, ...props }) => <li className="mb-1" {...props} />,
-            img: ({ src, alt }) => (
-              <Image
-                src={src || ""}
-                alt={alt || ""}
-                width={600}
-                height={400}
-                className="w-full h-auto my-4"
-              />
-            ),
+            img: ({ src, alt }) => {
+              const dims = (src && imageDims.get(src)) || {
+                width: 600,
+                height: 400,
+              };
+              return (
+                <Image
+                  src={src || ""}
+                  alt={alt || ""}
+                  width={dims.width ?? 600}
+                  height={dims.height ?? 400}
+                  sizes="(min-width: 768px) 736px, 100vw"
+                  className="w-full h-auto my-4"
+                />
+              );
+            },
           }}
         >
           {content}
