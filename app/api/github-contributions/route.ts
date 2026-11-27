@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { unstable_cache } from "next/cache";
 import { fetchUserPullRequests } from "@/lib/github";
 
 export async function GET(request: NextRequest) {
@@ -19,14 +20,38 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  try {
-    const contributions = await fetchUserPullRequests(username, limit);
+  const getCachedPullRequests = unstable_cache(
+    async (user: string, n: number) => {
+      try {
+        return await fetchUserPullRequests(user, n);
+      } catch (error) {
+        console.error("Error in cached pull-requests fetch", {
+          username: user,
+          limit: n,
+          error,
+        });
+        throw error;
+      }
+    },
+    [`github-prs-${username}-${limit}`],
+    { revalidate: 3600, tags: [`github-prs-${username}-${limit}`] }
+  );
 
-    return NextResponse.json({
-      success: true,
-      contributions,
-      count: contributions.length,
-    });
+  try {
+    const contributions = await getCachedPullRequests(username, limit);
+
+    return NextResponse.json(
+      {
+        success: true,
+        contributions,
+        count: contributions.length,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      }
+    );
   } catch (error) {
     console.error("GitHub contributions API error", {
       username,
