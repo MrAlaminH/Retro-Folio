@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
@@ -32,8 +32,17 @@ const navItems = [
 export default function Navbar() {
   const email = "itsalamin999@gmail.com";
   const [showCopyMessage, setShowCopyMessage] = useState(false);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
   const { font, setFont } = useFont();
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) {
+        clearTimeout(copyTimerRef.current);
+      }
+    };
+  }, []);
 
   // Theme switch animation. Runs uncontrolled so the hook owns persistence
   // (localStorage.theme) and the `.dark` class toggle; ThemeContext mirrors it
@@ -45,10 +54,22 @@ export default function Navbar() {
   });
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText(email).then(() => {
-      setShowCopyMessage(true);
-      setTimeout(() => setShowCopyMessage(false), 3000);
-    });
+    if (!navigator.clipboard?.writeText) return;
+    navigator.clipboard
+      .writeText(email)
+      .then(() => {
+        if (copyTimerRef.current !== null) {
+          clearTimeout(copyTimerRef.current);
+        }
+        setShowCopyMessage(true);
+        copyTimerRef.current = setTimeout(() => {
+          setShowCopyMessage(false);
+          copyTimerRef.current = null;
+        }, 3000);
+      })
+      .catch((error) => {
+        console.error("Failed to copy email to clipboard:", error);
+      });
   };
 
   return (
@@ -204,12 +225,19 @@ export default function Navbar() {
           </ul>
         </nav>
       </header>
+      <span className="sr-only" role="status" aria-live="polite">
+        {showCopyMessage ? "Email copied to clipboard!" : ""}
+      </span>
       <div
-        className="copy-toast fixed top-4 right-4"
+        className="copy-toast fixed top-4 right-4 z-50"
         data-shown={showCopyMessage ? "true" : "false"}
-        aria-hidden={!showCopyMessage}
+        aria-hidden="true"
       >
-        <Alert variant="default" className="text-green-700 dark:text-green-500">
+        <Alert
+          role="presentation"
+          variant="default"
+          className="text-green-700 dark:text-green-500"
+        >
           Email copied to clipboard!
         </Alert>
       </div>
