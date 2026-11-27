@@ -138,7 +138,7 @@ export default function MyProjects() {
       </ul>
 
       {/* Check More Projects Button */}
-      <div className="mt-4">
+      <div className="mt-4 flex justify-end">
         <Link
           href="/projects"
           className="text-green-500 dark:text-green-400 mt-2 focus:outline-none hover:text-green-800 dark:hover:text-green-500 hover:underline inline-block"

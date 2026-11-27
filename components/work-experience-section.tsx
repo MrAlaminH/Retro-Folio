@@ -28,6 +28,7 @@ export function WorkExperienceSection({
             key={experience.id}
             experience={experience}
             isLast={index === workExperienceData.length - 1}
+            defaultExpanded={index === 0}
           />
         ))}
       </ul>

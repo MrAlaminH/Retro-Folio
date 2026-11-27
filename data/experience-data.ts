@@ -12,7 +12,7 @@ export interface WorkExperience {
 export const workExperienceData: WorkExperience[] = [
   {
     id: 1,
-    company: "Fusion Calling Lab",
+    company: "Fusion Calling",
     role: "Founder and Marketer",
     startDate: "Jan 2025",
     endDate: "Present",

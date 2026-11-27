@@ -8,13 +8,15 @@ import type { WorkExperience } from "@/data/experience-data";
 interface WorkExperienceExpandableProps {
   experience: WorkExperience;
   isLast: boolean;
+  defaultExpanded?: boolean;
 }
 
 export default function WorkExperienceExpandable({
   experience,
   isLast,
+  defaultExpanded = false,
 }: WorkExperienceExpandableProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
     <li key={experience.id}>
